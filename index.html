@@ -20,7 +20,7 @@ label{display:block;font-size:14px;font-weight:bold;margin:7px 0 4px}
 input,select,button{width:100%;min-height:40px;border-radius:8px;font-size:14px;padding:7px}
 input,select{border:1.5px solid #ccc;background:#fff}
 button{border:0;font-weight:bold;cursor:pointer}
-.save{display:block!important;width:100%;background:var(--app)!important;color:#fff!important;font-size:15px;margin-top:9px;min-height:46px}
+.save{background:var(--app);color:white;font-size:15px;margin-top:9px}
 .etapas{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
 .etapa{min-height:30px;padding:2px;background:var(--app-light);color:var(--app);border:2px solid var(--app-border);border-radius:10px;font-size:12px}
 .etapa.active{background:var(--app);color:#fff}
@@ -42,6 +42,42 @@ button{border:0;font-weight:bold;cursor:pointer}
 .cores{display:none;position:absolute;right:0;top:38px;z-index:20;background:#fff;padding:6px;border-radius:10px;box-shadow:0 3px 12px #0003;gap:4px}
 .cores.aberta{display:flex}
 .cores button{width:32px!important;min-height:32px!important;padding:2px!important;border:1px solid #ddd;background:#fff;font-size:17px!important}
+
+/* Ajuste visual: painel compacto e paleta sempre por cima */
+header{position:relative;z-index:50}
+.cor-app{position:absolute!important;right:12px;top:12px;margin:0!important;z-index:9999!important}
+.cor-btn{width:42px!important;height:42px!important;min-height:42px!important;border-radius:12px!important;padding:2px!important;font-size:18px!important;background:#fff!important;box-shadow:0 2px 8px #0002!important}
+.cores{position:absolute!important;right:0!important;top:47px!important;z-index:10000!important;padding:5px!important;border-radius:10px!important;gap:3px!important;box-shadow:0 4px 14px #0003!important}
+.cores button{width:30px!important;height:30px!important;min-height:30px!important;border-radius:50%!important;padding:0!important;font-size:15px!important}
+.cores.aberta{display:flex!important}
+
+/* Deixa o formulário mais compacto no celular */
+.wrap{padding:10px 12px 28px!important}
+header{padding:2px 0 12px!important}
+header h1{font-size:32px!important}
+header .sub{font-size:11px!important;letter-spacing:1px!important}
+.card{border-radius:14px!important;padding:14px!important;margin-bottom:12px!important}
+.card h2{font-size:22px!important;margin-bottom:12px!important}
+label{font-size:15px!important;margin-bottom:4px!important}
+input,select,textarea{min-height:44px!important;padding:9px 11px!important;border-radius:10px!important}
+.field{margin-bottom:9px!important}
+.save{min-height:48px!important;padding:10px 12px!important;margin-top:4px!important}
+.section-title{font-size:23px!important;margin:12px 8px 8px!important}
+
+
+/* Versão compacta */
+.card{padding:11px!important;margin:4px 8px 9px!important}
+.card h2{font-size:20px!important;margin-bottom:8px!important}
+label{font-size:14px!important;margin:5px 0 3px!important}
+input{min-height:38px!important;padding:7px 10px!important;font-size:14px!important}
+.etapa-select{min-height:30px!important;height:30px!important;padding:2px 8px!important;font-size:13px!important;border-width:1.5px!important}
+.save-row{display:flex;justify-content:flex-end;margin-top:6px}
+.save{width:48px!important;height:42px!important;min-height:42px!important;padding:0!important;margin:0!important;border-radius:10px!important;font-size:21px!important;line-height:1}
+.small{font-size:11px!important;margin-top:7px!important;line-height:1.25}
+.endereco-linha{grid-template-columns:1fr 72px!important;gap:6px!important}
+.section-title{font-size:21px!important;margin:12px 12px 7px!important}
+.exportar-etapa{width:38px!important;min-height:34px!important;font-size:17px!important}
+
 </style>
 </head>
 <body>
@@ -107,7 +143,7 @@ button{border:0;font-weight:bold;cursor:pointer}
 <label>Data da correção da Leitura</label>
 <input id="data" type="date">
 
-<button class="save" onclick="salvar()">SALVAR LANÇAMENTO</button>
+<div class="save-row"><button class="save" onclick="salvar()" aria-label="Salvar lançamento" title="Salvar lançamento">💾</button></div>
 <div class="small">Os lançamentos ficam separados por etapa. Ao trocar de etapa, somente os registros daquela etapa são exibidos.</div>
 </div>
 
@@ -246,5 +282,13 @@ function esc(s){
 }
 selecionarEtapa(1);
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const c=document.getElementById('cores');
+  if(c){ c.style.zIndex='10000'; }
+});
+</script>
+
 </body>
 </html>
