@@ -26,9 +26,9 @@ button{border:0;font-weight:bold;cursor:pointer}
 .etapa.active{background:var(--app);color:#fff}
 .section-title{font-size:23px;font-weight:bold;margin:20px 18px 10px}
 .reg{border-left:6px solid var(--app);margin:10px 0;padding:14px;background:#fff;border-radius:12px;box-shadow:0 1px 5px #0001;color:#285f31}
-.reg b{font-size:19px}
-.reg div{margin-top:7px;color:#315e38}
-.del{margin-top:12px;background:#fff;border:2px solid var(--app);color:var(--app);min-height:44px}
+.reg b{font-size:16px}
+.reg div{margin-top:4px;color:#315e38;font-size:13px}
+.del{margin-top:7px;background:#fff;border:2px solid var(--app);color:var(--app);min-height:34px}
 .empty{text-align:center;color:#777;padding:20px}
 .small{font-size:12px;color:#666;margin-top:10px}
 
@@ -178,18 +178,56 @@ function carregarCor(){
 carregarCor();
 
 let etapaAtual=1;
-let registros=JSON.parse(localStorage.getItem('correcoes_etapas_1_18')||'[]');
+let registros=[];
+const STORAGE_PREFIX='correcoes_etapa_';
+
+function carregarRegistros(){
+  let encontrou=false;
+  for(let i=1;i<=18;i++){
+    const chave=STORAGE_PREFIX+String(i).padStart(2,'0');
+    const dados=JSON.parse(localStorage.getItem(chave)||'null');
+    if(Array.isArray(dados)){
+      encontrou=true;
+      registros.push(...dados.map(r=>({...r,etapa:i})));
+    }
+  }
+  // Migra a base antiga uma única vez, separando por etapa.
+  if(!encontrou){
+    const antigos=JSON.parse(localStorage.getItem('correcoes_etapas_1_18')||'[]');
+    if(Array.isArray(antigos)){
+      antigos.forEach(r=>{
+        const e=Number(r.etapa);
+        if(e>=1 && e<=18){
+          const chave=STORAGE_PREFIX+String(e).padStart(2,'0');
+          const lista=JSON.parse(localStorage.getItem(chave)||'[]');
+          lista.push({...r,etapa:e});
+          localStorage.setItem(chave,JSON.stringify(lista));
+          registros.push({...r,etapa:e});
+        }
+      });
+    }
+  }
+}
+carregarRegistros();
 
 
 document.getElementById('data').value=new Date().toISOString().slice(0,10);
 
 function selecionarEtapa(n){
+  n=Number(n);
+  if(!Number.isInteger(n) || n<1 || n>18) n=1;
   etapaAtual=n;
   const seletor=document.getElementById('etapaSelect');
   if(seletor) seletor.value=String(n);
   document.getElementById('etapaTitulo').textContent='Etapa '+String(n).padStart(2,'0');
   document.getElementById('etapaLista').textContent='Etapa '+String(n).padStart(2,'0');
-  document.getElementById('exportEtapaNumero').textContent=String(n).padStart(2,'0');
+  // Cada etapa é uma tela de trabalho independente.
+  ['endereco','localidade','numeroCasa','medidor','uc','leitura'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  const dataEl=document.getElementById('data');
+  if(dataEl) dataEl.value=new Date().toISOString().slice(0,10);
   render();
 }
 function salvar(){
@@ -204,8 +242,11 @@ function salvar(){
     alert('Preencha Endereço, Medidor, UC e Leitura Corrigida.');
     return;
   }
-  registros.push({id:Date.now(),etapa:etapaAtual,endereco,localidade,numeroCasa,medidor,uc,leitura,data});
-  localStorage.setItem('correcoes_etapas_1_18',JSON.stringify(registros));
+  const registro={id:Date.now(),etapa:Number(etapaAtual),endereco,localidade,numeroCasa,medidor,uc,leitura,data};
+  registros.push(registro);
+  const chave=STORAGE_PREFIX+String(etapaAtual).padStart(2,'0');
+  const dadosEtapa=registros.filter(r=>Number(r.etapa)===Number(etapaAtual));
+  localStorage.setItem(chave,JSON.stringify(dadosEtapa));
   document.getElementById('endereco').value='';
   document.getElementById('localidade').value='';
   document.getElementById('numeroCasa').value='';
@@ -217,8 +258,12 @@ function salvar(){
 }
 function excluir(id){
   if(confirm('Excluir este lançamento?')){
+    const etapaDoRegistro=registros.find(r=>r.id===id)?.etapa;
     registros=registros.filter(r=>r.id!==id);
-    localStorage.setItem('correcoes_etapas_1_18',JSON.stringify(registros));
+    if(etapaDoRegistro){
+      const chave=STORAGE_PREFIX+String(etapaDoRegistro).padStart(2,'0');
+      localStorage.setItem(chave,JSON.stringify(registros.filter(r=>Number(r.etapa)===Number(etapaDoRegistro))));
+    }
     render();
   }
 }
@@ -289,6 +334,24 @@ document.addEventListener('DOMContentLoaded', function(){
   if(c){ c.style.zIndex='10000'; }
 });
 </script>
+
+
+<footer class="rodape-app">
+  Criado por Luís Ricardo<br>
+  © Todos os direitos reservados
+</footer>
+
+<style>
+.rodape-app{
+  text-align:center;
+  padding:18px 10px 24px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--app);
+  font-weight:600;
+  opacity:.9;
+}
+</style>
 
 </body>
 </html>
