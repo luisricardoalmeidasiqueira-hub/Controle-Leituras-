@@ -6,19 +6,20 @@
 <title>Correção - Lançamentos por Etapa</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f4f5f6;font-family:Arial,sans-serif;color:#245d2e}
-header{padding:20px 18px 12px}
-h1{margin:0;font-size:32px}
-.sub{margin-top:6px;font-size:18px}
-.card{background:#fff;margin:10px 14px 18px;padding:18px;border-radius:18px;box-shadow:0 2px 9px #0001}
-h2{margin:0 0 18px;font-size:25px}
-label{display:block;font-size:17px;font-weight:bold;margin:14px 0 7px}
-input,select,button{width:100%;min-height:54px;border-radius:12px;font-size:17px;padding:12px}
-input,select{border:2px solid #ccc;background:#fff}
+body{margin:0;background:#f4f5f6 url('papel_leitura_energia.jpeg') center top/cover fixed no-repeat;font-family:Arial,sans-serif;color:#245d2e}
+body:before{content:"";position:fixed;inset:0;background:rgba(255,255,255,.78);z-index:-1}
+header{padding:10px 14px 6px}
+h1{margin:0;font-size:26px}
+.sub{margin-top:3px;font-size:12px}
+.card{background:#fff;margin:6px 10px 12px;padding:12px;border-radius:14px;box-shadow:0 2px 9px #0001}
+h2{margin:0 0 10px;font-size:20px}
+label{display:block;font-size:15px;font-weight:bold;margin:9px 0 5px}
+input,select,button{width:100%;min-height:44px;border-radius:9px;font-size:15px;padding:8px}
+input,select{border:1.5px solid #ccc;background:#fff}
 button{border:0;font-weight:bold;cursor:pointer}
-.save{background:#1d6829;color:white;font-size:19px;margin-top:18px}
-.etapas{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.etapa{min-height:50px;padding:7px;background:#e8f1e9;color:#1d6829;border:2px solid #b9cebc;border-radius:10px;font-size:15px}
+.save{background:#1d6829;color:white;font-size:16px;margin-top:12px}
+.etapas{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.etapa{min-height:38px;padding:4px;background:#e8f1e9;color:#1d6829;border:2px solid #b9cebc;border-radius:10px;font-size:15px}
 .etapa.active{background:#1d6829;color:#fff}
 .section-title{font-size:23px;font-weight:bold;margin:20px 18px 10px}
 .reg{border-left:6px solid #1d6829;margin:10px 0;padding:14px;background:#fff;border-radius:12px;box-shadow:0 1px 5px #0001;color:#285f31}
@@ -26,7 +27,7 @@ button{border:0;font-weight:bold;cursor:pointer}
 .reg div{margin-top:7px;color:#315e38}
 .del{margin-top:12px;background:#fff;border:2px solid #1d6829;color:#1d6829;min-height:44px}
 .empty{text-align:center;color:#777;padding:20px}
-.small{font-size:14px;color:#666;margin-top:10px}
+.small{font-size:12px;color:#666;margin-top:10px}
 </style>
 </head>
 <body>
