@@ -1,79 +1,154 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0d4b35">
+<meta name="theme-color" content="#123d2a">
 <title>Controle de Leituras</title>
 <style>
-:root{--g:#0d4b35;--g2:#176b4d;--mint:#e8f3ed;--bg:#f4f7f5;--line:#d8e4de;--text:#16362b;--muted:#708078}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-button,input,select{font:inherit}button{cursor:pointer}
-header{background:var(--g);color:#fff;padding:13px 14px 17px;padding-top:calc(12px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0003}
-.icon{border:0;background:transparent;color:#fff;font-size:25px;width:42px;height:42px;border-radius:11px}.icon:active{background:#fff2}
-.logo{font-size:30px}.head{flex:1}.head b{font-size:18px}.head small{display:block;margin-top:3px;color:#d8e9e2;font-size:11px}
-main{max-width:700px;margin:auto;padding:12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;margin-bottom:12px;box-shadow:0 5px 18px #12372b12}
-.row{display:flex;gap:9px;align-items:end}.field{flex:1}label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;margin:0 0 5px 2px}
-input,select{width:100%;height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);padding:0 12px;font-size:17px;font-weight:650;outline:0}
-input:focus,select:focus{border-color:var(--g2);box-shadow:0 0 0 3px #176b4d18}
-.date{height:48px;min-width:132px;background:var(--mint);border-radius:12px;padding:7px 10px;display:flex;gap:7px;align-items:center}.date b{font-size:12px}.date small{display:block;color:var(--muted);font-size:10px}
-.partition{margin-top:13px;background:#f4f8f6;border:1px solid #dce9e2;border-radius:13px;padding:10px 11px}.check{display:flex;align-items:center;gap:9px;font-weight:850}.check input{width:22px;height:22px;accent-color:var(--g2);margin:0}
-.range{display:none;gap:9px;margin-top:10px}.range.show{display:flex}.hint{font-size:10px;color:var(--muted);margin-top:7px}
-.save{width:100%;height:48px;border:0;border-radius:12px;background:var(--g2);color:#fff;font-weight:900;margin-top:12px}
-.total{display:flex;justify-content:space-between;align-items:center;background:var(--mint);border:1px solid #d7e9df;border-radius:14px;padding:11px 13px}.total span{font-size:11px;font-weight:850;color:var(--muted)}.total strong{font-size:25px;color:var(--g)}
-.rhead{display:flex;justify-content:space-between;align-items:center}.rhead h2{font-size:16px;margin:0}.badge{background:var(--mint);color:var(--g);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}
-.record{display:grid;grid-template-columns:1fr 43px;gap:10px;align-items:center;background:#f7faf8;border:1px solid #e1ebe5;border-radius:14px;padding:11px;margin-top:8px}
-.book{font-size:18px;font-weight:900}.info{font-size:12px;line-height:1.45;color:var(--muted);margin-top:3px}.info b{color:var(--text)}
-.del{width:43px;height:43px;border:0;border-radius:11px;background:#fde9e9;color:#c92727;font-size:21px;font-weight:900}.empty{text-align:center;color:var(--muted);font-size:12px;padding:13px}
-.drawerShade{display:none;position:fixed;inset:0;background:#0006;z-index:20}.drawerShade.show{display:block}
-.drawer{position:fixed;left:0;top:0;bottom:0;width:min(295px,82vw);background:#fff;z-index:21;transform:translateX(-105%);transition:.2s;box-shadow:8px 0 28px #0003;padding:16px;padding-top:calc(15px + env(safe-area-inset-top));overflow:auto}.drawer.open{transform:none}
-.dh{display:flex;align-items:center;margin-bottom:10px}.dh b{font-size:18px;color:var(--g);flex:1}.close{border:0;background:#edf3f0;border-radius:10px;width:38px;height:38px}
-.item{width:100%;display:flex;align-items:center;gap:10px;border:0;border-bottom:1px solid #edf1ef;background:#fff;padding:12px 4px;text-align:left;color:var(--text);font-size:14px}.item span{margin-left:auto;color:var(--muted)}
-.modalShade{display:none;position:fixed;inset:0;background:#0007;z-index:30;align-items:center;justify-content:center;padding:14px}.modalShade.show{display:flex}.modal{width:min(470px,100%);max-height:86vh;overflow:auto;background:#fff;border-radius:18px;padding:15px}.mh{display:flex;align-items:center;margin-bottom:12px}.mh b{flex:1;font-size:16px}
-@media(max-width:430px){.row{display:grid;grid-template-columns:1fr}.date{min-width:0}.range .field{min-width:0}}
+*{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#183126;font-family:Arial,sans-serif}.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:20px}
+header{background:#123d2a;color:white;padding:18px 15px;position:sticky;top:0;z-index:5}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;font-size:13px;opacity:.85}
+main{padding:12px}.card{background:white;border:1px solid #d7e0db;border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:0 2px 7px #0001}
+.label{font-size:12px;font-weight:700;margin-bottom:6px}input{width:100%;height:43px;border:1px solid #d7e0db;border-radius:10px;padding:0 11px;font-size:16px;color:#183126;background:white}
+.date-wrap{position:relative}.date-wrap input{height:56px;background:#e8f2ec;border:0;border-radius:14px;padding:0 44px 0 14px;font-size:20px;font-weight:800;color:#183126;display:block}.date-wrap input::-webkit-calendar-picker-indicator{position:absolute;right:12px;width:28px;height:28px;opacity:1;cursor:pointer}.date-arrow{display:none}
+.etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #b9cbc1;border-radius:8px;background:#fff;color:#123d2a;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#1d6545;color:#fff;border-color:#1d6545}
+.livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e8f2ec;color:#123d2a;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
+.row{display:grid;grid-template-columns:1.2fr 1fr 1fr 48px;gap:7px}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.add{height:43px;border:0;border-radius:10px;background:#1d6545;color:white;font-size:22px;font-weight:bold}
+.hint{font-size:11px;color:#68776f;margin-top:7px}.total{font-size:28px;font-weight:800;color:#123d2a}.total small{display:block;font-size:12px;color:#68776f}.item{border-top:1px solid #d7e0db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#123d2a;color:white;font-weight:bold}.action.sec{background:#e7eee9;color:#123d2a}.action.trash{background:#f5e7e7;color:#9a2f2f}
+footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
+@media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
 </style>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Controle de Leituras">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-2026.png">
+<link rel="icon" type="image/png" sizes="512x512" href="app-icon-2026.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Controle de Leituras">
 </head>
 <body>
-<header><button class="icon" onclick="openMenu()">☰</button><div class="logo">📚</div><div class="head"><b>Controle de Leituras</b><small>Lançamento por etapa, livro e intervalo</small></div><button class="icon" onclick="options()">⋮</button></header>
-<div id="shade" class="drawerShade" onclick="closeMenu()"></div>
-<aside id="drawer" class="drawer"><div class="dh"><b>📚 Menu</b><button class="close" onclick="closeMenu()">✕</button></div>
-<button class="item" onclick="closeMenu()">📚 Leituras <span>›</span></button>
-<button class="item" onclick="report()">📊 Relatório <span>›</span></button>
-<button class="item" onclick="exportCSV()">📄 Exportar <span>›</span></button>
-<button class="item" onclick="clearAll()">🗑️ Limpar registros <span>›</span></button></aside>
-
+<div class="app">
+<header><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></header>
 <main>
 <section class="card">
-<div class="row"><div class="field"><label>Etapa</label><select id="stage"></select></div><div class="date">📅<div><b id="today"></b><small id="weekday"></small></div></div></div>
-<div style="margin-top:13px"><label>Livro</label><input id="book" inputmode="numeric" autocomplete="off" placeholder="Digite o número do livro"></div>
-<div class="partition"><label class="check"><input id="part" type="checkbox" onchange="rangeToggle()">Particionado</label>
-<div id="range" class="range"><div class="field"><label>De</label><input id="from" inputmode="numeric" placeholder="Ex.: 5"></div><div class="field"><label>Até</label><input id="to" inputmode="numeric" placeholder="Ex.: 30"></div></div>
-<div class="hint">Marque somente quando for uma parte do livro. Sem limite de números.</div></div>
-<div style="margin-top:13px"><label>Quantidade de leituras</label><input id="qty" inputmode="numeric" placeholder="Digite a quantidade"></div>
-<button class="save" onclick="saveReading()">💾 &nbsp;Salvar leitura</button>
+<div class="label">📅 DATA DA LEITURA</div>
+<div class="date-wrap">
+<input id="data" type="date" aria-label="Selecionar data da leitura">
+<span class="date-arrow">⌄</span>
+</div>
+<div class="hint">Toque na data para escolher outro dia.</div>
 </section>
-<section class="card"><div class="total"><div><span>TOTAL DE LEITURAS NO MÊS</span><div id="month" style="font-size:12px;font-weight:800;margin-top:2px"></div></div><strong id="sum">0</strong></div></section>
-<section class="card"><div class="rhead"><h2>📋 Registros da Etapa <span id="stlabel">09</span></h2><span class="badge" id="count">0</span></div><div id="records"></div></section>
-<div style="text-align:center;color:#7a8a83;font-size:10px;padding:8px">© 2026 — Controle de Leituras</div>
+<section class="card"><div class="label">ETAPA — ESCOLHA 01 A 18</div><div id="etapas" class="etapas"></div></section>
+<section class="card">
+<div class="livro-title"><strong id="titulo">ETAPA 01</strong><span id="totEtapa" class="badge">0 leituras</span></div>
+<div class="label">LOCALIDADE</div>
+<input id="localidade" type="text" placeholder="Digite a localidade">
+<div style="height:9px"></div>
+<div class="label">LIVRO</div><input id="livro" type="text" placeholder="Digite o livro">
+<div style="height:9px"></div>
+<div class="label">TIPO DE LIVRO</div>
+<select id="tipoLivro" style="width:100%;height:40px;border:1px solid #d7e0db;border-radius:10px;padding:0 10px;font-size:15px;color:#183126;background:white">
+  <option value="normal">Livro normal</option>
+  <option value="particionado">Livro particionado</option>
+</select>
+<div style="height:9px"></div>
+<div class="row" id="camposLeitura">
+<div class="mini" id="deBox"><label>DE</label><input id="de" type="number" min="0" inputmode="numeric" placeholder="1"></div>
+<div class="mini" id="ateBox"><label>ATÉ</label><input id="ate" type="number" min="0" inputmode="numeric" placeholder="100"></div>
+<div class="mini" id="qtdBox"><label>QUANTIDADE</label><input id="qtd" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<button id="add" class="add">＋</button>
+</div>
+<div id="hintPart" class="hint">Livro particionado: a quantidade é calculada automaticamente: ATÉ − DE + 1.</div>
+<div id="hintNormal" class="hint">Livro normal: digite diretamente a quantidade de leituras.</div>
+</section>
+<section class="card"><div class="label">📊 TOTAL DE LEITURAS NO MÊS</div><div class="total"><span id="total">0</span><small id="mes"></small></div></section>
+<section class="card">
+<div class="livro-title"><strong>📋 REGISTROS DA ETAPA <span id="etapaLista">01</span></strong><span id="nreg" class="badge">0</span></div>
+<div id="lista"></div>
+<div class="tools">
+<button id="csv" class="action" title="Exportar arquivo">📄 Exportar</button>
+<button id="importar" class="action sec" title="Importar arquivo">📥 Importar</button>
+<input id="arquivoImportar" type="file" accept=".json,application/json" style="display:none">
+<button id="backup" class="action sec" title="Salvar backup">💾 Backup</button>
+<button id="lixeira" class="action trash" title="Lixeira">🗑️ Lixeira</button>
+</div>
+</section>
 </main>
-
-<div id="modalShade" class="modalShade" onclick="if(event.target===this)closeModal()"><div id="modal" class="modal"></div></div>
+<footer>© 2026 Luís Ricardo Almeida Siqueira — Todos os direitos reservados.</footer>
+</div>
 <script>
-const KEY="controle_leituras_v3";let records=JSON.parse(localStorage.getItem(KEY)||"[]");
-const st=document.getElementById("stage");for(let i=1;i<=18;i++){let o=document.createElement("option");o.value=String(i).padStart(2,"0");o.textContent=String(i).padStart(2,"0");st.appendChild(o)}st.value="09";st.onchange=render;
-function persist(){localStorage.setItem(KEY,JSON.stringify(records))}
-function rangeToggle(){document.getElementById("range").classList.toggle("show",document.getElementById("part").checked)}
-function clearFields(){book.value="";qty.value="";part.checked=false;from.value="";to.value="";rangeToggle()}
-function saveReading(){let b=book.value.trim(),q=qty.value.trim(),p=part.checked,a=from.value.trim(),z=to.value.trim();if(!b)return alert("Digite o número do livro.");if(!q)return alert("Digite a quantidade.");if(p&&(!a||!z))return alert("Informe o intervalo DE e ATÉ.");let d=new Date();records.unshift({id:Date.now(),stage:st.value,book:b,qty:parseInt(q.replace(/\D/g,""))||0,part:p,from:a,to:z,date:d.toISOString(),time:d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})});persist();clearFields();render();book.focus()}
-function render(){let s=st.value,list=records.filter(r=>r.stage===s);stlabel.textContent=s;count.textContent=list.length+" registro"+(list.length===1?"":"s");recordsEl=document.getElementById("records");recordsEl.innerHTML=list.length?list.map(r=>{let d=new Date(r.date);return `<div class="record"><div><div class="book">${esc(r.book)}</div><div class="info">${r.part?`Particionado: <b>${esc(r.from)} até ${esc(r.to)}</b>`:"Livro completo"}<br><b>Quantidade:</b> ${r.qty.toLocaleString("pt-BR")} · ${d.toLocaleDateString("pt-BR")} · ${r.time}</div></div><button class="del" onclick="del(${r.id})">✕</button></div>`}).join(""):'<div class="empty">Nenhuma leitura lançada nesta etapa.</div>';let n=new Date(),t=records.filter(r=>{let d=new Date(r.date);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear()}).reduce((x,r)=>x+r.qty,0);sum.textContent=t.toLocaleString("pt-BR")}
-function del(id){if(confirm("Excluir somente esta leitura?")){records=records.filter(r=>r.id!==id);persist();render()}}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function openMenu(){drawer.classList.add("open");shade.classList.add("show")}function closeMenu(){drawer.classList.remove("open");shade.classList.remove("show")}
-function options(){openModal('<div class="mh"><b>Opções</b><button class="close" onclick="closeModal()">✕</button></div><p style="font-size:13px;color:var(--muted)">O lançamento só é salvo quando você toca em <b>Salvar leitura</b>.</p>')}
-function report(){openMenu();closeMenu();let total=records.reduce((x,r)=>x+r.qty,0);openModal(`<div class="mh"><b>📊 Relatório</b><button class="close" onclick="closeModal()">✕</button></div><div class="total"><div><span>REGISTROS</span><div>${records.length}</div></div><strong>${total.toLocaleString("pt-BR")}</strong></div>`)}
-function exportCSV(){if(!records.length)return alert("Não há registros para exportar.");let c="Etapa;Livro;Particionado;De;Até;Quantidade;Data;Hora\n";records.forEach(r=>c+=`${r.stage};${r.book};${r.part?"SIM":"NÃO"};${r.from||""};${r.to||""};${r.qty};${new Date(r.date).toLocaleDateString("pt-BR")};${r.time}\n`);let a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+c],{type:"text/csv"}));a.download="controle_leituras.csv";a.click()}
-function openModal(c){modal.innerHTML=c;modalShade.classList.add("show")}function closeModal(){modalShade.classList.remove("show")}
-let d=new Date();today.textContent=d.toLocaleDateString("pt-BR");weekday.textContent=d.toLocaleDateString("pt-BR",{weekday:"long"});month.textContent=d.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});render();
+const KEY="controle_leituras_luis_ricardo_v1";let registros=JSON.parse(localStorage.getItem(KEY)||"[]"),etapa=1;
+const $=x=>document.getElementById(x);
+function hoje(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
+$("data").value=hoje();
+for(let i=1;i<=18;i++){let b=document.createElement("button");b.className="etapa"+(i==1?" ativa":"");b.textContent=String(i).padStart(2,"0");b.onclick=()=>sel(i);$("etapas").appendChild(b)}
+function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");render()}
+function calc(){let a=Number($("de").value),b=Number($("ate").value);$("qtd").value=(b>=a&&Number.isFinite(a)&&Number.isFinite(b))?b-a+1:0}
+$("de").oninput=calc;$("ate").oninput=calc;
+function atualizarTipo(){
+  const part=$("tipoLivro").value==="particionado";
+  $("deBox").style.display=part?"block":"none";
+  $("ateBox").style.display=part?"block":"none";
+  $("qtdBox").style.display="block";
+  $("qtd").readOnly=part;
+  $("hintPart").style.display=part?"block":"none";
+  $("hintNormal").style.display=part?"none":"block";
+  $("camposLeitura").style.gridTemplateColumns=part?"1.1fr 1fr 1fr 48px":"1fr 48px";
+  if(part){calc()}else{$("de").value="";$("ate").value="";$("qtd").value="";}
+}
+$("tipoLivro").onchange=atualizarTipo;
+atualizarTipo();
+$("add").onclick=()=>{let data=$("data").value,localidade=$("localidade").value.trim(),livro=$("livro").value.trim(),part=$("tipoLivro").value==="particionado",a=Number($("de").value),b=Number($("ate").value),q=Number($("qtd").value);if(!data)return alert("Selecione a data.");if(!localidade){alert("Digite a localidade.");$("localidade").focus();return}if(!livro){alert("Digite o livro.");return}if(part){if(!Number.isFinite(a)||!Number.isFinite(b)||b<a){alert("Informe DE e ATÉ corretamente.");return}}else{if(!Number.isFinite(q)||q<=0){alert("Informe a quantidade de leituras.");return}}let quantidade=part?(b-a+1):q;registros.push({id:Date.now()+Math.random(),data,etapa,localidade,livro,de:part?a:null,ate:part?b:null,qtd:quantidade,particionado:part});localStorage.setItem(KEY,JSON.stringify(registros));$("de").value="";$("ate").value="";$("qtd").value="";$("tipoLivro").value="normal";atualizarTipo();$("livro").focus();render()};
+function mes(){return ($("data").value||hoje()).slice(0,7)}
+function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");let [y,mo]=m.split("-");$("mes").textContent=new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});let rs=registros.filter(r=>r.etapa===etapa).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#68776f;padding:8px 0'>Nenhum registro nesta etapa.</div>"}
+function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>r.id!==id);localStorage.setItem(KEY,JSON.stringify(registros));render()}}
+function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+$("data").onchange=render;
+$("csv").onclick=()=>{let m=mes(),rs=registros.filter(r=>r.data.startsWith(m));if(!rs.length)return alert("Não há leituras neste mês.");let c="\ufeffData;Etapa;Localidade;Livro;De;Até;Quantidade\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${r.livro.replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+".csv";a.click()};
+
+$("importar").onclick=()=>$("arquivoImportar").click();
+$("arquivoImportar").onchange=(e)=>{
+  const file=e.target.files && e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const dados=JSON.parse(reader.result);
+      if(!Array.isArray(dados))throw new Error();
+      const validos=dados.filter(r=>r && r.data && Number(r.etapa)>=1 && Number(r.etapa)<=18 && r.livro && Number(r.qtd)>0)
+        .map(r=>({...r,id:r.id||Date.now()+Math.random(),etapa:Number(r.etapa),qtd:Number(r.qtd),localidade:r.localidade||""}));
+      if(!validos.length){alert("O arquivo não contém registros válidos.");return}
+      const existentes=new Set(registros.map(r=>String(r.id)));
+      let adicionados=0;
+      validos.forEach(r=>{if(!existentes.has(String(r.id))){registros.push(r);adicionados++;}});
+      localStorage.setItem(KEY,JSON.stringify(registros));
+      render();
+      alert(adicionados+" registro(s) importado(s).");
+    }catch(err){alert("Não foi possível importar este arquivo.");}
+    e.target.value="";
+  };
+  reader.readAsText(file);
+};
+$("backup").onclick=()=>{
+  const blob=new Blob([JSON.stringify(registros,null,2)],{type:"application/json;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="backup-controle-leituras.json";a.click();
+};
+$("lixeira").onclick=()=>{
+  const m=mes(), rs=registros.filter(r=>r.data.startsWith(m));
+  if(!rs.length){alert("A lixeira não tem registros deste mês.");return}
+  if(confirm("Mover todos os registros deste mês para a lixeira?")){
+    // Keep a recoverable backup in the browser before removal.
+    localStorage.setItem(KEY+"_lixeira",JSON.stringify(rs));
+    registros=registros.filter(r=>!r.data.startsWith(m));
+    localStorage.setItem(KEY,JSON.stringify(registros));render();
+    alert("Registros movidos para a lixeira. O backup permanece salvo neste celular.");
+  }
+};
+render();
 </script>
 </body></html>
