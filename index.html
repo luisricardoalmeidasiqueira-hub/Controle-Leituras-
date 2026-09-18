@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123d2a">
+<title>Controle de Leituras</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#183126;font-family:Arial,sans-serif}.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:20px}
+header{background:#123d2a;color:white;padding:18px 15px;position:sticky;top:0;z-index:5}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;font-size:13px;opacity:.85}
+main{padding:12px}.card{background:white;border:1px solid #d7e0db;border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:0 2px 7px #0001}
+.label{font-size:12px;font-weight:700;margin-bottom:6px}input{width:100%;height:43px;border:1px solid #d7e0db;border-radius:10px;padding:0 11px;font-size:16px;color:#183126;background:white}
+.etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #b9cbc1;border-radius:8px;background:#fff;color:#123d2a;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#1d6545;color:#fff;border-color:#1d6545}
+.livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e8f2ec;color:#123d2a;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
+.row{display:grid;grid-template-columns:1.2fr 1fr 1fr 48px;gap:7px}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.add{height:43px;border:0;border-radius:10px;background:#1d6545;color:white;font-size:22px;font-weight:bold}
+.hint{font-size:11px;color:#68776f;margin-top:7px}.total{font-size:28px;font-weight:800;color:#123d2a}.total small{display:block;font-size:12px;color:#68776f}.item{border-top:1px solid #d7e0db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#123d2a;color:white;font-weight:bold}.action.sec{background:#e7eee9;color:#123d2a}.action.trash{background:#f5e7e7;color:#9a2f2f}
+footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
+@media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
+</style>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Controle de Leituras">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-2026.png">
+<link rel="icon" type="image/png" sizes="512x512" href="app-icon-2026.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Controle de Leituras">
+</head>
+<body>
+<div class="app">
+<header><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></header>
+<main>
+<section class="card"><div class="label">📅 DATA DA LEITURA</div><input id="data" type="date"></section>
+<section class="card"><div class="label">ETAPA — ESCOLHA 01 A 18</div><div id="etapas" class="etapas"></div></section>
+<section class="card">
+<div class="livro-title"><strong id="titulo">ETAPA 01</strong><span id="totEtapa" class="badge">0 leituras</span></div>
+<div class="label">LOCALIDADE</div>
+<input id="localidade" type="text" placeholder="Digite a localidade">
+<div style="height:9px"></div>
+<div class="label">LIVRO</div><input id="livro" type="text" placeholder="Digite o livro">
+<div style="height:9px"></div>
+<div class="label">TIPO DE LIVRO</div>
+<select id="tipoLivro" style="width:100%;height:40px;border:1px solid #d7e0db;border-radius:10px;padding:0 10px;font-size:15px;color:#183126;background:white">
+  <option value="normal">Livro normal</option>
+  <option value="particionado">Livro particionado</option>
+</select>
+<div style="height:9px"></div>
+<div class="row" id="camposLeitura">
+<div class="mini" id="deBox"><label>DE</label><input id="de" type="number" min="0" inputmode="numeric" placeholder="1"></div>
+<div class="mini" id="ateBox"><label>ATÉ</label><input id="ate" type="number" min="0" inputmode="numeric" placeholder="100"></div>
+<div class="mini" id="qtdBox"><label>QUANTIDADE</label><input id="qtd" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<button id="add" class="add">＋</button>
+</div>
+<div id="hintPart" class="hint">Livro particionado: a quantidade é calculada automaticamente: ATÉ − DE + 1.</div>
+<div id="hintNormal" class="hint">Livro normal: digite diretamente a quantidade de leituras.</div>
+</section>
+<section class="card"><div class="label">📊 TOTAL DE LEITURAS NO MÊS</div><div class="total"><span id="total">0</span><small id="mes"></small></div></section>
+<section class="card">
+<div class="livro-title"><strong>📋 REGISTROS DA ETAPA <span id="etapaLista">01</span></strong><span id="nreg" class="badge">0</span></div>
+<div id="lista"></div>
+<div class="tools">
+<button id="csv" class="action" title="Exportar arquivo">📄</button>
+<button id="backup" class="action sec" title="Salvar backup">💾</button>
+<button id="lixeira" class="action trash" title="Lixeira">🗑️</button>
+</div>
+</section>
+</main>
+<footer>© 2026 Luís Ricardo Almeida Siqueira — Todos os direitos reservados.</footer>
+</div>
+<script>
+const KEY="controle_leituras_luis_ricardo_v1";let registros=JSON.parse(localStorage.getItem(KEY)||"[]"),etapa=1;
+const $=x=>document.getElementById(x);
+function hoje(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
+$("data").value=hoje();
+for(let i=1;i<=18;i++){let b=document.createElement("button");b.className="etapa"+(i==1?" ativa":"");b.textContent=String(i).padStart(2,"0");b.onclick=()=>sel(i);$("etapas").appendChild(b)}
+function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");render()}
+function calc(){let a=Number($("de").value),b=Number($("ate").value);$("qtd").value=(b>=a&&Number.isFinite(a)&&Number.isFinite(b))?b-a+1:0}
+$("de").oninput=calc;$("ate").oninput=calc;
+function atualizarTipo(){
+  const part=$("tipoLivro").value==="particionado";
+  $("deBox").style.display=part?"block":"none";
+  $("ateBox").style.display=part?"block":"none";
+  $("qtdBox").style.display="block";
+  $("qtd").readOnly=part;
+  $("hintPart").style.display=part?"block":"none";
+  $("hintNormal").style.display=part?"none":"block";
+  $("camposLeitura").style.gridTemplateColumns=part?"1.1fr 1fr 1fr 48px":"1fr 48px";
+  if(part){calc()}else{$("de").value="";$("ate").value="";$("qtd").value="";}
+}
+$("tipoLivro").onchange=atualizarTipo;
+atualizarTipo();
+$("add").onclick=()=>{let data=$("data").value,localidade=$("localidade").value.trim(),livro=$("livro").value.trim(),part=$("tipoLivro").value==="particionado",a=Number($("de").value),b=Number($("ate").value),q=Number($("qtd").value);if(!data)return alert("Selecione a data.");if(!localidade){alert("Digite a localidade.");$("localidade").focus();return}if(!livro){alert("Digite o livro.");return}if(part){if(!Number.isFinite(a)||!Number.isFinite(b)||b<a){alert("Informe DE e ATÉ corretamente.");return}}else{if(!Number.isFinite(q)||q<=0){alert("Informe a quantidade de leituras.");return}}let quantidade=part?(b-a+1):q;registros.push({id:Date.now()+Math.random(),data,etapa,livro,de:part?a:null,ate:part?b:null,qtd:quantidade,particionado:part});localStorage.setItem(KEY,JSON.stringify(registros));$("de").value="";$("ate").value="";$("qtd").value="";$("tipoLivro").value="normal";atualizarTipo();$("livro").focus();render()};
+function mes(){return ($("data").value||hoje()).slice(0,7)}
+function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");let [y,mo]=m.split("-");$("mes").textContent=new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});let rs=registros.filter(r=>r.etapa===etapa).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#68776f;padding:8px 0'>Nenhum registro nesta etapa.</div>"}
+function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>r.id!==id);localStorage.setItem(KEY,JSON.stringify(registros));render()}}
+function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+$("data").onchange=render;
+$("limpar").onclick=()=>{let m=mes();if(confirm("Apagar todos os registros do mês selecionado?")){registros=registros.filter(r=>!r.data.startsWith(m));localStorage.setItem(KEY,JSON.stringify(registros));render()}};
+$("csv").onclick=()=>{let m=mes(),rs=registros.filter(r=>r.data.startsWith(m));if(!rs.length)return alert("Não há leituras neste mês.");let c="\ufeffData;Etapa;Localidade;Livro;De;Até;Quantidade\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${r.livro.replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+".csv";a.click()};
+
+$("backup").onclick=()=>{
+  const blob=new Blob([JSON.stringify(registros,null,2)],{type:"application/json;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="backup-controle-leituras.json";a.click();
+};
+$("lixeira").onclick=()=>{
+  const m=mes(), rs=registros.filter(r=>r.data.startsWith(m));
+  if(!rs.length){alert("A lixeira não tem registros deste mês.");return}
+  if(confirm("Mover todos os registros deste mês para a lixeira?")){
+    // Keep a recoverable backup in the browser before removal.
+    localStorage.setItem(KEY+"_lixeira",JSON.stringify(rs));
+    registros=registros.filter(r=>!r.data.startsWith(m));
+    localStorage.setItem(KEY,JSON.stringify(registros));render();
+    alert("Registros movidos para a lixeira. O backup permanece salvo neste celular.");
+  }
+};
+render();
+</script>
+</body></html>
