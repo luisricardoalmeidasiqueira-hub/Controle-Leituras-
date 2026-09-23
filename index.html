@@ -16,6 +16,7 @@ main{padding:12px}.card{background:white;border:1px solid #d7e0db;border-radius:
 .row{display:grid;grid-template-columns:1fr 110px;gap:7px;align-items:end}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.livro-row{display:grid;grid-template-columns:1fr 110px;gap:7px;margin-bottom:8px}.livro-row.part{grid-template-columns:1fr 72px 72px}.livro-row input{height:43px}.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#1d6545;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
 .hint{font-size:11px;color:#68776f;margin-top:7px}.total{font-size:28px;font-weight:800;color:#123d2a}.total small{display:block;font-size:12px;color:#68776f}.item{border-top:1px solid #d7e0db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#123d2a;color:white;font-weight:bold}.action.sec{background:#e7eee9;color:#123d2a}.action.trash{background:#f5e7e7;color:#9a2f2f}
+.etapa-toggle{width:100%;height:50px;display:flex;justify-content:space-between;align-items:center;border:1px solid #b9cbc1;border-radius:12px;background:#e8f2ec;color:#123d2a;font-size:17px;font-weight:800;padding:0 14px;cursor:pointer}.etapa-toggle b{font-size:20px}.etapas.fechado{display:none!important}.etapas{margin-top:9px}
 footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
 @media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
 </style>
@@ -42,7 +43,7 @@ footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
 </div>
 <div class="hint">Toque na data para escolher outro dia.</div>
 </section>
-<section class="card"><div class="label">ETAPA — ESCOLHA 01 A 18</div><div id="etapas" class="etapas"></div></section>
+<section class="card"><div class="label">ETAPA</div><button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span id="etapaSeta">▾</span></button><div id="etapas" class="etapas fechado"></div></section>
 <section class="card">
 <div class="livro-title"><strong id="titulo">ETAPA 01</strong><span id="totEtapa" class="badge">0 leituras</span></div>
 <div class="label">LOCALIDADE</div>
@@ -82,23 +83,32 @@ const $=x=>document.getElementById(x);
 function hoje(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
 $("data").value=hoje();
 for(let i=1;i<=18;i++){let b=document.createElement("button");b.className="etapa"+(i==1?" ativa":"");b.textContent=String(i).padStart(2,"0");b.onclick=()=>sel(i);$("etapas").appendChild(b)}
-function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");render()}
+function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");$("etapaAtual").textContent=String(n).padStart(2,"0");abrirEtapas(false);render()}
+function abrirEtapas(abrir){$("etapas").classList.toggle("fechado",!abrir);$("etapaSeta").textContent=abrir?"▴":"▾"}
+$("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
 function atualizarTipo(){
   const part=$("tipoLivro").value==="particionado";
   $("normalCab").style.display=part?"none":"grid";
   $("partCab").style.display=part?"grid":"none";
-  criarLinha();
+  $("hintPart").style.display=part?"block":"none";
+  $("hintNormal").style.display=part?"none":"block";
+  $("livroRows").innerHTML="";
+  criarLinha(false);
 }
 $("tipoLivro").onchange=atualizarTipo;
 
+let contLinha=0;
+const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"';
 function criarLinha(foco=true){
+  const n=++contLinha;
   const part=$("tipoLivro").value==="particionado";
   const row=document.createElement("div");
   row.className="livro-row"+(part?" part":"");
   row.innerHTML=part
-    ? `<div><input class="r-livro" type="text" placeholder="Digite o livro"></div><div><input class="r-de" type="number" min="0" inputmode="numeric" placeholder="1"></div><div><input class="r-ate" type="number" min="0" inputmode="numeric" placeholder="100"></div>`
-    : `<div><input class="r-livro" type="text" placeholder="Digite o livro"></div><div><input class="r-qtd" type="number" min="0" inputmode="numeric" placeholder="0"></div>`;
+    ? `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="1"></div><div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="100"></div>`
+    : `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="0"></div>`;
   $("livroRows").appendChild(row);
+  row.querySelectorAll("input").forEach(i=>i.value="");
   const livro=row.querySelector(".r-livro");
   const gatilho=part?row.querySelector(".r-ate"):row.querySelector(".r-qtd");
   // Só cria a próxima barrinha quando o campo de quantidade/ATÉ for confirmado.
@@ -147,7 +157,9 @@ function coletarLancamentos(){
       saida.push({livro,de:null,ate:null,qtd:q,particionado:false});
     }
   }
-  return {saida};
+  const vistos=new Set(),unicos=[];let repetidos=0;
+  for(const x of saida){const k=[x.livro,x.qtd,x.de,x.ate].join("|");if(vistos.has(k)){repetidos++;continue}vistos.add(k);unicos.push(x)}
+  return {saida:unicos,repetidos};
 }
 $("saveAll").onclick=()=>{
   const data=$("data").value,localidade=$("localidade").value.trim();
@@ -156,11 +168,13 @@ $("saveAll").onclick=()=>{
   const r=coletarLancamentos();
   if(r.erro)return alert(r.erro);
   if(!r.saida.length)return alert("Digite pelo menos um livro e finalize a quantidade.");
+  const jaSalvos=r.saida.filter(x=>registros.some(g=>g.data===data&&g.etapa===etapa&&g.livro===x.livro)).map(x=>x.livro);
+  if(jaSalvos.length&&!confirm("O(s) livro(s) "+jaSalvos.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,...x}));
   localStorage.setItem(KEY,JSON.stringify(registros));
   limparLancamentos();
   render();
-  alert(r.saida.length+" livro(s) salvo(s) na Etapa "+String(etapa).padStart(2,"0"));
+  alert(r.saida.length+" livro(s) salvo(s) na Etapa "+String(etapa).padStart(2,"0")+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":""));
 };
 atualizarTipo();
 function mes(){return ($("data").value||hoje()).slice(0,7)}
