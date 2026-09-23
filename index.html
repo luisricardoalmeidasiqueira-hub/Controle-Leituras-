@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#123d2a">
+<meta name="theme-color" content="#4b5563">
 <title>Controle de Leituras</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#183126;font-family:Arial,sans-serif}.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:20px}
-header{background:#123d2a;color:white;padding:18px 15px;position:sticky;top:0;z-index:5}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;font-size:13px;opacity:.85}
-main{padding:12px}.card{background:white;border:1px solid #d7e0db;border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:0 2px 7px #0001}
-.label{font-size:12px;font-weight:700;margin-bottom:6px}input{width:100%;height:43px;border:1px solid #d7e0db;border-radius:10px;padding:0 11px;font-size:16px;color:#183126;background:white}
-.date-wrap{position:relative}.date-wrap input{height:56px;background:#e8f2ec;border:0;border-radius:14px;padding:0 44px 0 14px;font-size:20px;font-weight:800;color:#183126;display:block}.date-wrap input::-webkit-calendar-picker-indicator{position:absolute;right:12px;width:28px;height:28px;opacity:1;cursor:pointer}.date-arrow{display:none}
-.etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #b9cbc1;border-radius:8px;background:#fff;color:#123d2a;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#1d6545;color:#fff;border-color:#1d6545}
-.livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e8f2ec;color:#123d2a;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
-.row{display:grid;grid-template-columns:1fr 110px;gap:7px;align-items:end}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.livro-row{display:grid;grid-template-columns:1fr 110px;gap:7px;margin-bottom:8px}.livro-row.part{grid-template-columns:1fr 72px 72px}.livro-row input{height:43px}.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#1d6545;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
-.hint{font-size:11px;color:#68776f;margin-top:7px}.total{font-size:28px;font-weight:800;color:#123d2a}.total small{display:block;font-size:12px;color:#68776f}.item{border-top:1px solid #d7e0db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
-.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#123d2a;color:white;font-weight:bold}.action.sec{background:#e7eee9;color:#123d2a}.action.trash{background:#f5e7e7;color:#9a2f2f}
-.etapa-toggle{width:100%;height:50px;display:flex;justify-content:space-between;align-items:center;border:1px solid #b9cbc1;border-radius:12px;background:#e8f2ec;color:#123d2a;font-size:17px;font-weight:800;padding:0 14px;cursor:pointer}.etapa-toggle b{font-size:20px}.etapas.fechado{display:none!important}.etapas{margin-top:9px}
-footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#1f2937;font-family:Arial,sans-serif}.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:20px}
+header{background:#4b5563;color:white;padding:18px 15px;position:sticky;top:0;z-index:5}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;font-size:13px;opacity:.85}
+main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:0 2px 7px #0001}
+.label{font-size:12px;font-weight:700;margin-bottom:6px}input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 11px;font-size:16px;color:#1f2937;background:white}
+.date-wrap{position:relative}.date-wrap input{height:56px;background:#e5e7eb;border:0;border-radius:14px;padding:0 44px 0 14px;font-size:20px;font-weight:800;color:#1f2937;display:block}.date-wrap input::-webkit-calendar-picker-indicator{position:absolute;right:12px;width:28px;height:28px;opacity:1;cursor:pointer}.date-arrow{display:none}
+.etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #c4c9d0;border-radius:8px;background:#fff;color:#4b5563;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#5f6b7a;color:#fff;border-color:#5f6b7a}
+.livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e5e7eb;color:#4b5563;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
+.row{display:grid;grid-template-columns:1fr 110px;gap:7px;align-items:end}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.livro-row{display:grid;grid-template-columns:1fr 110px;gap:7px;margin-bottom:8px}.livro-row.part{grid-template-columns:1fr 72px 72px}.livro-row input{height:43px}.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#5f6b7a;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
+.hint{font-size:11px;color:#6b7280;margin-top:7px}.total{font-size:28px;font-weight:800;color:#4b5563}.total small{display:block;font-size:12px;color:#6b7280}.item{border-top:1px solid #d1d5db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#4b5563;color:white;font-weight:bold}.action.sec{background:#e5e7eb;color:#4b5563}.action.trash{background:#f5e7e7;color:#9a2f2f}.action.update{grid-column:1/-1;background:#5f6b7a}
+.etapa-toggle{width:100%;height:50px;display:flex;justify-content:space-between;align-items:center;border:1px solid #c4c9d0;border-radius:12px;background:#e5e7eb;color:#4b5563;font-size:17px;font-weight:800;padding:0 14px;cursor:pointer}.etapa-toggle b{font-size:20px}.etapas.fechado{display:none!important}.etapas{margin-top:9px}
+footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 @media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
 </style>
 
@@ -50,7 +50,7 @@ footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
 <input id="localidade" type="text" placeholder="Digite a localidade">
 <div style="height:9px"></div>
 <div class="label">TIPO DE LIVRO</div>
-<select id="tipoLivro" style="width:100%;height:40px;border:1px solid #d7e0db;border-radius:10px;padding:0 10px;font-size:15px;color:#183126;background:white">
+<select id="tipoLivro" style="width:100%;height:40px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:15px;color:#1f2937;background:white">
   <option value="normal">Livro normal</option>
   <option value="particionado">Livro particionado</option>
 </select>
@@ -72,6 +72,7 @@ footer{text-align:center;color:#65736c;font-size:11px;padding:14px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" style="display:none">
 <button id="backup" class="action sec" title="Salvar backup">💾 Backup</button>
 <button id="lixeira" class="action trash" title="Lixeira">🗑️ Lixeira</button>
+<button id="atualizarApp" class="action update" title="Atualizar aplicativo">🔄 Atualizar aplicativo</button>
 </div>
 </section>
 </main>
@@ -178,7 +179,7 @@ $("saveAll").onclick=()=>{
 };
 atualizarTipo();
 function mes(){return ($("data").value||hoje()).slice(0,7)}
-function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");let [y,mo]=m.split("-");$("mes").textContent=new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});let rs=registros.filter(r=>r.etapa===etapa).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#68776f;padding:8px 0'>Nenhum registro nesta etapa.</div>"}
+function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");let [y,mo]=m.split("-");$("mes").textContent=new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});let rs=registros.filter(r=>r.etapa===etapa).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro nesta etapa.</div>"}
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>r.id!==id);localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 $("data").onchange=render;
@@ -222,6 +223,15 @@ $("lixeira").onclick=()=>{
     localStorage.setItem(KEY,JSON.stringify(registros));render();
     alert("Registros movidos para a lixeira. O backup permanece salvo neste celular.");
   }
+};
+$("atualizarApp").onclick=async()=>{
+  if(!confirm("Atualizar o aplicativo para a versão mais recente? Seus registros não serão apagados."))return;
+  const b=$("atualizarApp");b.disabled=true;b.textContent="⏳ Atualizando...";
+  try{
+    if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}
+    if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}
+  }catch(e){}
+  location.replace(location.pathname+"?v="+Date.now());
 };
 render();
 </script>
