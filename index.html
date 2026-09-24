@@ -23,6 +23,7 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 .etapa-toggle{height:44px;border-radius:10px;font-size:15px;padding:0 10px}.etapa-toggle b{font-size:16px}
 .save-row{display:flex;align-items:center;gap:10px;margin-top:6px}.save-row>div{flex:1}.save-row .hint{margin-top:0}
 .save-all{width:54px;height:46px;flex:none;margin:0;font-size:24px;padding:0}
+.head-row{display:flex;justify-content:space-between;align-items:center;gap:10px}.btn-atualizar{flex:none;width:44px;height:44px;border:0;border-radius:12px;background:rgba(255,255,255,.18);color:#fff;font-size:22px;padding:0;cursor:pointer}
 footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 @media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
 </style>
@@ -39,7 +40,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 </head>
 <body>
 <div class="app">
-<header><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></header>
+<header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div><button id="atualizarApp" class="btn-atualizar" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></header>
 <main>
 <section class="card">
 <div class="topo">
@@ -77,7 +78,6 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" style="display:none">
 <button id="backup" class="action sec" title="Salvar backup">💾 Backup</button>
 <button id="lixeira" class="action trash" title="Lixeira">🗑️ Lixeira</button>
-<button id="atualizarApp" class="action update" title="Atualizar aplicativo">🔄 Atualizar aplicativo</button>
 </div>
 </section>
 </main>
@@ -231,7 +231,7 @@ $("lixeira").onclick=()=>{
 };
 $("atualizarApp").onclick=async()=>{
   if(!confirm("Atualizar o aplicativo para a versão mais recente? Seus registros não serão apagados."))return;
-  const b=$("atualizarApp");b.disabled=true;b.textContent="⏳ Atualizando...";
+  const b=$("atualizarApp");b.disabled=true;b.textContent="⏳";
   try{
     if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}
     if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}
