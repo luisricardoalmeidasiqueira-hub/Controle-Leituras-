@@ -34,9 +34,6 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-2026.png">
 <link rel="icon" type="image/png" sizes="512x512" href="app-icon-2026.png">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Controle de Leituras">
 </head>
 <body>
 <div class="app">
@@ -64,7 +61,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 <div id="partCab" class="row" style="display:none;grid-template-columns:1fr 72px 72px"><div class="row-label">LIVRO</div><div class="row-label">DE</div><div class="row-label">ATÉ</div></div>
 <div id="livroRows" class="rows-wrap"></div>
 <div class="save-row">
-<div><div id="hintPart" class="hint">Livro particionado: informe DE e ATÉ. A quantidade é calculada automaticamente.</div><div id="hintNormal" class="hint">Digite o livro e a quantidade. Outra barrinha aparece sozinha.</div></div>
+<div><div id="hintPart" class="hint">Livro particionado: informe DE e ATÉ. A próxima barrinha aparece sozinha.</div><div id="hintNormal" class="hint">Digite o livro e a quantidade. A próxima barrinha aparece sozinha.</div></div>
 <button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
 </div>
 </section>
@@ -104,7 +101,19 @@ function atualizarTipo(){
 $("tipoLivro").onchange=atualizarTipo;
 
 let contLinha=0;
-const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"';
+const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
+
+// A barrinha está preenchida quando tem livro + quantidade (ou livro + DE + ATÉ).
+function linhaPreenchida(row){
+  if(!row.querySelector(".r-livro").value.trim())return false;
+  if(row.classList.contains("part"))return row.querySelector(".r-de").value!==""&&row.querySelector(".r-ate").value!=="";
+  return row.querySelector(".r-qtd").value!=="";
+}
+// Garante que sempre exista uma barrinha vazia embaixo da última preenchida.
+// Não mexe no foco: você continua digitando normalmente e o teclado não fecha.
+function abrirProxima(row){
+  if(row===$("livroRows").lastElementChild&&linhaPreenchida(row))criarLinha(false);
+}
 function criarLinha(foco=true){
   const n=++contLinha;
   const part=$("tipoLivro").value==="particionado";
@@ -114,31 +123,20 @@ function criarLinha(foco=true){
     ? `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="1"></div><div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="100"></div>`
     : `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="0"></div>`;
   $("livroRows").appendChild(row);
-  row.querySelectorAll("input").forEach(i=>i.value="");
-  const livro=row.querySelector(".r-livro");
-  const gatilho=part?row.querySelector(".r-ate"):row.querySelector(".r-qtd");
-  // Só cria a próxima barrinha quando o campo de quantidade/ATÉ for confirmado.
-  // Não usar blur aqui: no iPhone o teclado pode disparar blur durante a digitação,
-  // fazendo a próxima linha aparecer depois do primeiro número.
-  gatilho.addEventListener("change",()=>finalizarLinha(row));
-  if(part){
-    const de=row.querySelector(".r-de"),ate=row.querySelector(".r-ate");
-    ate.addEventListener("input",()=>{if(de.value!==""&&ate.value!==""){const a=Number(de.value),b=Number(ate.value);if(b>=a)ate.dataset.qtd=String(b-a+1)}});
-  }
-  if(foco) setTimeout(()=>livro.focus(),40);
-}
-function finalizarLinha(row){
-  const part=$("tipoLivro").value==="particionado";
-  const livro=row.querySelector(".r-livro").value.trim();
-  if(!livro)return;
-  if(part){
-    const a=Number(row.querySelector(".r-de").value),b=Number(row.querySelector(".r-ate").value);
-    if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)return;
-  }else{
-    const q=Number(row.querySelector(".r-qtd").value);
-    if(!Number.isFinite(q)||q<=0)return;
-  }
-  if(row=== $("livroRows").lastElementChild) criarLinha(true);
+  const campos=[...row.querySelectorAll("input")];
+  campos.forEach(i=>i.value="");
+  // Assim que digitar o número, a próxima barrinha já aparece embaixo.
+  row.addEventListener("input",()=>abrirProxima(row));
+  // Botão "Próximo"/"Ir" do teclado: pula para o campo seguinte ou para a barrinha de baixo.
+  campos.forEach((inp,idx)=>inp.addEventListener("keydown",e=>{
+    if(e.key!=="Enter")return;
+    e.preventDefault();
+    if(idx<campos.length-1){campos[idx+1].focus();return}
+    abrirProxima(row);
+    const prox=row.nextElementSibling;
+    if(prox)prox.querySelector(".r-livro").focus();
+  }));
+  if(foco) setTimeout(()=>row.querySelector(".r-livro").focus(),40);
 }
 function limparLancamentos(){
   $("livroRows").innerHTML="";
@@ -173,7 +171,7 @@ $("saveAll").onclick=()=>{
   if(!localidade){alert("Digite a localidade.");$("localidade").focus();return}
   const r=coletarLancamentos();
   if(r.erro)return alert(r.erro);
-  if(!r.saida.length)return alert("Digite pelo menos um livro e finalize a quantidade.");
+  if(!r.saida.length)return alert("Digite pelo menos um livro e a quantidade.");
   const jaSalvos=r.saida.filter(x=>registros.some(g=>g.data===data&&g.etapa===etapa&&g.livro===x.livro)).map(x=>x.livro);
   if(jaSalvos.length&&!confirm("O(s) livro(s) "+jaSalvos.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,...x}));
@@ -222,7 +220,6 @@ $("lixeira").onclick=()=>{
   const m=mes(), rs=registros.filter(r=>r.data.startsWith(m));
   if(!rs.length){alert("A lixeira não tem registros deste mês.");return}
   if(confirm("Mover todos os registros deste mês para a lixeira?")){
-    // Keep a recoverable backup in the browser before removal.
     localStorage.setItem(KEY+"_lixeira",JSON.stringify(rs));
     registros=registros.filter(r=>!r.data.startsWith(m));
     localStorage.setItem(KEY,JSON.stringify(registros));render();
