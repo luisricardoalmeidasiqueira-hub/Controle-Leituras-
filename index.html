@@ -14,6 +14,7 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 .etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #c4c9d0;border-radius:8px;background:#fff;color:#4b5563;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#5f6b7a;color:#fff;border-color:#5f6b7a}
 .livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e5e7eb;color:#4b5563;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
 .row{display:grid;grid-template-columns:1fr 110px;gap:7px;align-items:end}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.livro-row{display:grid;grid-template-columns:1fr 110px;gap:7px;margin-bottom:8px}.livro-row.part{grid-template-columns:1fr 72px 72px}.livro-row input{height:43px}.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#5f6b7a;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
+.grupo-cab{display:grid;grid-template-columns:1fr 110px;gap:7px}.grupo-cab.part{grid-template-columns:1fr 72px 72px}.grupo-cab:not(:first-child){margin-top:12px;padding-top:10px;border-top:1px dashed #c4c9d0}
 .hint{font-size:11px;color:#6b7280;margin-top:7px}.total{font-size:28px;font-weight:800;color:#4b5563}.total small{display:block;font-size:12px;color:#6b7280}.item{border-top:1px solid #d1d5db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#4b5563;color:white;font-weight:bold}.action.sec{background:#e5e7eb;color:#4b5563}.action.trash{background:#f5e7e7;color:#9a2f2f}.action.update{grid-column:1/-1;background:#5f6b7a}
 .etapa-toggle{width:100%;height:50px;display:flex;justify-content:space-between;align-items:center;border:1px solid #c4c9d0;border-radius:12px;background:#e5e7eb;color:#4b5563;font-size:17px;font-weight:800;padding:0 14px;cursor:pointer}.etapa-toggle b{font-size:20px}.etapas.fechado{display:none!important}.etapas{margin-top:9px}
@@ -57,11 +58,9 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
   <option value="particionado">Livro particionado</option>
 </select>
 <div style="height:9px"></div>
-<div id="normalCab" class="row"><div class="row-label">LIVRO</div><div class="row-label">QUANTIDADE</div></div>
-<div id="partCab" class="row" style="display:none;grid-template-columns:1fr 72px 72px"><div class="row-label">LIVRO</div><div class="row-label">DE</div><div class="row-label">ATÉ</div></div>
 <div id="livroRows" class="rows-wrap"></div>
 <div class="save-row">
-<div><div id="hintPart" class="hint">Livro particionado: informe DE e ATÉ. A próxima barrinha aparece sozinha.</div><div id="hintNormal" class="hint">Digite o livro e a quantidade. A próxima barrinha aparece sozinha.</div></div>
+<div><div id="hintPart" class="hint">Livro particionado: informe DE e ATÉ. O que você já digitou continua na tela.</div><div id="hintNormal" class="hint">Digite o livro e a quantidade. A próxima barrinha aparece sozinha.</div></div>
 <button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
 </div>
 </section>
@@ -89,51 +88,65 @@ for(let i=1;i<=18;i++){let b=document.createElement("button");b.className="etapa
 function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");$("etapaAtual").textContent=String(n).padStart(2,"0");abrirEtapas(false);render()}
 function abrirEtapas(abrir){$("etapas").classList.toggle("fechado",!abrir);$("etapaSeta").textContent=abrir?"▴":"▾"}
 $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
-function atualizarTipo(){
-  const part=$("tipoLivro").value==="particionado";
-  $("normalCab").style.display=part?"none":"grid";
-  $("partCab").style.display=part?"grid":"none";
-  $("hintPart").style.display=part?"block":"none";
-  $("hintNormal").style.display=part?"none":"block";
-  $("livroRows").innerHTML="";
-  criarLinha(false);
-}
-$("tipoLivro").onchange=atualizarTipo;
 
 let contLinha=0;
 const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
 
-// A barrinha está preenchida quando tem livro + quantidade (ou livro + DE + ATÉ).
+function ultimaLinha(){const r=$("livroRows").querySelectorAll(".livro-row");return r[r.length-1]||null}
+function linhaVazia(row){return [...row.querySelectorAll("input")].every(i=>i.value.trim()==="")}
+
+// Trocar o tipo de livro NÃO apaga mais nada: as barrinhas já digitadas ficam
+// e uma nova barrinha do outro tipo aparece embaixo. Dá para salvar tudo junto.
+function atualizarTipo(){
+  const part=$("tipoLivro").value==="particionado";
+  $("hintPart").style.display=part?"block":"none";
+  $("hintNormal").style.display=part?"none":"block";
+  const box=$("livroRows");
+  let r;
+  while((r=ultimaLinha())&&linhaVazia(r))r.remove(); // tira só as barrinhas vazias do fim
+  while(box.lastElementChild&&box.lastElementChild.classList.contains("grupo-cab"))box.lastElementChild.remove();
+  criarLinha(box.children.length>0);
+}
+$("tipoLivro").onchange=atualizarTipo;
+
 function linhaPreenchida(row){
   if(!row.querySelector(".r-livro").value.trim())return false;
   if(row.classList.contains("part"))return row.querySelector(".r-de").value!==""&&row.querySelector(".r-ate").value!=="";
   return row.querySelector(".r-qtd").value!=="";
 }
-// Garante que sempre exista uma barrinha vazia embaixo da última preenchida.
-// Não mexe no foco: você continua digitando normalmente e o teclado não fecha.
 function abrirProxima(row){
-  if(row===$("livroRows").lastElementChild&&linhaPreenchida(row))criarLinha(false);
+  if(row===ultimaLinha()&&linhaPreenchida(row))criarLinha(false);
 }
 function criarLinha(foco=true){
   const n=++contLinha;
   const part=$("tipoLivro").value==="particionado";
+  const box=$("livroRows");
+  const ult=ultimaLinha();
+  // Cabeçalho aparece sempre que começa um grupo de outro tipo.
+  if(!ult||ult.classList.contains("part")!==part){
+    const cab=document.createElement("div");
+    cab.className="grupo-cab"+(part?" part":"");
+    cab.innerHTML=part
+      ?'<div class="row-label">LIVRO PARTICIONADO</div><div class="row-label">DE</div><div class="row-label">ATÉ</div>'
+      :'<div class="row-label">LIVRO</div><div class="row-label">QUANTIDADE</div>';
+    box.appendChild(cab);
+  }
   const row=document.createElement("div");
   row.className="livro-row"+(part?" part":"");
   row.innerHTML=part
     ? `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="1"></div><div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="100"></div>`
     : `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="0"></div>`;
-  $("livroRows").appendChild(row);
+  box.appendChild(row);
   const campos=[...row.querySelectorAll("input")];
   campos.forEach(i=>i.value="");
-  // Assim que digitar o número, a próxima barrinha já aparece embaixo.
   row.addEventListener("input",()=>abrirProxima(row));
-  // Botão "Próximo"/"Ir" do teclado: pula para o campo seguinte ou para a barrinha de baixo.
   campos.forEach((inp,idx)=>inp.addEventListener("keydown",e=>{
     if(e.key!=="Enter")return;
     e.preventDefault();
     if(idx<campos.length-1){campos[idx+1].focus();return}
     abrirProxima(row);
-    const prox=row.nextElementSibling;
+    let prox=row.nextElementSibling;
+    while(prox&&!prox.classList.contains("livro-row"))prox=prox.nextElementSibling;
     if(prox)prox.querySelector(".r-livro").focus();
   }));
   if(foco) setTimeout(()=>row.querySelector(".r-livro").focus(),40);
@@ -143,17 +156,17 @@ function limparLancamentos(){
   criarLinha(true);
 }
 function coletarLancamentos(){
-  const part=$("tipoLivro").value==="particionado";
   const rows=[...$("livroRows").querySelectorAll(".livro-row")];
   const saida=[];
   for(const row of rows){
+    const part=row.classList.contains("part");
     const livro=row.querySelector(".r-livro").value.trim();
-    const temDados=[...row.querySelectorAll("input")].some(i=>i.value.trim()!=="");
-    if(!temDados)continue;
+    if(linhaVazia(row))continue;
     if(!livro) return {erro:"Preencha o livro de cada barrinha utilizada."};
     if(part){
-      const a=Number(row.querySelector(".r-de").value),b=Number(row.querySelector(".r-ate").value);
-      if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
+      const de=row.querySelector(".r-de").value,ate=row.querySelector(".r-ate").value;
+      const a=Number(de),b=Number(ate);
+      if(de===""||ate===""||!Number.isFinite(a)||!Number.isFinite(b)||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
       saida.push({livro,de:a,ate:b,qtd:b-a+1,particionado:true});
     }else{
       const q=Number(row.querySelector(".r-qtd").value);
