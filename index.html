@@ -17,8 +17,10 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 
 /* Barrinhas: cada uma tem o seu quadradinho de particionado */
 .cab{display:grid;grid-template-columns:1fr 50px;gap:7px}.cab .row-label:last-child{text-align:center}
-.livro-row{display:grid;grid-template-columns:1fr 100px 50px;gap:7px;margin-bottom:8px;align-items:center}
-.livro-row.part{grid-template-columns:1fr 68px 68px 50px}
+.livro-row{display:grid;grid-template-columns:1fr 100px 50px;grid-template-areas:"livro qtd chk";gap:7px;margin-bottom:8px;align-items:end}
+.livro-row.part{grid-template-columns:1fr 1fr 1fr 50px;grid-template-areas:"livro livro livro chk" "de ate qtd .";background:#f3f4f6;border-radius:12px;padding:7px;margin-left:-7px;margin-right:-7px}
+.c-livro{grid-area:livro;min-width:0}.c-qtd{grid-area:qtd;min-width:0}.c-de{grid-area:de;min-width:0}.c-ate{grid-area:ate;min-width:0}.part-chk{grid-area:chk}
+.mini{display:none;font-size:9px;font-weight:800;color:#6b7280;margin:0 0 3px 2px}.livro-row.part .mini{display:block}
 .livro-row:not(.part) .so-part{display:none}
 .livro-row.part .so-normal{display:none}
 .livro-row input{height:43px}
@@ -41,7 +43,17 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 
 .mes-nav{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}.mes-nav button{height:44px;border:0;border-radius:10px;background:#e5e7eb;color:#4b5563;font-size:20px;font-weight:800;cursor:pointer}.mes-nome{position:relative;height:44px;border-radius:10px;background:#5f6b7a;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;text-transform:capitalize}.mes-nome input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
-@media(max-width:420px){.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}.livro-row.part{grid-template-columns:1fr 62px 62px 50px}}
+@media(max-width:420px){.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
+.item-btns{display:flex;align-items:center;gap:2px;flex:none}.edit{border:0;background:transparent;font-size:17px;padding:4px}
+[hidden]{display:none!important}
+.modal-fundo{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:20;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal{background:#fff;width:100%;max-width:520px;border-radius:16px;padding:15px;max-height:88vh;overflow:auto;box-shadow:0 10px 30px #0004}
+.modal h3{margin:0 0 12px;font-size:17px}
+.ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
+.ed-grid select{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:#1f2937}
+.ed-chk{display:flex;align-items:center;gap:10px;height:43px;border:1px solid #c4c9d0;border-radius:10px;padding:0 12px;font-weight:800;font-size:14px;color:#4b5563}
+.ed-chk input{width:20px;height:20px;margin:0;padding:0;accent-color:#5f6b7a}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 </style>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -67,10 +79,10 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 <div class="label">LOCALIDADE</div>
 <input id="localidade" type="text" placeholder="Digite a localidade">
 <div style="height:9px"></div>
-<div class="cab"><div class="row-label">LIVRO E QUANTIDADE (OU DE / ATÉ)</div><div class="row-label">PART.</div></div>
+<div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div></div>
 <div id="livroRows" class="rows-wrap"></div>
 <div class="save-row">
-<div><div class="hint">Livro particionado? Marque o quadradinho PART. daquela barrinha para abrir DE e ATÉ. O que já foi digitado não se perde.</div></div>
+<div><div class="hint">Livro particionado? Marque o quadradinho PART. daquela barrinha para abrir DE, ATÉ e QTD (a quantidade se calcula sozinha, mas dá pra corrigir). O que já foi digitado não se perde.</div></div>
 <button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
 </div>
 </section>
@@ -93,6 +105,22 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 </section>
 </main>
 <footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.</footer>
+</div>
+<div id="editFundo" class="modal-fundo" hidden>
+<div class="modal" role="dialog" aria-label="Editar livro">
+<h3>✏️ Editar livro</h3>
+<div class="ed-grid">
+<div><div class="label">DATA</div><input id="edData" type="date"></div>
+<div><div class="label">ETAPA</div><select id="edEtapa"></select></div>
+<div class="full"><div class="label">LOCALIDADE</div><input id="edLocal" type="text" autocomplete="off"></div>
+<div><div class="label">LIVRO</div><input id="edLivro" type="text" autocomplete="off" autocorrect="off" spellcheck="false"></div>
+<div><div class="label">&nbsp;</div><label class="ed-chk"><input id="edPart" type="checkbox"> Particionado</label></div>
+<div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" min="0" inputmode="numeric"></div>
+<div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" min="0" inputmode="numeric"></div>
+<div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" min="0" inputmode="numeric"></div>
+</div>
+<div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
+</div>
 </div>
 <script>
 const KEY="controle_leituras_luis_ricardo_v1";let registros=JSON.parse(localStorage.getItem(KEY)||"[]"),etapa=1;
@@ -143,10 +171,10 @@ function criarLinha(foco=true,dados={}){
   const row=document.createElement("div");
   row.className="livro-row"+(part?" part":"");
   row.innerHTML=
-    `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div>`+
-    `<div class="so-normal"><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
-    `<div class="so-part"><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="De"></div>`+
-    `<div class="so-part"><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
+    `<div class="c-livro"><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div>`+
+    `<div class="c-de so-part"><div class="mini">DE</div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="De"></div>`+
+    `<div class="c-ate so-part"><div class="mini">ATÉ</div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
+    `<div class="c-qtd"><div class="mini">QTD</div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
     `<label class="part-chk" title="Livro particionado"><input type="checkbox" class="r-part"${part?" checked":""}><span>PART.</span></label>`;
   row.querySelector(".r-livro").value=dados.livro||"";
   row.querySelector(".r-qtd").value=dados.qtd||"";
@@ -165,6 +193,11 @@ function criarLinha(foco=true,dados={}){
   });
   row.addEventListener("input",e=>{
     if(e.target.type==="checkbox")return;
+    // Particionado: ao digitar DE ou ATÉ, a quantidade é calculada (ATÉ - DE + 1). Dá pra corrigir depois.
+    if(row.classList.contains("part")&&(e.target.classList.contains("r-de")||e.target.classList.contains("r-ate"))){
+      const de=row.querySelector(".r-de").value,ate=row.querySelector(".r-ate").value;
+      if(de!==""&&ate!==""&&Number(ate)>=Number(de))row.querySelector(".r-qtd").value=Number(ate)-Number(de)+1;
+    }
     abrirProxima(row);salvarRascunho();
   });
   // Botão "Próximo"/"Ir" do teclado: pula para o campo seguinte ou para a barrinha de baixo.
@@ -210,7 +243,9 @@ function coletarLancamentos(){
       const de=row.querySelector(".r-de").value,ate=row.querySelector(".r-ate").value;
       const a=Number(de),b=Number(ate);
       if(de===""||ate===""||!Number.isFinite(a)||!Number.isFinite(b)||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
-      saida.push({livro,de:a,ate:b,qtd:b-a+1,particionado:true});
+      const qv=row.querySelector(".r-qtd").value,q=qv===""?b-a+1:Number(qv);
+      if(!Number.isFinite(q)||q<=0)return {erro:"Informe uma quantidade válida para o livro "+livro+"."};
+      saida.push({livro,de:a,ate:b,qtd:q,particionado:true});
     }else{
       const q=Number(row.querySelector(".r-qtd").value);
       if(!Number.isFinite(q)||q<=0)return {erro:"Informe uma quantidade válida para o livro "+livro+"."};
@@ -245,8 +280,42 @@ function mudarMes(delta){let [y,mo]=mesVer.split("-").map(Number);let d=new Date
 $("mesAnt").onclick=()=>mudarMes(-1);
 $("mesProx").onclick=()=>mudarMes(1);
 $("mesPicker").onchange=e=>{if(e.target.value){mesVer=e.target.value;render()}};
-function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");$("mes").textContent=nomeMes(m);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;let rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>"}
-function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>r.id!==id);localStorage.setItem(KEY,JSON.stringify(registros));render()}}
+function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");$("mes").textContent=nomeMes(m);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;let rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button class="edit" onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button class="del" onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>"}
+function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
+// ---------- Editar registro salvo ----------
+let editId=null;
+for(let i=1;i<=18;i++){const o=document.createElement("option");o.value=i;o.textContent="Etapa "+String(i).padStart(2,"0");$("edEtapa").appendChild(o)}
+function edMostrarPart(){document.querySelectorAll(".ed-part").forEach(d=>d.style.display=$("edPart").checked?"":"none")}
+function edCalcQtd(){const de=$("edDe").value,ate=$("edAte").value;if($("edPart").checked&&de!==""&&ate!==""&&Number(ate)>=Number(de))$("edQtd").value=Number(ate)-Number(de)+1}
+$("edPart").onchange=()=>{edMostrarPart();edCalcQtd()};
+$("edDe").oninput=edCalcQtd;$("edAte").oninput=edCalcQtd;
+function editar(id){
+  const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
+  editId=String(id);
+  $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";
+  $("edLivro").value=r.livro;$("edPart").checked=!!r.particionado;
+  $("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;
+  edMostrarPart();$("editFundo").hidden=false;
+}
+function fecharEdicao(){$("editFundo").hidden=true;editId=null}
+$("edCancelar").onclick=fecharEdicao;
+$("editFundo").onclick=e=>{if(e.target===$("editFundo"))fecharEdicao()};
+$("edSalvar").onclick=()=>{
+  const r=registros.find(x=>String(x.id)===editId);if(!r)return fecharEdicao();
+  const data=$("edData").value,livro=$("edLivro").value.trim(),part=$("edPart").checked,q=Number($("edQtd").value);
+  if(!data)return alert("Selecione a data.");
+  if(!livro)return alert("Preencha o livro.");
+  let de=null,ate=null;
+  if(part){
+    if($("edDe").value===""||$("edAte").value==="")return alert("Preencha DE e ATÉ.");
+    de=Number($("edDe").value);ate=Number($("edAte").value);
+    if(ate<de)return alert("O ATÉ não pode ser menor que o DE.");
+  }
+  if(!Number.isFinite(q)||q<=0)return alert("Informe uma quantidade válida.");
+  Object.assign(r,{data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),livro,particionado:part,de,ate,qtd:q});
+  localStorage.setItem(KEY,JSON.stringify(registros));
+  fecharEdicao();render();
+};
 function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 $("data").onchange=()=>{if($("data").value)mesVer=$("data").value.slice(0,7);render()};
 $("csv").onclick=()=>{let m=mes(),rs=registros.filter(r=>r.data.startsWith(m));if(!rs.length)return alert("Não há leituras neste mês.");let c="\ufeffData;Etapa;Localidade;Livro;De;Até;Quantidade\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${r.livro.replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+".csv";a.click()};
