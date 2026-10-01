@@ -13,7 +13,21 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 .date-wrap{position:relative}.date-wrap input{height:56px;background:#e5e7eb;border:0;border-radius:14px;padding:0 44px 0 14px;font-size:20px;font-weight:800;color:#1f2937;display:block}.date-wrap input::-webkit-calendar-picker-indicator{position:absolute;right:12px;width:28px;height:28px;opacity:1;cursor:pointer}.date-arrow{display:none}
 .etapas{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:4px}.etapa{display:block!important;visibility:visible!important;opacity:1!important;height:38px;min-width:0;border:1px solid #c4c9d0;border-radius:8px;background:#fff;color:#4b5563;font-weight:800;font-size:12px;padding:0;cursor:pointer}.etapa.ativa{background:#5f6b7a;color:#fff;border-color:#5f6b7a}
 .livro-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.livro-title strong{font-size:16px}.badge{background:#e5e7eb;color:#4b5563;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:bold}
-.row{display:grid;grid-template-columns:1fr 110px;gap:7px;align-items:end}.mini label{display:block;font-size:10px;font-weight:bold;margin-bottom:4px}.livro-row{display:grid;grid-template-columns:1fr 110px;gap:7px;margin-bottom:8px}.livro-row.part{grid-template-columns:1fr 72px 72px}.livro-row input{height:43px}.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#5f6b7a;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
+.row-label{font-size:10px;font-weight:bold;margin:0 0 4px}.save-all{width:100%;height:46px;border:0;border-radius:11px;background:#5f6b7a;color:#fff;font-weight:800;font-size:17px;margin-top:9px}.rows-wrap{margin-top:4px}
+
+/* Barrinhas: cada uma tem o seu quadradinho de particionado */
+.cab{display:grid;grid-template-columns:1fr 50px;gap:7px}.cab .row-label:last-child{text-align:center}
+.livro-row{display:grid;grid-template-columns:1fr 100px 50px;gap:7px;margin-bottom:8px;align-items:center}
+.livro-row.part{grid-template-columns:1fr 68px 68px 50px}
+.livro-row:not(.part) .so-part{display:none}
+.livro-row.part .so-normal{display:none}
+.livro-row input{height:43px}
+.part-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:43px;border:1px solid #c4c9d0;border-radius:10px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.part-chk input{width:20px;height:20px;margin:0;padding:0;accent-color:#5f6b7a;cursor:pointer}
+.part-chk span{font-size:8px;font-weight:800;color:#6b7280;letter-spacing:.2px}
+.livro-row.part .part-chk{background:#e5e7eb;border-color:#5f6b7a}
+.livro-row.part .part-chk span{color:#374151}
+
 .hint{font-size:11px;color:#6b7280;margin-top:7px}.total{font-size:28px;font-weight:800;color:#4b5563}.total small{display:block;font-size:12px;color:#6b7280}.item{border-top:1px solid #d1d5db;padding:9px 0;display:flex;justify-content:space-between;font-size:13px}.item:first-child{border-top:0}.del{border:0;background:transparent;color:#a33;font-size:17px}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.action{height:42px;border:0;border-radius:10px;background:#4b5563;color:white;font-weight:bold}.action.sec{background:#e5e7eb;color:#4b5563}.action.trash{background:#f5e7e7;color:#9a2f2f}.action.update{grid-column:1/-1;background:#5f6b7a}
 .etapa-toggle{width:100%;height:50px;display:flex;justify-content:space-between;align-items:center;border:1px solid #c4c9d0;border-radius:12px;background:#e5e7eb;color:#4b5563;font-size:17px;font-weight:800;padding:0 14px;cursor:pointer}.etapa-toggle b{font-size:20px}.etapas.fechado{display:none!important}.etapas{margin-top:9px}
@@ -27,7 +41,7 @@ main{padding:12px}.card{background:white;border:1px solid #d1d5db;border-radius:
 
 .mes-nav{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}.mes-nav button{height:44px;border:0;border-radius:10px;background:#e5e7eb;color:#4b5563;font-size:20px;font-weight:800;cursor:pointer}.mes-nome{position:relative;height:44px;border-radius:10px;background:#5f6b7a;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;text-transform:capitalize}.mes-nome input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
-@media(max-width:420px){.row{grid-template-columns:1.1fr 1fr 1fr 44px}.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}}
+@media(max-width:420px){.etapas{display:grid!important;grid-template-columns:repeat(6,1fr);gap:6px}.etapa{display:block!important;height:36px;font-size:11px}.livro-row.part{grid-template-columns:1fr 62px 62px 50px}}
 </style>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -53,17 +67,10 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 <div class="label">LOCALIDADE</div>
 <input id="localidade" type="text" placeholder="Digite a localidade">
 <div style="height:9px"></div>
-<div class="label">TIPO DE LIVRO</div>
-<select id="tipoLivro" style="width:100%;height:40px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:15px;color:#1f2937;background:white">
-  <option value="normal">Livro normal</option>
-  <option value="particionado">Livro particionado</option>
-</select>
-<div style="height:9px"></div>
-<div id="normalCab" class="row"><div class="row-label">LIVRO</div><div class="row-label">QUANTIDADE</div></div>
-<div id="partCab" class="row" style="display:none;grid-template-columns:1fr 72px 72px"><div class="row-label">LIVRO</div><div class="row-label">DE</div><div class="row-label">ATÉ</div></div>
+<div class="cab"><div class="row-label">LIVRO E QUANTIDADE (OU DE / ATÉ)</div><div class="row-label">PART.</div></div>
 <div id="livroRows" class="rows-wrap"></div>
 <div class="save-row">
-<div><div id="hintPart" class="hint">Livro particionado: informe DE e ATÉ. A próxima barrinha aparece sozinha.</div><div id="hintNormal" class="hint">Digite o livro e a quantidade. A próxima barrinha aparece sozinha.</div></div>
+<div><div class="hint">Livro particionado? Marque o quadradinho PART. daquela barrinha para abrir DE e ATÉ. O que já foi digitado não se perde.</div></div>
 <button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
 </div>
 </section>
@@ -89,6 +96,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 </div>
 <script>
 const KEY="controle_leituras_luis_ricardo_v1";let registros=JSON.parse(localStorage.getItem(KEY)||"[]"),etapa=1;
+const RASC=KEY+"_rascunho";
 const $=x=>document.getElementById(x);
 function hoje(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o*60000).toISOString().slice(0,10)}
 $("data").value=hoje();
@@ -96,19 +104,22 @@ for(let i=1;i<=18;i++){let b=document.createElement("button");b.className="etapa
 function sel(n){etapa=n;document.querySelectorAll(".etapa").forEach((b,i)=>b.classList.toggle("ativa",i+1==n));$("titulo").textContent="ETAPA "+String(n).padStart(2,"0");$("etapaLista").textContent=String(n).padStart(2,"0");$("etapaAtual").textContent=String(n).padStart(2,"0");abrirEtapas(false);render()}
 function abrirEtapas(abrir){$("etapas").classList.toggle("fechado",!abrir);$("etapaSeta").textContent=abrir?"▴":"▾"}
 $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
-function atualizarTipo(){
-  const part=$("tipoLivro").value==="particionado";
-  $("normalCab").style.display=part?"none":"grid";
-  $("partCab").style.display=part?"grid":"none";
-  $("hintPart").style.display=part?"block":"none";
-  $("hintNormal").style.display=part?"none":"block";
-  $("livroRows").innerHTML="";
-  criarLinha(false);
-}
-$("tipoLivro").onchange=atualizarTipo;
 
 let contLinha=0;
 const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
+
+// ---------- Rascunho: tudo que é digitado fica guardado no celular até salvar ----------
+function salvarRascunho(){
+  const linhas=[...$("livroRows").querySelectorAll(".livro-row")].map(row=>({
+    livro:row.querySelector(".r-livro").value,
+    qtd:row.querySelector(".r-qtd").value,
+    de:row.querySelector(".r-de").value,
+    ate:row.querySelector(".r-ate").value,
+    part:row.classList.contains("part")
+  })).filter(l=>l.livro||l.qtd||l.de||l.ate);
+  try{localStorage.setItem(RASC,JSON.stringify({localidade:$("localidade").value,linhas}))}catch(e){}
+}
+$("localidade").addEventListener("input",salvarRascunho);
 
 // A barrinha está preenchida quando tem livro + quantidade (ou livro + DE + ATÉ).
 function linhaPreenchida(row){
@@ -117,50 +128,88 @@ function linhaPreenchida(row){
   return row.querySelector(".r-qtd").value!=="";
 }
 // Garante que sempre exista uma barrinha vazia embaixo da última preenchida.
-// Não mexe no foco: você continua digitando normalmente e o teclado não fecha.
 function abrirProxima(row){
   if(row===$("livroRows").lastElementChild&&linhaPreenchida(row))criarLinha(false);
 }
-function criarLinha(foco=true){
+// Campos visíveis da barrinha (muda conforme o quadradinho PART.)
+function camposVisiveis(row){
+  return [...row.querySelectorAll("input:not([type=checkbox])")].filter(i=>i.offsetParent!==null);
+}
+function criarLinha(foco=true,dados={}){
   const n=++contLinha;
-  const part=$("tipoLivro").value==="particionado";
+  const anterior=$("livroRows").lastElementChild;
+  // Barrinha nova copia o tipo da de cima (se a de cima é particionada, a nova também já vem marcada)
+  const part=dados.part!==undefined?dados.part:(anterior?anterior.classList.contains("part"):false);
   const row=document.createElement("div");
   row.className="livro-row"+(part?" part":"");
-  row.innerHTML=part
-    ? `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="1"></div><div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="100"></div>`
-    : `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div><div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="0"></div>`;
+  row.innerHTML=
+    `<div><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div>`+
+    `<div class="so-normal"><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
+    `<div class="so-part"><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="De"></div>`+
+    `<div class="so-part"><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
+    `<label class="part-chk" title="Livro particionado"><input type="checkbox" class="r-part"${part?" checked":""}><span>PART.</span></label>`;
+  row.querySelector(".r-livro").value=dados.livro||"";
+  row.querySelector(".r-qtd").value=dados.qtd||"";
+  row.querySelector(".r-de").value=dados.de||"";
+  row.querySelector(".r-ate").value=dados.ate||"";
   $("livroRows").appendChild(row);
-  const campos=[...row.querySelectorAll("input")];
-  campos.forEach(i=>i.value="");
-  // Assim que digitar o número, a próxima barrinha já aparece embaixo.
-  row.addEventListener("input",()=>abrirProxima(row));
+
+  // Marcar/desmarcar só mostra ou esconde DE/ATÉ. Nada é apagado.
+  row.querySelector(".r-part").addEventListener("change",e=>{
+    row.classList.toggle("part",e.target.checked);
+    abrirProxima(row);
+    salvarRascunho();
+    if(row.querySelector(".r-livro").value.trim()){
+      setTimeout(()=>(e.target.checked?row.querySelector(".r-de"):row.querySelector(".r-qtd")).focus(),30);
+    }
+  });
+  row.addEventListener("input",e=>{
+    if(e.target.type==="checkbox")return;
+    abrirProxima(row);salvarRascunho();
+  });
   // Botão "Próximo"/"Ir" do teclado: pula para o campo seguinte ou para a barrinha de baixo.
-  campos.forEach((inp,idx)=>inp.addEventListener("keydown",e=>{
-    if(e.key!=="Enter")return;
+  row.addEventListener("keydown",e=>{
+    if(e.key!=="Enter"||e.target.type==="checkbox")return;
     e.preventDefault();
-    if(idx<campos.length-1){campos[idx+1].focus();return}
+    const campos=camposVisiveis(row),idx=campos.indexOf(e.target);
+    if(idx>-1&&idx<campos.length-1){campos[idx+1].focus();return}
     abrirProxima(row);
     const prox=row.nextElementSibling;
     if(prox)prox.querySelector(".r-livro").focus();
-  }));
+  });
   if(foco) setTimeout(()=>row.querySelector(".r-livro").focus(),40);
+}
+function iniciarLinhas(){
+  let r=null;
+  try{r=JSON.parse(localStorage.getItem(RASC)||"null")}catch(e){}
+  $("livroRows").innerHTML="";
+  if(r){
+    if(r.localidade)$("localidade").value=r.localidade;
+    (r.linhas||[]).forEach(l=>criarLinha(false,l));
+  }
+  const ultima=$("livroRows").lastElementChild;
+  if(!ultima||linhaPreenchida(ultima))criarLinha(false);
 }
 function limparLancamentos(){
   $("livroRows").innerHTML="";
-  criarLinha(true);
+  criarLinha(true,{part:false});
+  salvarRascunho();
 }
 function coletarLancamentos(){
-  const part=$("tipoLivro").value==="particionado";
   const rows=[...$("livroRows").querySelectorAll(".livro-row")];
   const saida=[];
   for(const row of rows){
+    const part=row.classList.contains("part");
     const livro=row.querySelector(".r-livro").value.trim();
-    const temDados=[...row.querySelectorAll("input")].some(i=>i.value.trim()!=="");
+    const temDados=livro!==""||(part
+      ? row.querySelector(".r-de").value!==""||row.querySelector(".r-ate").value!==""
+      : row.querySelector(".r-qtd").value!=="");
     if(!temDados)continue;
     if(!livro) return {erro:"Preencha o livro de cada barrinha utilizada."};
     if(part){
-      const a=Number(row.querySelector(".r-de").value),b=Number(row.querySelector(".r-ate").value);
-      if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
+      const de=row.querySelector(".r-de").value,ate=row.querySelector(".r-ate").value;
+      const a=Number(de),b=Number(ate);
+      if(de===""||ate===""||!Number.isFinite(a)||!Number.isFinite(b)||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
       saida.push({livro,de:a,ate:b,qtd:b-a+1,particionado:true});
     }else{
       const q=Number(row.querySelector(".r-qtd").value);
@@ -188,7 +237,7 @@ $("saveAll").onclick=()=>{
   render();
   alert(r.saida.length+" livro(s) salvo(s) na Etapa "+String(etapa).padStart(2,"0")+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":""));
 };
-atualizarTipo();
+iniciarLinhas();
 let mesVer=($("data").value||hoje()).slice(0,7);
 function mes(){return mesVer}
 function nomeMes(m){let [y,mo]=m.split("-");return new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}
@@ -198,7 +247,7 @@ $("mesProx").onclick=()=>mudarMes(1);
 $("mesPicker").onchange=e=>{if(e.target.value){mesVer=e.target.value;render()}};
 function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");$("mes").textContent=nomeMes(m);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;let rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><button class="del" onclick="del(${r.id})">🗑️</button></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>"}
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>r.id!==id);localStorage.setItem(KEY,JSON.stringify(registros));render()}}
-function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function fmt(x){let [y,m,d]=x.split("-");return d+"/"+m+"/"+y}function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 $("data").onchange=()=>{if($("data").value)mesVer=$("data").value.slice(0,7);render()};
 $("csv").onclick=()=>{let m=mes(),rs=registros.filter(r=>r.data.startsWith(m));if(!rs.length)return alert("Não há leituras neste mês.");let c="\ufeffData;Etapa;Localidade;Livro;De;Até;Quantidade\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${r.livro.replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+".csv";a.click()};
 
