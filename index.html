@@ -54,6 +54,25 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 .ed-chk{display:flex;align-items:center;gap:10px;height:43px;border:1px solid #c4c9d0;border-radius:10px;padding:0 12px;font-weight:800;font-size:14px;color:#4b5563}
 .ed-chk input{width:20px;height:20px;margin:0;padding:0;accent-color:#5f6b7a}
 .modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+
+/* v1.1 — topo compacto */
+.topo{grid-template-columns:1fr 1fr;gap:7px}
+.date-wrap input{height:40px;line-height:40px;font-size:14px;border-radius:10px}
+.etapa-toggle{height:40px;font-size:14px;border-radius:10px}.etapa-toggle b{font-size:15px}
+.resumo{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:7px;align-items:center}
+.mes-nav{grid-template-columns:34px 1fr 34px;gap:5px}.mes-nav button{height:38px;font-size:18px}
+.mes-nome{height:38px;font-size:14px;text-transform:none;white-space:nowrap;overflow:hidden}
+.tot-mes{height:38px;display:flex;align-items:center;gap:5px;background:#eef0f3;border-radius:10px;padding:0 10px;white-space:nowrap}
+.tot-mes b{font-size:18px;font-weight:800;color:#374151}.tot-mes small{font-size:11px;color:#6b7280;font-weight:700}
+/* lista que abre e fecha */
+.lista-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;border:0;background:transparent;padding:2px 0;font-size:15px;font-weight:800;color:#1f2937;text-align:left;cursor:pointer}
+.lista-toggle .lt-dir{display:flex;align-items:center;gap:8px;flex:none}.lista-toggle #listaSeta{font-size:18px;color:#4b5563}
+#lista{margin-top:8px}
+/* preenchido automático */
+.livro-row input.auto{background:#eef6ff;border-color:#9fb8d6}
+.head-btns{display:flex;gap:8px;flex:none}
+.lt-sub{display:block;font-size:12px;font-weight:700;color:#6b7280;margin-top:2px}.lt-tot{font-size:13px;padding:6px 10px;background:#5f6b7a;color:#fff}
+.versao{display:block;margin-top:4px;font-weight:700}
 </style>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -65,36 +84,34 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 </head>
 <body>
 <div class="app">
-<header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div><button id="atualizarApp" class="btn-atualizar" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></header>
+<header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div><div class="head-btns"><button id="compartilharApp" class="btn-atualizar" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="btn-atualizar" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
 <main>
 <section class="card">
 <div class="topo">
-<div><div class="label">📅 DATA</div><div class="date-wrap"><input id="data" type="date" aria-label="Selecionar data da leitura"></div></div>
-<div><div class="label">ETAPA</div><button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span id="etapaSeta">▾</span></button></div>
+<div class="date-wrap"><input id="data" type="date" aria-label="Selecionar data da leitura"></div>
+<button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span id="etapaSeta">▾</span></button>
 </div>
 <div id="etapas" class="etapas fechado"></div>
+<div class="resumo">
+<div class="mes-nav"><button id="mesAnt" type="button" aria-label="Mês anterior">‹</button><div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div><button id="mesProx" type="button" aria-label="Próximo mês">›</button></div>
+<div class="tot-mes" title="Total de leituras no mês"><b id="total">0</b><small>no mês</small></div>
+</div>
 </section>
 <section class="card">
-<div class="livro-title"><strong id="titulo">ETAPA 01</strong><span id="totEtapa" class="badge">0 leituras</span></div>
+<div class="livro-title"><strong id="titulo">ETAPA 01</strong></div>
 <div class="label">LOCALIDADE</div>
 <input id="localidade" type="text" placeholder="Digite a localidade">
 <div style="height:9px"></div>
 <div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div></div>
 <div id="livroRows" class="rows-wrap"></div>
 <div class="save-row">
-<div><div class="hint">Livro particionado? Marque o quadradinho PART. daquela barrinha para abrir DE, ATÉ e QTD (a quantidade se calcula sozinha, mas dá pra corrigir). O que já foi digitado não se perde.</div></div>
+<div><div class="hint">Livro já lançado antes? A quantidade aparece sozinha (em azul) — dá pra corrigir. Particionado: marque PART.</div></div>
 <button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
 </div>
 </section>
 <section class="card">
-<div class="label">🗓️ MÊS</div>
-<div class="mes-nav"><button id="mesAnt" type="button" aria-label="Mês anterior">‹</button><div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div><button id="mesProx" type="button" aria-label="Próximo mês">›</button></div>
-<div style="height:11px"></div>
-<div class="label">📊 TOTAL DE LEITURAS NO MÊS</div><div class="total"><span id="total">0</span><small id="mes"></small></div>
-</section>
-<section class="card">
-<div class="livro-title"><strong>📋 ETAPA <span id="etapaLista">01</span> · <span id="mesLista" style="text-transform:capitalize"></span></strong><span id="nreg" class="badge">0</span></div>
-<div id="lista"></div>
+<button id="listaToggle" class="lista-toggle" type="button" aria-expanded="false"><span>📋 ETAPA <span id="etapaLista">01</span> · <span id="mesLista"></span><small id="nreg" class="lt-sub">0 livros</small></span><span class="lt-dir"><span id="totEtapa" class="badge lt-tot">0 leituras</span><span id="listaSeta">▾</span></span></button>
+<div id="lista" hidden></div>
 <div class="tools">
 <button id="csv" class="action" title="Exportar arquivo">📄 Exportar</button>
 <button id="importar" class="action sec" title="Importar arquivo">📥 Importar</button>
@@ -104,7 +121,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}
 </div>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.</footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="versao">Versão 1.2</span></footer>
 </div>
 <div id="editFundo" class="modal-fundo" hidden>
 <div class="modal" role="dialog" aria-label="Editar livro">
@@ -163,6 +180,31 @@ function abrirProxima(row){
 function camposVisiveis(row){
   return [...row.querySelectorAll("input:not([type=checkbox])")].filter(i=>i.offsetParent!==null);
 }
+// ---------- Preenche sozinho com o último lançamento do mesmo livro ----------
+function chaveLivro(x){return String(x||"").trim().replace(/^0+/,"")}
+function ultimoDoLivro(livro){
+  const k=chaveLivro(livro);if(!k)return null;
+  let u=null;
+  for(const g of registros){if(chaveLivro(g.livro)!==k)continue;if(!u||g.data>u.data||(g.data===u.data&&Number(g.id)>Number(u.id)))u=g}
+  return u;
+}
+function marcarAuto(row,on){row.dataset.auto=on?"1":"";row.querySelectorAll(".r-qtd,.r-de,.r-ate").forEach(i=>i.classList.toggle("auto",on&&i.value!==""))}
+function sugerir(row){
+  const qtd=row.querySelector(".r-qtd"),de=row.querySelector(".r-de"),ate=row.querySelector(".r-ate"),chk=row.querySelector(".r-part");
+  const auto=row.dataset.auto==="1";
+  if(!auto&&(qtd.value!==""||de.value!==""||ate.value!==""))return; // já digitou: não troca
+  const u=ultimoDoLivro(row.querySelector(".r-livro").value);
+  if(u){
+    const part=!!u.particionado;
+    chk.checked=part;row.classList.toggle("part",part);
+    de.value=part?u.de:"";ate.value=part?u.ate:"";qtd.value=u.qtd;
+    marcarAuto(row,true);
+  }else if(auto){
+    qtd.value="";de.value="";ate.value="";marcarAuto(row,false);
+    const prox=row.nextElementSibling;
+    if(prox&&prox===$("livroRows").lastElementChild&&[...prox.querySelectorAll("input:not([type=checkbox])")].every(i=>i.value===""))prox.remove();
+  }
+}
 function criarLinha(foco=true,dados={}){
   const n=++contLinha;
   const anterior=$("livroRows").lastElementChild;
@@ -193,6 +235,8 @@ function criarLinha(foco=true,dados={}){
   });
   row.addEventListener("input",e=>{
     if(e.target.type==="checkbox")return;
+    if(e.target.classList.contains("r-livro"))sugerir(row);
+    else marcarAuto(row,false);
     // Particionado: ao digitar DE ou ATÉ, a quantidade é calculada (ATÉ - DE + 1). Dá pra corrigir depois.
     if(row.classList.contains("part")&&(e.target.classList.contains("r-de")||e.target.classList.contains("r-ate"))){
       const de=row.querySelector(".r-de").value,ate=row.querySelector(".r-ate").value;
@@ -275,12 +319,14 @@ $("saveAll").onclick=()=>{
 iniciarLinhas();
 let mesVer=($("data").value||hoje()).slice(0,7);
 function mes(){return mesVer}
-function nomeMes(m){let [y,mo]=m.split("-");return new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}
+function nomeMes(m){let [y,mo]=m.split("-");let n=new Date(+y,+mo-1,1).toLocaleDateString("pt-BR",{month:"long"});return n.charAt(0).toUpperCase()+n.slice(1)+" "+y}
+let listaAberta=false;
+$("listaToggle").onclick=()=>{listaAberta=!listaAberta;$("lista").hidden=!listaAberta;$("listaSeta").textContent=listaAberta?"▴":"▾";$("listaToggle").setAttribute("aria-expanded",listaAberta)};
 function mudarMes(delta){let [y,mo]=mesVer.split("-").map(Number);let d=new Date(y,mo-1+delta,1);mesVer=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");render()}
 $("mesAnt").onclick=()=>mudarMes(-1);
 $("mesProx").onclick=()=>mudarMes(1);
 $("mesPicker").onchange=e=>{if(e.target.value){mesVer=e.target.value;render()}};
-function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");$("mes").textContent=nomeMes(m);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;let rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length;$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button class="edit" onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button class="del" onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>"}
+function render(){let m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);$("total").textContent=tot.toLocaleString("pt-BR");$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;let rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);$("nreg").textContent=rs.length+(rs.length===1?" livro":" livros");$("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";$("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado ? r.de+" até "+r.ate+" · " : ""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button class="edit" onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button class="del" onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>"}
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 // ---------- Editar registro salvo ----------
 let editId=null;
@@ -357,6 +403,11 @@ $("lixeira").onclick=()=>{
     localStorage.setItem(KEY,JSON.stringify(registros));render();
     alert("Registros movidos para a lixeira. O backup permanece salvo neste celular.");
   }
+};
+$("compartilharApp").onclick=async()=>{
+  const url=location.href.split("?")[0];
+  try{if(navigator.share){await navigator.share({title:"Controle de Leituras",text:"Controle de Leituras",url});return}}catch(e){return}
+  try{await navigator.clipboard.writeText(url);alert("Link copiado:\n"+url)}catch(e){prompt("Copie o link do aplicativo:",url)}
 };
 $("atualizarApp").onclick=async()=>{
   if(!confirm("Atualizar o aplicativo para a versão mais recente? Seus registros não serão apagados."))return;
