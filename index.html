@@ -104,6 +104,12 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .consulta-res{border-radius:10px;padding:9px 11px;font-size:14px;font-weight:800;margin-bottom:10px;background:#ede9fe;color:#4c1d95}
 .consulta-res.fora-res{background:#fee2e2;color:#7f1d1d;font-size:13px;line-height:1.5}.volta-mes{display:block;width:100%;margin-top:8px;height:36px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:14px;text-transform:none}
 .cartao-atraso{position:fixed;left:12px;right:12px;bottom:16px;z-index:40;max-width:500px;margin:auto;background:#fff;border:2px solid #fca5a5;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px #0004;font-size:14px;color:#1f2937;line-height:1.6}
+.cartao-comp{border-color:#93c5fd}.comp-tit{display:block;color:#1e3a8a!important;margin-bottom:8px}
+.comp-linha{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #e5e7eb;border-radius:10px;padding:7px 9px;margin-bottom:6px;cursor:pointer;line-height:1.3}
+.comp-linha.sel{border:2px solid #2563eb;background:#eff6ff}
+.comp-linha small{display:block;font-size:11px;color:#6b7280;font-weight:600}
+.comp-linha .pct{font-size:13px;text-align:center;cursor:pointer}.comp-linha .pct small{color:inherit;font-size:10px}
+.comp-dica{font-size:11px;color:#6b7280;margin-top:2px}
 .cartao-atraso>b{display:block;color:#b91c1c;margin-bottom:4px}.cartao-atraso button{display:block;width:100%;margin-top:8px;height:38px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:15px}
 .consulta-res.nao{background:#f3f4f6;color:#4b5563}
 #calGrid.cal-grid{grid-template-columns:repeat(3,1fr);gap:6px 6px}#calGrid.cal-grid.editando{grid-template-columns:1fr 1fr}
@@ -159,7 +165,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .linha2{grid-template-columns:34px 1fr 34px auto;gap:6px;margin-top:7px}
 .linha2 button.nav{height:34px;font-size:17px}
 .mes-nome{height:34px;font-size:14px}
-.tot-mes{height:34px;padding:0 10px}.tot-mes b{font-size:16px}
+.tot-mes{height:34px;padding:0 8px}.tot-mes b{font-size:16px}
+.pct{border:0;border-radius:7px;padding:2px 5px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+.pct.sobe{background:#dcfce7;color:#166534}.pct.desce{background:#fee2e2;color:#b91c1c}.pct.igual{background:#e5e7eb;color:#4b5563}
 .pendentes{margin-top:7px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#92400e;background:#fef3c7;border-radius:9px;padding:6px 8px}
 .pendentes button.pend{border:1px solid #f59e0b;background:#fff;color:#92400e;border-radius:8px;height:28px;padding:0 8px;font-size:12px;font-weight:800;cursor:pointer}
 .pendentes button.pend small{font-weight:600;opacity:.75}
@@ -217,7 +225,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
 <div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
-<div class="tot-mes"><b id="total">0</b><span>no mês</span></div>
+<div class="tot-mes"><b id="total">0</b><span id="noMes">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
 </section>
 
@@ -249,7 +257,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.4</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -299,6 +307,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 </div></div>
 
 <div id="cartaoAtraso" class="cartao-atraso" hidden></div>
+<div id="cartaoComp" class="cartao-atraso cartao-comp" hidden></div>
 
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
@@ -624,9 +633,43 @@ $("mesAnt").onclick=()=>mudarMes(-1);$("mesProx").onclick=()=>mudarMes(1);
 $("mesPicker").onchange=e=>{if(e.target.value){mesVer=e.target.value;render()}};
 $("listaHead").onclick=()=>{const l=$("lista");l.hidden=!l.hidden;$("listaSeta").textContent=l.hidden?"▼":"▲"};
 function atualizarNomes(){const set=new Set();registros.forEach(r=>(r.com||[]).forEach(n=>set.add(n)));$("nomesDivididos").innerHTML=[...set].sort().map(n=>`<option value="${esc(n)}">`).join("")}
+// ---------- Comparação com o mês passado: por dia, por etapa e mês inteiro ----------
+const COMPKEY=KEY+"_comparar";let modoComp="dia";try{modoComp=localStorage.getItem(COMPKEY)||"dia"}catch(e){}
+function somaQtd(lista){return lista.reduce((t,r)=>t+r.qtd,0)}
+function calcComparacoes(m){
+  const ant=somaMes(m,-1),doMes=registros.filter(r=>r.data.startsWith(m)),doAnt=registros.filter(r=>r.data.startsWith(ant));
+  const emAndamento=m===hoje().slice(0,7),dia=emAndamento?hoje().slice(8):"31";
+  const maxEt=doMes.length?Math.max(...doMes.map(r=>r.etapa)):0;
+  const pct=(a,b)=>b?Math.round((a-b)/b*100):null;
+  const res={ant,
+    dia:{rot:emAndamento?"Por dia (até o dia "+dia+")":"Por dia (mês inteiro)",a:somaQtd(doMes.filter(r=>r.data.slice(8)<=dia)),b:somaQtd(doAnt.filter(r=>r.data.slice(8)<=dia))},
+    etapa:{rot:maxEt?"Por etapa (Etapas 01 a "+p2(maxEt)+")":"Por etapa",a:somaQtd(doMes.filter(r=>r.etapa<=maxEt)),b:somaQtd(doAnt.filter(r=>r.etapa<=maxEt))},
+    mes:{rot:"Mês inteiro",a:somaQtd(doMes),b:somaQtd(doAnt)}};
+  ["dia","etapa","mes"].forEach(k=>res[k].p=pct(res[k].a,res[k].b));
+  return res;
+}
+function atualizarComparacao(m,tot){
+  const c=calcComparacoes(m),b=$("pctMes"),x=c[modoComp]||c.dia;
+  const tem=tot&&x.b;$("noMes").hidden=!!tem;b.hidden=!tem;if(!tem)return;
+  const p=x.p;b.className="pct "+(p>0?"sobe":p<0?"desce":"igual");
+  b.textContent=(p>0?"▲ ":p<0?"▼ ":"= ")+Math.abs(p)+"%"+(modoComp==="etapa"?" E":"");
+  b.onclick=()=>abrirComparacao(m);
+}
+function abrirComparacao(m){
+  const c=calcComparacoes(m),box=$("cartaoComp");
+  const linha=k=>{const x=c[k],p=x.p,dif=x.a-x.b;
+    return `<div class="comp-linha${modoComp===k?" sel":""}" data-k="${k}"><div><b>${x.rot}</b><small>${nomeMes(m)}: ${x.a.toLocaleString("pt-BR")} · ${nomeMes(c.ant)}: ${x.b.toLocaleString("pt-BR")}</small></div>`+
+      (p==null?`<span class="pct igual">sem dados</span>`:`<span class="pct ${p>0?"sobe":p<0?"desce":"igual"}">${p>0?"▲ ":p<0?"▼ ":"= "}${Math.abs(p)}%<small>${dif>0?"+":""}${dif.toLocaleString("pt-BR")}</small></span>`)+`</div>`};
+  box.innerHTML=`<b class="comp-tit">📊 Comparação com ${nomeMes(c.ant)}</b>${linha("dia")}${linha("etapa")}${linha("mes")}
+    <div class="comp-dica">Toque numa linha pra ela aparecer no selinho do total.</div><button type="button" class="comp-ok">Ok</button>`;
+  box.querySelectorAll(".comp-linha").forEach(l=>l.onclick=()=>{modoComp=l.dataset.k;try{localStorage.setItem(COMPKEY,modoComp)}catch(e){}render();abrirComparacao(m)});
+  box.querySelector(".comp-ok").onclick=()=>box.hidden=true;
+  box.hidden=false;
+}
 function render(){atualizarNomes();
   const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);
-  $("total").textContent=tot.toLocaleString("pt-BR");$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
+  $("total").textContent=tot.toLocaleString("pt-BR");
+  atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
   const rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
   $("nreg").textContent=rs.length+(rs.length===1?" livro":" livros");
   $("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
