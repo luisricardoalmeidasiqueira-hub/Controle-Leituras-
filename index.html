@@ -321,7 +321,7 @@ footer{font-size:10px;padding:10px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.2</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.3</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1003,9 +1003,13 @@ $("edSalvar").onclick=()=>{
 // ---------- Janela do calendário ----------
 let calVer=hoje().slice(0,7);
 // ---------- 📅 Faixa "Lançar calendário do ano" (de novembro até lançar) ----------
+function anoFaltando(alvo){for(let i=1;i<=12;i++){const m=alvo+"-"+p2(i);if(!cal[m]||ehProv(m))return true}return false}
 function anoParaLancar(){
+  // pela data do celular: de novembro em diante, o ano que vem
   const h=hoje(),ano=+h.slice(0,4),mesH=+h.slice(5,7),alvo=mesH>=11?ano+1:ano;
-  for(let i=1;i<=12;i++){const m=alvo+"-"+p2(i);if(!cal[m]||ehProv(m))return alvo}
+  if(anoFaltando(alvo))return alvo;
+  // pela data escolhida no app: se o ano dela ainda está provisório
+  const d=$("data").value;if(d){const a=+d.slice(0,4);if(a>=ano&&anoFaltando(a))return a}
   return 0;
 }
 function atualizarBannerCal(){
@@ -1321,7 +1325,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.2";
+const VERSAO_APP="6.3";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
