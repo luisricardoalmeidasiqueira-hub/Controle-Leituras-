@@ -122,7 +122,11 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .zoom-area img{display:block;max-width:none}
 .zoom-btns{display:flex;gap:6px;margin-left:auto}.zoom-btns button{width:38px;height:34px;border:0;border-radius:9px;background:#e5e7eb;font-size:18px;font-weight:800;color:#374151}
 #imgFundo{z-index:30}#imgFundo img{width:100%;border-radius:10px;border:1px solid #d1d5db;-webkit-touch-callout:default}
-.ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
+.ed-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
+/* Campos de data do iPhone: não passam mais por cima do campo do lado */
+.modal input[type=date]{-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;box-sizing:border-box;text-align:left;display:block}
+.modal input[type=date]::-webkit-date-and-time-value{text-align:left}
+.modal select{max-width:100%;min-width:0}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
 .ed-grid select{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:#1f2937}
 .ed-chk{display:flex;align-items:center;gap:10px;height:43px;border:1px solid #c4c9d0;border-radius:10px;padding:0 12px;font-weight:800;font-size:14px;color:#4b5563}
 .ed-chk input{width:20px;height:20px;margin:0;padding:0;accent-color:#5f6b7a}
@@ -245,7 +249,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.3</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.4</span></footer>
 </div>
 
 <!-- Editar registro -->
