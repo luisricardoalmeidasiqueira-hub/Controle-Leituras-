@@ -259,7 +259,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.9</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 5.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -514,7 +514,13 @@ function salvarRascunho(){
 $("localidade").addEventListener("input",salvarRascunho);$("prontuario").addEventListener("input",salvarRascunho);
 // Cada cidade lembra o seu prontuário: trocou a localidade, o prontuário daquela cidade aparece sozinho
 const PRONTKEY=KEY+"_prontuarios";let prontPorCidade={};try{prontPorCidade=JSON.parse(localStorage.getItem(PRONTKEY)||"{}")}catch(e){}
-function guardarPront(loc,pr){const k=normLoc(loc);if(!k||!pr)return;prontPorCidade[k]=pr;try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}}
+function guardarPront(loc,pr){const k=normLoc(loc);if(!k||!pr)return;prontPorCidade[k]=pr;try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}preencherAntigos(loc,pr)}
+// Livros antigos daquela cidade que ficaram sem prontuário recebem o prontuário dela (uma vez só)
+function preencherAntigos(loc,pr){
+  const k=normLoc(loc);if(!k||!pr)return;let n=0;
+  registros.forEach(r=>{if(!r.prontuario&&normLoc(r.localidade)===k){r.prontuario=pr;n++}});
+  if(n){localStorage.setItem(KEY,JSON.stringify(registros));render();setTimeout(()=>alert("✅ "+n+" livro(s) antigo(s) de "+loc.trim()+" receberam o prontuário "+pr+"."),300)}
+}
 function prontDaCidade(loc){const k=normLoc(loc);if(!k)return "";if(prontPorCidade[k])return prontPorCidade[k];let u=null;registros.forEach(r=>{if(r.prontuario&&normLoc(r.localidade)===k&&(!u||r.data>u.data))u=r});return u?u.prontuario:""}
 let tPront=null;
 $("localidade").addEventListener("input",()=>{clearTimeout(tPront);tPront=setTimeout(()=>{const p=prontDaCidade($("localidade").value);if(p&&p!==$("prontuario").value){$("prontuario").value=p;salvarRascunho()}},500)});
@@ -1111,6 +1117,8 @@ $("atualizarApp").onclick=async()=>{
 $("data").value=hoje();
 iniciarLinhas();
 completarProvisorio();
+// Ao abrir: usa o prontuário que já está escrito pra completar os livros antigos daquela cidade
+setTimeout(()=>{const l=$("localidade").value,p=$("prontuario").value.trim();if(l&&p)guardarPront(l,p)},400);
 const eHoje=etapaAutomatica(hoje());
 sel(eHoje||1,false);
 </script>
