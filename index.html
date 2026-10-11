@@ -143,12 +143,21 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .linha2 button.nav{height:34px;font-size:17px}
 .mes-nome{height:34px;font-size:14px}
 .tot-mes{height:34px;padding:0 10px}.tot-mes b{font-size:16px}
+.pendentes{margin-top:7px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#92400e;background:#fef3c7;border-radius:9px;padding:6px 8px}
+.pendentes button.pend{border:1px solid #f59e0b;background:#fff;color:#92400e;border-radius:8px;height:28px;padding:0 8px;font-size:12px;font-weight:800;cursor:pointer}
+.pendentes button.pend small{font-weight:600;opacity:.75}
+.pendentes button.pend.ativa{background:#f59e0b;color:#fff}
+.pend-opcoes{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:2px}
+.pend-opcoes button{border:0;border-radius:9px;height:44px;font-size:13px;font-weight:800;cursor:pointer;line-height:1.1}
+.pend-opcoes small{display:block;font-size:10px;font-weight:600;opacity:.85}
+.op-agora{background:#2563eb;color:#fff}.pendentes button.cancelar-esq{font-size:12px;font-weight:800;text-decoration:underline;margin-left:4px}.op-esqueci{background:#16a34a;color:#fff}
+.pendentes button.fechar-pend{margin-left:auto;border:0;background:transparent;color:#92400e;font-size:15px;padding:0 4px;cursor:pointer}
 .cal-info{margin-top:7px;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800;background:#f3f4f6;color:#4b5563}
 .etapa-toggle,.etapa-toggle span{white-space:nowrap}.etapa-toggle{padding:0 8px;font-size:14px;gap:4px}
 .ciclo-badge{font-size:11px;font-weight:800;border-radius:6px;padding:2px 4px;margin-right:4px;background:#dcfce7;color:#166534}.ciclo-badge.cedo{background:#fef3c7;color:#92400e}.ciclo-badge.fora{background:#fee2e2;color:#b91c1c}
 .cal-info.fora{background:#fee2e2;color:#b91c1c}
 #calGrid .cal-dia{height:auto;min-height:32px;flex-wrap:wrap;padding:3px 6px;line-height:1.15;align-content:center}
-.cal-dia i{flex-basis:100%;font-style:normal;font-size:10px;font-weight:800;color:#15803d}.cal-dia i.fora{color:#dc2626}
+.cal-dia i{flex-basis:100%;font-style:normal;font-size:10px;font-weight:800;color:#15803d}.cal-dia i.fora{color:#dc2626}.cal-dia i.real{color:#2563eb}#calGrid .cal-dia i{white-space:nowrap;letter-spacing:-.2px}
 .date-wrap.atrasado{background:#fee2e2;box-shadow:inset 0 0 0 2px #f87171}.date-wrap.atrasado .data-txt{color:#b91c1c}
 .dt-atraso{color:#dc2626;font-weight:800}.dt-ok{color:#15803d;font-weight:700}
 #calGrid .cal-dia{position:relative}.interroga{position:absolute;top:-7px;right:-5px;font-size:13px;cursor:pointer;background:#fff;border-radius:50%;line-height:1;padding:1px}
@@ -177,6 +186,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
+<div id="pendentes" class="pendentes" hidden></div>
 <div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasado ou adiantado? Escolha a etapa que você está lendo — a data continua a mesma.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
@@ -213,7 +223,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.2</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -252,7 +262,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span>❓ Lida atrasada no mês passado</span></div>
+<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span>❓ Lida atrasada no mês passado</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
 <button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
 <div id="calGrid" class="cal-grid"></div>
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
@@ -350,14 +360,18 @@ function atrasoMesPassado(m,n){
   const ant=somaMes(m,-1),real=ultimaLeituraReal(ant,n);if(!real)return null;
   const c=cicloReal(real,n);if(!foraDoLimite(c))return null;
   const [a,mo,d]=real.split("-").map(Number),lim=new Date(a,mo-1,d+CICLO_MAX);
-  return {dias:c,lido:real,lerAte:lim.getFullYear()+"-"+p2(lim.getMonth()+1)+"-"+p2(lim.getDate())};
+  return {dias:c,lido:real,previsto:diaDaEtapa(ant,n),lerAte:lim.getFullYear()+"-"+p2(lim.getMonth()+1)+"-"+p2(lim.getDate())};
 }
 // Pelo calendário (o mesmo número da coluna "Cic" da foto da empresa)
 function cicloPlanejado(m,i){const d=cal[m]&&cal[m][i],a=cal[somaMes(m,-1)],b=a&&a[i];return d&&b?diasEntre(d,b):null}
 // Na vida real: conta a partir do dia em que você REALMENTE leu essa etapa no mês passado (se lançou no app);
 // se não lançou, usa a data do calendário
-function ultimaLeituraReal(m,n){let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u)u=r.data});return u}
-function cicloReal(data,n){const ant=somaMes(data.slice(0,7),-1),base=ultimaLeituraReal(ant,n)||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
+// Cada cidade tem sua conta: "Tatui" e "Tatuí" contam como a mesma (sem acento, maiúscula ou espaço)
+function normLoc(t){return String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
+function locAtual(){return normLoc($("localidade").value)}
+function mesmaCidade(r,loc){return !loc||normLoc(r.localidade)===loc}
+function ultimaLeituraReal(m,n,loc){if(loc===undefined)loc=locAtual();let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u&&mesmaCidade(r,loc))u=r.data});return u}
+function cicloReal(data,n,loc){const ant=somaMes(data.slice(0,7),-1),base=ultimaLeituraReal(ant,n,loc)||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
 // Monta um mês: 18 dias úteis seguidos, com a Etapa 01 uns 30 dias depois da Etapa 01 do mês anterior
 function gerarMes(m){
   const ant=cal[somaMes(m,-1)];if(!ant||!ant[0])return null;
@@ -418,7 +432,7 @@ $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado
 // Trocou a data → puxa a etapa do calendário
 function etapaAutomatica(d){const e=etapaDoDia(d);if(e)return e;const pr=proximaEtapa(d);return pr&&pr.dia.slice(0,7)===d.slice(0,7)?pr.etapa:0}
 let dataManual=false;
-$("data").onchange=()=>{const d=$("data").value;if(!d)return;dataManual=d!==hoje();mesVer=d.slice(0,7);const e=etapaAutomatica(d);if(e)sel(e,false);else render()};
+$("data").onchange=()=>{const d=$("data").value;if(!d)return;esqueci=null;dataManual=d!==hoje();mesVer=d.slice(0,7);const e=etapaAutomatica(d);if(e)sel(e,false);else render()};
 // Virou o dia com o app aberto: quando você voltar pro app, ele já passa pra data de hoje e a etapa do dia
 function conferirVirada(){if(dataManual||$("data").value===hoje())return;$("data").value=hoje();mesVer=hoje().slice(0,7);const e=etapaAutomatica(hoje());if(e)sel(e,false);else render()}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirVirada()});
@@ -433,6 +447,7 @@ function salvarRascunho(){
   try{localStorage.setItem(RASC,JSON.stringify({localidade:$("localidade").value,linhas}))}catch(e){}
 }
 $("localidade").addEventListener("input",salvarRascunho);
+let tLoc=null;$("localidade").addEventListener("input",()=>{clearTimeout(tLoc);tLoc=setTimeout(render,400)});
 function linhaPreenchida(r){
   if(!r.querySelector(".r-livro").value.trim())return false;
   if(r.classList.contains("part"))return r.querySelector(".r-de").value!==""&&r.querySelector(".r-ate").value!=="";
@@ -528,6 +543,7 @@ $("saveAll").onclick=()=>{
   r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,...x}));
   localStorage.setItem(KEY,JSON.stringify(registros));
   mesVer=data.slice(0,7);limparLancamentos();render();
+  if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
   alert(r.saida.length+" livro(s) salvo(s) na Etapa "+p2(etapa)+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":""));
 };
 
@@ -544,8 +560,8 @@ function render(){
   const rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
   $("nreg").textContent=rs.length+(rs.length===1?" livro":" livros");
   $("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  $("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${(()=>{const c=cicloReal(r.data,r.etapa);return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
-  pintarEtapas();atualizarChip();
+  $("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${(()=>{const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
+  pintarEtapas();atualizarChip();atualizarPendentes();
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
@@ -584,6 +600,54 @@ function atualizarChip(){
     info.hidden=!txt;info.textContent=txt;info.className="cal-info"+(fora&&e===etapa?" fora":am?" atraso":cor?" "+cor:pv?" prov":"");
   }
 
+}
+// ---------- Etapas pendentes: já passou a data e não tem nada lançado ----------
+let pendFechado="";
+function etapasPendentes(h){
+  const m=h.slice(0,7),lista=cal[m];if(!lista)return [];
+  const loc=locAtual(),doMes=registros.filter(r=>r.data.startsWith(m)&&mesmaCidade(r,loc));
+  // Cidade que você só ajudou (não tem nada seu no mês passado nem neste): não mostra pendentes
+  const mAnt=somaMes(m,-1);if(!doMes.length&&!registros.some(r=>r.data.startsWith(mAnt)&&mesmaCidade(r,loc)))return [];
+  // Só considera a partir da primeira etapa que você já lançou no mês (pra não acusar o que foi antes de usar o app).
+  // Se ainda não lançou nada no mês, olha só os últimos 5 dias.
+  const minEt=doMes.length?Math.min(...doMes.map(r=>r.etapa)):0;
+  const [a,mo,d]=h.split("-").map(Number),lim=new Date(a,mo-1,d-5),limIso=lim.getFullYear()+"-"+p2(lim.getMonth()+1)+"-"+p2(lim.getDate());
+  const out=[];
+  lista.forEach((dia,i)=>{
+    const n=i+1;if(!dia||dia>=h||n===etapa)return;
+    if(minEt?n<minEt:dia<limIso)return;
+    if(!doMes.some(r=>r.etapa===n))out.push({etapa:n,dia});
+  });
+  return out;
+}
+// Tocou numa pendente: escolhe "Lendo agora" (data de hoje, atrasada) ou "Esqueci de lançar" (data do calendário)
+let pendEscolha=0,esqueci=null;
+function irParaLivro(){const l=document.querySelector("#livroRows .r-livro");if(l)l.scrollIntoView({block:"center",behavior:"smooth"})}
+function sairDoEsqueci(){
+  if(!esqueci)return;const v=esqueci.voltar;esqueci=null;dataManual=false;
+  $("data").value=v;mesVer=v.slice(0,7);const e=etapaAutomatica(v);if(e)sel(e,false);else render();
+}
+function atualizarPendentes(){
+  const box=$("pendentes");
+  if(esqueci){
+    box.hidden=false;
+    box.innerHTML=`<span style="flex:1">📝 Lançando a Etapa ${p2(esqueci.etapa)} que você esqueceu, com a data ${esqueci.dia.slice(8)}/${esqueci.dia.slice(5,7)}. Depois de salvar, volta pra hoje.</span><button class="fechar-pend cancelar-esq" type="button">Cancelar</button>`;
+    box.querySelector(".fechar-pend").onclick=sairDoEsqueci;return;
+  }
+  const h=$("data").value||hoje(),pend=pendFechado===h?[]:etapasPendentes(h);
+  box.hidden=!pend.length;if(!pend.length)return;
+  const mostra=pend.slice(-6),esc=pend.find(p=>p.etapa===pendEscolha);
+  box.innerHTML="⏳ Pendente"+(pend.length>1?"s":"")+":"+mostra.map(p=>`<button class="pend${p.etapa===pendEscolha?" ativa":""}" type="button" data-e="${p.etapa}" title="Etapa ${p2(p.etapa)}, do dia ${p.dia.slice(8)}/${p.dia.slice(5,7)}">Et. ${p2(p.etapa)} <small>${p.dia.slice(8)}/${p.dia.slice(5,7)}</small></button>`).join("")+(pend.length>mostra.length?` <span>+${pend.length-mostra.length}</span>`:"")+`<button class="fechar-pend" type="button" title="Esconder hoje" aria-label="Esconder">✕</button>`
+    +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">📝 Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button></div>`:"");
+  box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
+  box.querySelector(".fechar-pend").onclick=()=>{pendFechado=h;pendEscolha=0;atualizarPendentes()};
+  if(esc){
+    box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;sel(esc.etapa,false);irParaLivro()};
+    box.querySelector(".op-esqueci").onclick=()=>{
+      pendEscolha=0;esqueci={etapa:esc.etapa,dia:esc.dia,voltar:h};dataManual=true;
+      $("data").value=esc.dia;mesVer=esc.dia.slice(0,7);sel(esc.etapa,false);irParaLivro();
+    };
+  }
 }
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
@@ -627,9 +691,13 @@ function desenharCal(){
     if(!d)return `<span class="cal-dia">—</span>`;
     const [a,mo,di]=d.split("-").map(Number);
     const cc=cicloPlanejado(calVer,i),am=atrasoMesPassado(calVer,i+1);
-    const linha2=cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
+    // Mês que já foi lido: se você leu num dia diferente do calendário, mostra o dia real e o ciclo de verdade
+    const real=ultimaLeituraReal(calVer,i+1),cr=real?cicloReal(real,i+1):null;
+    const linha2=real&&real!==d
+      ?`<i class="${foraDoLimite(cr)?"fora":"real"}">lida ${real.slice(8)}/${real.slice(5,7)}${cr!=null?" "+cr+"d":""}</i>`
+      :cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
     // ❓ = no mês passado esta etapa foi lida atrasada (toque para ver)
-    const marca=am?`<b class="interroga" onclick="alert('Etapa ${p2(i+1)}: no mês passado foi lida atrasada, com ${am.dias} dias (em ${am.lido.slice(8)}/${am.lido.slice(5,7)}).')">❓</b>`:"";
+    const marca=am?`<b class="interroga" onclick="alert('Etapa ${p2(i+1)} — mês passado:\\n\\n📅 No calendário: ${am.previsto?am.previsto.slice(8)+"/"+am.previsto.slice(5,7):"—"}\\n📖 Foi lida em: ${am.lido.slice(8)}/${am.lido.slice(5,7)}${am.previsto?" ("+diasEntre(am.lido,am.previsto)+" dia(s) depois)":""}\\n🔴 Ciclo: ${am.dias} dias (limite ${CICLO_MAX})')">❓</b>`:"";
     return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em>${marca}${linha2}</span>`;
   };
   $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${d&&d===calBuscaDia?" busca":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
