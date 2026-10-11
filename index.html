@@ -68,6 +68,17 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .modal-fundo{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:20;display:flex;align-items:center;justify-content:center;padding:12px}
 .modal{background:#fff;width:100%;max-width:520px;border-radius:16px;padding:15px;max-height:90vh;overflow:auto;box-shadow:0 10px 30px #0004}
 .modal h3{margin:0 0 12px;font-size:17px}
+.modal-top{position:sticky;top:-15px;margin:-15px -15px 12px;padding:10px 12px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;z-index:2;border-radius:16px 16px 0 0}
+.modal-top h3{margin:0;font-size:16px}
+.voltar{flex:none;height:38px;padding:0 12px;border:0;border-radius:10px;background:#e5e7eb;color:#374151;font-size:15px;font-weight:800;cursor:pointer}
+.cal-dia{display:flex;align-items:center;height:38px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:15px;font-weight:800;color:#1f2937;background:#fff}
+.cal-dia em{font-style:normal;font-weight:600;color:#6b7280;margin-left:6px;font-size:13px}
+.cal-grid.prov .cal-dia{background:#fef9c3;border-color:#facc15}
+.cal-grid .cal-item.sab .cal-dia{background:#fee2e2;border-color:#f87171;color:#991b1b}
+.cal-grid .cal-item.fer .cal-dia{background:#ffedd5;border-color:#fb923c;color:#9a3412}
+.cal-grid .cal-item.hoje .cal-dia{border:2px solid #2563eb}
+.btn-editar{width:100%;height:42px;border:0;border-radius:10px;background:#4b5563;color:#fff;font-weight:800;font-size:15px;margin-bottom:10px;cursor:pointer}
+.btn-editar.pronto{background:#16a34a}
 .ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
 .ed-grid select{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:#1f2937}
 .ed-chk{display:flex;align-items:center;gap:10px;height:43px;border:1px solid #c4c9d0;border-radius:10px;padding:0 12px;font-weight:800;font-size:14px;color:#4b5563}
@@ -150,12 +161,12 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 1.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 1.8</span></footer>
 </div>
 
 <!-- Editar registro -->
 <div id="editFundo" class="modal-fundo" hidden><div class="modal">
-<h3>✏️ Editar livro</h3>
+<div class="modal-top"><button class="voltar" type="button" onclick="fecharEdicao()">‹ Voltar</button><h3>✏️ Editar livro</h3></div>
 <div class="ed-grid">
 <div><div class="label">DATA</div><input id="edData" type="date"></div>
 <div><div class="label">ETAPA</div><select id="edEtapa"></select></div>
@@ -171,10 +182,11 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
-<h3>📅 Calendário de leitura</h3>
+<div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
-<div id="provAviso" class="prov-aviso" hidden>🟡 <b>Calendário provisório</b> — calculado pelo app, pode ter erro. Corrigiu uma data? As etapas seguintes do mês se ajustam sozinhas a partir dela.<button id="provOk" type="button">✅ Este mês está certo</button></div>
+<div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
 <div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span></div>
+<button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
 <div id="calGrid" class="cal-grid"></div>
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
 <div class="cal-btns">
@@ -468,13 +480,21 @@ $("edSalvar").onclick=()=>{
 
 // ---------- Janela do calendário ----------
 let calVer=hoje().slice(0,7);
-function abrirCal(){calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
+function abrirCal(){calEditando=false;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
 function desenharCal(){
   const pv=ehProv(calVer);
   $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
   $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);
-  const lista=cal[calVer]||Array(18).fill(""),h=hoje();
-  $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${c?" "+c:""}"><b>${p2(i+1)}</b><input type="date" data-i="${i}" value="${d||""}">${t?"<small>"+t+"</small>":""}</div>`}).join("");
+  const lista=cal[calVer]||Array(18).fill(""),h=hoje(),sem=["dom","seg","ter","qua","qui","sex","sáb"];
+  const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar mês";b.classList.toggle("pronto",calEditando);
+  // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
+  const campo=(d,i)=>{
+    if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
+    if(!d)return `<span class="cal-dia">—</span>`;
+    const [a,mo,di]=d.split("-").map(Number);
+    return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em></span>`;
+  };
+  $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
   $("calGrid").querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
     const m=calVer,i=+inp.dataset.i;
     if(!cal[m])cal[m]=Array(18).fill("");
@@ -488,10 +508,18 @@ function desenharCal(){
     const e=etapaDoDia($("data").value);if(e&&e!==etapa)sel(e,false);
   });
 }
-$("provOk").onclick=()=>{prov.delete(calVer);editados.delete(calVer);salvarProv();desenharCal();render()};
+// Editar mês: liga/desliga as datas para corrigir
+let calEditando=false;
+$("calEditar").onclick=()=>{
+  if(!calEditando){calEditando=true;desenharCal();return}
+  calEditando=false;
+  if(ehProv(calVer)&&confirm("Este mês já está igual ao calendário oficial?\n\nOK = fica oficial (sai do amarelo)\nCancelar = continua provisório")){prov.delete(calVer);editados.delete(calVer);salvarProv()}
+  desenharCal();render();
+};
+$("calVoltar").onclick=()=>{calEditando=false;$("calFundo").hidden=true};
 $("calChip").onclick=abrirCal;
-$("calAnt").onclick=()=>{calVer=somaMes(calVer,-1);desenharCal()};
-$("calProx").onclick=()=>{calVer=somaMes(calVer,1);desenharCal()};
+$("calAnt").onclick=()=>{calEditando=false;calVer=somaMes(calVer,-1);desenharCal()};
+$("calProx").onclick=()=>{calEditando=false;calVer=somaMes(calVer,1);desenharCal()};
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
 $("calFundo").onclick=e=>{if(e.target===$("calFundo"))$("calFundo").hidden=true};
 
