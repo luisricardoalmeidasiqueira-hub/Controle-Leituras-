@@ -205,6 +205,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .imp-item{border-top:1px solid #d1d5db;padding:7px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#991b1b;font-weight:700}
 .imp-item:first-child{border-top:0}.imp-item button{border:0;background:transparent;font-size:16px}
 .imp-tag{color:#b91c1c;font-weight:800}
+.banner-cal{margin-top:6px;width:100%;min-height:34px;border:1px dashed #2563eb;border-radius:9px;background:#eff6ff;color:#1e40af;font-size:12.5px;font-weight:800;cursor:pointer;padding:5px 8px}
+.banner-cal small{display:block;font-size:10px;font-weight:600;color:#3b82f6}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
 .cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
@@ -276,6 +278,7 @@ footer{font-size:10px;padding:10px}
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
 <div id="pendentes" class="pendentes" hidden></div>
+<button id="bannerCal" class="banner-cal" type="button" hidden></button>
 <div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasou? Escolha a etapa que está lendo — a data não muda.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
@@ -318,7 +321,7 @@ footer{font-size:10px;padding:10px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.2</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -348,7 +351,7 @@ footer{font-size:10px;padding:10px}
 
 <!-- Ver a foto do calendário em tela cheia -->
 <div id="zoomFundo" class="modal-fundo" hidden><div class="modal">
-<div class="modal-top"><button id="zoomVoltar" class="voltar" type="button">‹ Voltar</button><h3>🖼️ Calendário</h3><div class="zoom-btns"><button id="zoomMenos" type="button" aria-label="Diminuir">−</button><button id="zoomMais" type="button" aria-label="Aumentar">+</button></div></div>
+<div class="modal-top"><button id="zoomVoltar" class="voltar" type="button">‹ Voltar</button><h3>🖼️ Calendário</h3><div class="zoom-btns"><button id="zoomMenos" type="button" aria-label="Diminuir">−</button><button id="zoomMais" type="button" aria-label="Aumentar">+</button><button id="zoomComp" type="button" aria-label="Compartilhar">📤</button></div></div>
 <div id="zoomArea" class="zoom-area"><img id="zoomImg" alt="Foto do calendário"></div>
 </div></div>
 
@@ -388,6 +391,7 @@ footer{font-size:10px;padding:10px}
 <button id="calCompTabela" class="action sec" type="button">📤 Enviar o ano</button>
 <button id="calCompFoto" class="action sec full" type="button">🖼️ Enviar foto original</button>
 <button id="feriasBtn" class="action sec full" type="button">🏖️ Minhas férias / folgas</button>
+<button id="calApagar" class="action sec full" type="button" style="background:#fef2f2;color:#b91c1c">🗑️ Apagar calendário do ano</button>
 <button id="calFechar" class="action sec full" type="button">Fechar</button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
@@ -426,6 +430,8 @@ const CAL_PADRAO={
 let cal={};
 Object.entries(CAL_PADRAO).forEach(([m,dias])=>cal[m]=dias.map(d=>m+"-"+p2(d)));
 try{Object.assign(cal,JSON.parse(localStorage.getItem(CALKEY)||"{}"))}catch(e){}
+const CALDELKEY=KEY+"_calendario_apagado";let calApagados=[];try{calApagados=JSON.parse(localStorage.getItem(CALDELKEY)||"[]")}catch(e){}
+calApagados.forEach(m=>delete cal[m]);
 function salvarCal(){
   const mud={};Object.keys(cal).forEach(m=>{const pad=CAL_PADRAO[m]?CAL_PADRAO[m].map(d=>m+"-"+p2(d)):null;if(!pad||JSON.stringify(pad)!==JSON.stringify(cal[m]))mud[m]=cal[m]});
   try{localStorage.setItem(CALKEY,JSON.stringify(mud))}catch(e){}
@@ -839,7 +845,7 @@ function render(){atualizarNomes();
     $("lista").innerHTML=cidadesDaLista.map(k=>{const g=rs.filter(r=>normLoc(r.localidade)===k);return `<div class="grupo-cid">📍 ${esc(nomeCidade(k,m))} <span>${g.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras · ${g.length} livro(s)</span></div>`+g.map(itemHtml).join("")}).join("");
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
-  pintarEtapas();atualizarChip();atualizarPendentes();
+  pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
@@ -996,8 +1002,22 @@ $("edSalvar").onclick=()=>{
 
 // ---------- Janela do calendário ----------
 let calVer=hoje().slice(0,7);
+// ---------- 📅 Faixa "Lançar calendário do ano" (de novembro até lançar) ----------
+function anoParaLancar(){
+  const h=hoje(),ano=+h.slice(0,4),mesH=+h.slice(5,7),alvo=mesH>=11?ano+1:ano;
+  for(let i=1;i<=12;i++){const m=alvo+"-"+p2(i);if(!cal[m]||ehProv(m))return alvo}
+  return 0;
+}
+function atualizarBannerCal(){
+  const b=$("bannerCal");if(!b)return;const a=anoParaLancar();
+  // de janeiro a outubro só aparece se o ano atual ainda estiver provisório
+  b.hidden=!a;if(!a)return;
+  b.innerHTML=`📅 Lançar calendário de ${a}<small>toque e escolha a foto do calendário que a empresa mandou</small>`;
+  b.onclick=()=>{abrirCal();calVer=a+"-01";desenharCal();setTimeout(()=>$("calFotoArq").click(),50)};
+}
 function abrirCal(){calEditando=false;calBuscaDia="";$("calBusca").value="";$("calBuscaRes").hidden=true;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
 function desenharCal(){
+  if($("calApagar"))$("calApagar").textContent="🗑️ Apagar calendário de "+calVer.slice(0,4);
   const pv=ehProv(calVer);
   $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
   $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);$("calGrid").classList.toggle("editando",calEditando);
@@ -1233,7 +1253,9 @@ $("arquivoImportar").onchange=e=>{
   const file=e.target.files&&e.target.files[0];if(!file)return;
   const rd=new FileReader();rd.onload=()=>{
     try{
-      const dados=JSON.parse(rd.result);if(!Array.isArray(dados))throw 0;
+      const dados=JSON.parse(rd.result);
+      if(dados&&!Array.isArray(dados)&&dados.tipo==="backup-completo-controle-leituras"){importarBackupCompleto(dados);e.target.value="";return}
+      if(!Array.isArray(dados))throw 0;
       const val=dados.filter(r=>r&&r.data&&Number(r.etapa)>=1&&Number(r.etapa)<=18&&r.livro&&Number(r.qtd)>0).map(r=>({...r,id:r.id||Date.now()+Math.random(),etapa:Number(r.etapa),qtd:Number(r.qtd),localidade:r.localidade||""}));
       if(!val.length){alert("O arquivo não contém registros válidos.");return}
       const ex=new Set(registros.map(r=>String(r.id)));let n=0;val.forEach(r=>{if(!ex.has(String(r.id))){registros.push(r);n++}});
@@ -1242,7 +1264,37 @@ $("arquivoImportar").onchange=e=>{
     e.target.value="";
   };rd.readAsText(file);
 };
-$("backup").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(registros,null,2)],{type:"application/json;charset=utf-8"}));a.download="backup-controle-leituras.json";a.click()};
+// 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
+$("backup").onclick=()=>{
+  let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto};
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
+  a.download="backup-controle-leituras-"+hoje()+".json";a.click();
+};
+function importarBackupCompleto(d){
+  const soma=(lista,novos)=>{const ex=new Set(lista.map(x=>String(x.id)));let n=0;(novos||[]).forEach(x=>{if(x&&!ex.has(String(x.id))){lista.push(x);n++}});return n};
+  const nR=soma(registros,(d.registros||[]).filter(r=>r&&r.data&&r.etapa&&r.qtd>0));
+  const nI=soma(impedimentos,d.impedimentos),nF=soma(ferias,d.ferias);
+  let nC=0;Object.entries(d.calendario||{}).forEach(([m,v])=>{const oficialNoBackup=!(d.provisorios||[]).includes(m);if(Array.isArray(v)&&(!cal[m]||(prov.has(m)&&oficialNoBackup))){if(oficialNoBackup){prov.delete(m);editados.delete(m)}cal[m]=v;nC++;calApagados=calApagados.filter(x=>x!==m);try{localStorage.setItem(CALDELKEY,JSON.stringify(calApagados))}catch(e){};if((d.provisorios||[]).includes(m))prov.add(m)}});
+  Object.entries(d.prontuarios||{}).forEach(([k,v])=>{if(!prontPorCidade[k])prontPorCidade[k]=v});
+  try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
+  localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
+  try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
+  render();
+  alert("✅ Backup importado:\n\n📚 "+nR+" livro(s)\n⛔ "+nI+" lançamento(s) de não lidos\n🏖️ "+nF+" férias/folga(s)\n📅 "+nC+" mês(es) de calendário\n\nO que já existia no celular não foi apagado nem repetido.");
+}
+// 🗑️ Apagar o calendário de um ano que já passou (as leituras continuam)
+$("calApagar").onclick=()=>{
+  const ano=calVer.slice(0,4),meses=Object.keys(cal).filter(m=>m.startsWith(ano));
+  if(!meses.length)return alert("Não há calendário de "+ano+".");
+  if(+ano>=+hoje().slice(0,4))return alert("Só dá pra apagar o calendário de anos que já passaram.\n"+ano+" ainda está em uso.");
+  if(!confirm("Apagar o calendário de "+ano+"?\n\nAs leituras lançadas NÃO serão apagadas, só as datas das etapas.\n\nDica: faça o 💾 Backup antes."))return;
+  if(!confirm("Tem certeza? Isso não dá pra desfazer (só importando um backup)."))return;
+  meses.forEach(m=>{delete cal[m];prov.delete(m);editados.delete(m);if(!calApagados.includes(m))calApagados.push(m)});
+  try{localStorage.setItem(CALDELKEY,JSON.stringify(calApagados))}catch(e){}
+  salvarCal();salvarProv();desenharCal();render();alert("🗑️ Calendário de "+ano+" apagado.");
+};
+$("zoomComp").onclick=()=>{const f=fotoAtual();if(f)compartilharImagem(f,"calendario-leitura.jpg","Calendário de Leitura")};
 $("lixeira").onclick=()=>{
   const m=mes(),rs=registros.filter(r=>r.data.startsWith(m));
   if(!rs.length){alert("A lixeira não tem registros deste mês.");return}
@@ -1269,7 +1321,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.0";
+const VERSAO_APP="6.2";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
