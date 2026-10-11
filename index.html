@@ -49,18 +49,27 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .livro-row.part .part-chk{background:#e5e7eb;border-color:#5f6b7a}
 .hint{font-size:11px;color:#6b7280}
 .save-row{display:flex;align-items:center;gap:10px;margin-top:6px}.save-row>div{flex:1}
-.save-all{width:54px;height:46px;flex:none;border:0;border-radius:11px;background:#5f6b7a;color:#fff;font-size:24px;padding:0}
+.save-all{width:54px;height:46px;flex:none;border:0;border-radius:11px;background:#16a34a;color:#fff;font-size:28px;font-weight:900;padding:0;box-shadow:0 2px 6px #16a34a55}.save-all:active{background:#15803d}
 
 /* Lista */
 .lista-head{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
-.lista-head strong{font-size:16px}.lista-head small{display:block;color:#6b7280;font-size:13px;margin-top:3px;font-weight:700}
+.lista-head strong{font-size:14px}.lista-head small{display:block;color:#6b7280;font-size:12px;margin-top:2px;font-weight:700}.pill{font-size:12px!important;padding:5px 10px!important}
 .pill{flex:none;background:#5f6b7a;color:#fff;border-radius:999px;padding:7px 12px;font-size:14px;font-weight:800}
 .seta{flex:none;color:#4b5563;font-size:14px}
 #lista{margin-top:8px}
 .item{border-top:1px solid #d1d5db;padding:9px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px}.item:first-child{border-top:0}
 .item-btns{display:flex;align-items:center;gap:2px;flex:none}.item-btns button{border:0;background:transparent;font-size:17px;padding:4px}
-.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:11px}
-.ic{height:46px;border:0;border-radius:11px;background:#e5e7eb;font-size:22px;padding:0;cursor:pointer}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.ic{height:36px;border:0;border-radius:9px;background:#e5e7eb;font-size:17px;padding:0;cursor:pointer}
+.troca-etapa{display:flex;align-items:center;gap:6px}.troca-etapa strong{text-align:center}
+.etapa-escolha{position:relative;display:flex;align-items:center;gap:4px;height:34px;padding:0 10px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;cursor:pointer}
+.etapa-escolha .seta-esc{font-size:12px;color:#6b7280}
+.etapa-escolha select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;cursor:pointer}
+.troca-dica{text-align:right;line-height:1.2}
+.troca-etapa button{width:36px;height:34px;border:0;border-radius:9px;background:#e5e7eb;color:#374151;font-size:20px;font-weight:800;padding:0;cursor:pointer}
+.troca-etapa button:disabled{opacity:.35}
+.troca-dica{font-size:11px;color:#6b7280;font-weight:700}
+.etapas-dica{grid-column:1/-1;font-size:11px;color:#4b5563;font-weight:700;margin-bottom:2px}
 .ic.escuro{background:#4b5563}.ic.trash{background:#f5e7e7}
 .action{height:42px;border:0;border-radius:10px;background:#4b5563;color:#fff;font-weight:bold;font-size:14px;cursor:pointer}.action.sec{background:#e5e7eb;color:#4b5563}
 
@@ -168,7 +177,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
-<div id="etapas" class="etapas fechado"></div>
+<div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasado ou adiantado? Escolha a etapa que você está lendo — a data continua a mesma.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
 <div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
@@ -178,14 +187,14 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 </section>
 
 <section class="card">
-<div class="livro-title"><strong id="titulo">ETAPA 01</strong></div>
+<div class="livro-title"><div class="troca-etapa"><button id="etapaMenos" type="button" aria-label="Etapa anterior">‹</button><label class="etapa-escolha"><strong id="titulo">ETAPA 01</strong><span class="seta-esc">▾</span><select id="etapaSelect" aria-label="Escolher etapa"></select></label><button id="etapaMais" type="button" aria-label="Próxima etapa">›</button></div><span class="troca-dica">atrasou? toque<br>no nome ou ‹</span></div>
 <div class="label">LOCALIDADE</div>
 <input id="localidade" type="text" placeholder="Digite a localidade">
 <div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div></div>
 <div id="livroRows"></div>
 <div class="save-row">
 <div class="hint">Livro já lançado antes? A quantidade aparece sozinha (em azul) — dá pra corrigir. Particionado: marque PART.</div>
-<button id="saveAll" class="save-all" type="button" title="Salvar tudo" aria-label="Salvar tudo">💾</button>
+<button id="saveAll" class="save-all" type="button" title="Salvar leitura" aria-label="Salvar leitura">✔</button>
 </div>
 </section>
 
@@ -204,7 +213,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 2.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -385,15 +394,24 @@ function pintarEtapas(){
     b.classList.toggle("ativa",i+1===etapa);b.classList.toggle("hoje",d===h);
     const c=corDoDia(d);b.classList.toggle("sab",c==="sab");b.classList.toggle("fer",c==="fer");b.title=textoDoDia(d).slice(3);
   });
+  montarSelectEtapa();
 }
 // porData=true: escolheu a etapa na mão → a data vai para o dia dessa etapa no calendário
 function sel(n,porData){
   etapa=n;
   if(porData){const d=diaDaEtapa(($("data").value||hoje()).slice(0,7),n);if(d){$("data").value=d;mesVer=d.slice(0,7)}}
-  $("titulo").textContent="ETAPA "+p2(n);$("etapaLista").textContent=p2(n);$("etapaAtual").textContent=p2(n);
+  $("titulo").textContent="ETAPA "+p2(n);$("etapaSelect").value=n;$("etapaMenos").disabled=n<=1;$("etapaMais").disabled=n>=18;$("etapaLista").textContent=p2(n);$("etapaAtual").textContent=p2(n);
   abrirEtapas(false);render();
 }
 function abrirEtapas(abrir){$("etapas").classList.toggle("fechado",!abrir);$("etapaSeta").textContent=abrir?"▴":"▾"}
+// Lista de etapas com a data de cada uma no calendário do mês
+function montarSelectEtapa(){
+  const m=($("data").value||hoje()).slice(0,7),sl=$("etapaSelect");sl.innerHTML="";
+  for(let i=1;i<=18;i++){const d=diaDaEtapa(m,i),o=document.createElement("option");o.value=i;o.textContent="Etapa "+p2(i)+(d?" — "+d.slice(8)+"/"+d.slice(5,7):"");sl.appendChild(o)}
+  sl.value=etapa;
+}
+$("etapaSelect").onchange=e=>sel(+e.target.value,false);
+$("etapaMenos").onclick=()=>{if(etapa>1)sel(etapa-1,false)};$("etapaMais").onclick=()=>{if(etapa<18)sel(etapa+1,false)};
 $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
 // Trocou a data → puxa a etapa do calendário
 $("data").onchange=()=>{const d=$("data").value;if(!d)return;mesVer=d.slice(0,7);const e=etapaDoDia(d);if(e)sel(e,false);else render()};
