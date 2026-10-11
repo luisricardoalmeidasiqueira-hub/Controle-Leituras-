@@ -81,6 +81,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .cal-item b{font-size:13px;color:#4b5563;text-align:right}.cal-item input{height:38px;font-size:14px;padding:0 6px}
 .cal-item.hoje input{border:2px solid #2563eb}
 .cal-grid.prov input{background:#fef9c3;border-color:#facc15}
+.cal-grid>div,.cal-item input{min-width:0}.cal-item input{width:100%;-webkit-appearance:none;appearance:none}
 .cal-item small{grid-column:2;font-size:10px;font-weight:800;margin-top:-2px}
 .cal-grid .cal-item.sab input{background:#fee2e2;border-color:#f87171;color:#991b1b;font-weight:700}.cal-item.sab small{color:#b91c1c}
 .cal-grid .cal-item.fer input{background:#ffedd5;border-color:#fb923c;color:#9a3412;font-weight:700}.cal-item.fer small{color:#c2410c}
@@ -149,7 +150,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 1.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 1.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -178,8 +179,9 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
 <div class="cal-btns">
 <button id="calFotoBtn" class="action full" type="button" style="background:#2563eb">📷 Ler foto do calendário</button>
-<button id="calCompTabela" class="action sec" type="button">📤 Enviar tabela</button>
-<button id="calCompFoto" class="action sec" type="button">🖼️ Enviar foto</button>
+<button id="calCompMes" class="action" type="button">📤 Enviar este mês</button>
+<button id="calCompTabela" class="action sec" type="button">📤 Enviar o ano</button>
+<button id="calCompFoto" class="action sec full" type="button">🖼️ Enviar foto original</button>
 <button id="calFechar" class="action sec full" type="button">Fechar</button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
@@ -498,6 +500,33 @@ async function compartilharArquivo(blob,nome,titulo){
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:titulo});return}}catch(e){if(e&&e.name==="AbortError")return}
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nome;a.click();
 }
+// Monta uma imagem só do mês que está aberto (18 etapas, dia da semana e cores)
+$("calCompMes").onclick=()=>{
+  const m=calVer,lista=cal[m];
+  if(!lista||!lista.some(Boolean))return alert("Não há calendário para "+nomeMes(m)+".");
+  const pv=ehProv(m),W=440,rh=34,top=pv?92:74,H=top+rh*19+20;
+  const cv=document.createElement("canvas");cv.width=W*2;cv.height=H*2;const g=cv.getContext("2d");g.scale(2,2);
+  g.fillStyle="#fff";g.fillRect(0,0,W,H);
+  const titulo=nomeMes(m).replace(/^./,c=>c.toUpperCase());
+  g.fillStyle="#1f2937";g.font="bold 20px Arial";g.fillText("Calendário de Leitura",12,30);
+  g.font="bold 16px Arial";g.fillStyle="#4b5563";g.fillText(titulo,12,54);
+  if(pv){g.font="bold 12px Arial";g.fillStyle="#a16207";g.fillText("PROVISÓRIO — pode mudar quando sair o oficial",12,76)}
+  const cols=[12,92,172,262];g.fillStyle="#4b5563";g.fillRect(10,top,W-20,rh);
+  g.fillStyle="#fff";g.font="bold 13px Arial";g.textBaseline="middle";
+  ["Etapa","Data","Dia","Obs."].forEach((t,i)=>g.fillText(t,cols[i]+6,top+rh/2));
+  const sem=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
+  lista.forEach((d,i)=>{
+    const y=top+rh*(i+1),c=corDoDia(d);
+    g.fillStyle=c==="sab"?"#fee2e2":c==="fer"?"#ffedd5":pv?"#fef9c3":i%2?"#f3f4f6":"#fff";g.fillRect(10,y,W-20,rh);
+    g.fillStyle=c==="sab"?"#991b1b":c==="fer"?"#9a3412":"#1f2937";
+    g.font="bold 13px Arial";g.fillText(p2(i+1),cols[0]+12,y+rh/2);
+    if(d){const [a,mo,di]=d.split("-").map(Number);g.fillText(d.slice(8)+"/"+d.slice(5,7)+"/"+d.slice(2,4),cols[1]+6,y+rh/2);
+      g.font="13px Arial";g.fillText(sem[new Date(a,mo-1,di).getDay()],cols[2]+6,y+rh/2);g.fillText(nomeFeriado(d),cols[3]+6,y+rh/2)}
+    else g.fillText("—",cols[1]+6,y+rh/2);
+  });
+  g.strokeStyle="#d1d5db";g.strokeRect(10,top,W-20,rh*19);
+  cv.toBlob(b=>compartilharArquivo(b,"calendario-leitura-"+m+".png","Calendário de Leitura "+titulo),"image/png");
+};
 // Monta uma imagem com a tabela do ano inteiro (18 etapas x 12 meses)
 $("calCompTabela").onclick=()=>{
   const ano=calVer.slice(0,4),meses=[];for(let i=1;i<=12;i++)if(cal[ano+"-"+p2(i)])meses.push(ano+"-"+p2(i));
