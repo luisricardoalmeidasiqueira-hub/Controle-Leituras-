@@ -213,7 +213,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.1</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.2</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -304,6 +304,8 @@ function salvarCal(){
   try{localStorage.setItem(CALKEY,JSON.stringify(mud))}catch(e){}
 }
 function etapaDoDia(d){for(const m in cal){const i=cal[m].indexOf(d);if(i>-1)return i+1}return 0}
+// Dia sem leitura (domingo, feriado): qual é a próxima etapa do calendário?
+function proximaEtapa(d){let melhor=null;for(const m in cal)cal[m].forEach((x,i)=>{if(x&&x>d&&(!melhor||x<melhor.dia))melhor={dia:x,etapa:i+1}});return melhor}
 
 // ---------- Calendário provisório (calculado pelo app até chegar o oficial) ----------
 const PROVKEY=KEY+"_calendario_provisorio";
@@ -414,7 +416,14 @@ $("etapaSelect").onchange=e=>sel(+e.target.value,false);
 $("etapaMenos").onclick=()=>{if(etapa>1)sel(etapa-1,false)};$("etapaMais").onclick=()=>{if(etapa<18)sel(etapa+1,false)};
 $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
 // Trocou a data → puxa a etapa do calendário
-$("data").onchange=()=>{const d=$("data").value;if(!d)return;mesVer=d.slice(0,7);const e=etapaDoDia(d);if(e)sel(e,false);else render()};
+function etapaAutomatica(d){const e=etapaDoDia(d);if(e)return e;const pr=proximaEtapa(d);return pr&&pr.dia.slice(0,7)===d.slice(0,7)?pr.etapa:0}
+let dataManual=false;
+$("data").onchange=()=>{const d=$("data").value;if(!d)return;dataManual=d!==hoje();mesVer=d.slice(0,7);const e=etapaAutomatica(d);if(e)sel(e,false);else render()};
+// Virou o dia com o app aberto: quando você voltar pro app, ele já passa pra data de hoje e a etapa do dia
+function conferirVirada(){if(dataManual||$("data").value===hoje())return;$("data").value=hoje();mesVer=hoje().slice(0,7);const e=etapaAutomatica(hoje());if(e)sel(e,false);else render()}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirVirada()});
+window.addEventListener("focus",conferirVirada);
+setInterval(conferirVirada,60000);
 
 // ---------- Barrinhas ----------
 let contLinha=0;
@@ -544,6 +553,16 @@ function atualizarChip(){
   const pv=e&&etapaDoDiaProv(h),quando=h===hoje()?"Hoje":h.slice(8)+"/"+h.slice(5,7);
   // A etapa já aparece no botão ao lado: este aviso só aparece quando o dia tem algo diferente
   const info=$("calTexto"),cor=e?corDoDia(h):"";let txt="";
+  const [da,dm,dd]=h.split("-").map(Number),dsem=new Date(da,dm-1,dd).getDay();
+  $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][dsem]+"</em>";
+  if(!e&&cal[h.slice(0,7)]){
+    // Domingo, feriado ou dia sem etapa: nada de atraso, só mostra a próxima leitura
+    const f=nomeFeriado(h),pr=proximaEtapa(h);
+    $("cicloBadge").hidden=true;$("dataTxt").parentNode.classList.remove("atrasado");
+    txt="⚪ "+(f||["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"][dsem])+" — sem leitura"+(pr?" · próxima: Etapa "+p2(pr.etapa)+" em "+pr.dia.slice(8)+"/"+pr.dia.slice(5,7):"");
+    info.hidden=false;info.textContent=txt;info.className="cal-info";
+    return;
+  }
   const diaDaMinha=diaDaEtapa(h.slice(0,7),etapa),ciclo=cicloReal(h,etapa),fora=foraDoLimite(ciclo);
   const bd=$("cicloBadge");bd.hidden=ciclo==null;bd.textContent=ciclo+"d";bd.title="Ciclo de "+ciclo+" dias";bd.className="ciclo-badge"+(fora?" fora":muitoCedo(ciclo)?" cedo":"");
   const txtCiclo=ciclo==null?"":fora?" · 🔴 "+ciclo+" dias, passou do limite de "+CICLO_MAX:muitoCedo(ciclo)?" · "+ciclo+" dias (abaixo de "+CICLO_MIN+")":" · ciclo de "+ciclo+" dias";
@@ -564,9 +583,7 @@ function atualizarChip(){
     if(am)txt=(txt?txt+" · ":"")+txtAntes.slice(3);
     info.hidden=!txt;info.textContent=txt;info.className="cal-info"+(fora&&e===etapa?" fora":am?" atraso":cor?" "+cor:pv?" prov":"");
   }
-  // Data escrita curtinha (o campo do iPhone cortava: "13 de out. de")
-  const [da,dm,dd]=h.split("-").map(Number);
-  $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][new Date(da,dm-1,dd).getDay()]+"</em>";
+
 }
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
@@ -855,7 +872,7 @@ $("atualizarApp").onclick=async()=>{
 $("data").value=hoje();
 iniciarLinhas();
 completarProvisorio();
-const eHoje=etapaDoDia(hoje());
+const eHoje=etapaAutomatica(hoje());
 sel(eHoje||1,false);
 </script>
 </body></html>
