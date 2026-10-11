@@ -152,6 +152,14 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .pend-opcoes small{display:block;font-size:10px;font-weight:600;opacity:.85}
 .op-agora{background:#2563eb;color:#fff}.pendentes button.cancelar-esq{font-size:12px;font-weight:800;text-decoration:underline;margin-left:4px}.op-esqueci{background:#16a34a;color:#fff}
 .pendentes button.fechar-pend{margin-left:auto;border:0;background:transparent;color:#92400e;font-size:15px;padding:0 4px;cursor:pointer}
+#feriasFundo{z-index:25}
+.cal-info.ferias{background:#ede9fe;color:#5b21b6}
+#calGrid .cal-dia.fer-dia{background:#ede9fe;border-color:#a78bfa;color:#5b21b6}.cal-dia i.fer-txt{color:#6d28d9}
+.fer-data{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;width:100%;font-size:15px;padding:0 8px;text-align:left}
+#feriasFundo .ed-grid>div{min-width:0;overflow:hidden}
+.fer-rapido{display:flex;flex-wrap:wrap;gap:6px}.fer-rapido button{border:1px solid #c4b5fd;background:#f5f3ff;color:#5b21b6;border-radius:8px;height:32px;padding:0 10px;font-weight:800;font-size:13px}
+.fer-item{display:flex;justify-content:space-between;align-items:center;border:1px solid #ddd6fe;background:#f5f3ff;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px;color:#4c1d95}
+.fer-item button{border:0;background:transparent;font-size:17px}
 .cal-info{margin-top:7px;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800;background:#f3f4f6;color:#4b5563}
 .etapa-toggle,.etapa-toggle span{white-space:nowrap}.etapa-toggle{padding:0 8px;font-size:14px;gap:4px}
 .ciclo-badge{font-size:11px;font-weight:800;border-radius:6px;padding:2px 4px;margin-right:4px;background:#dcfce7;color:#166534}.ciclo-badge.cedo{background:#fef3c7;color:#92400e}.ciclo-badge.fora{background:#fee2e2;color:#b91c1c}
@@ -223,7 +231,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -255,6 +263,22 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div id="zoomArea" class="zoom-area"><img id="zoomImg" alt="Foto do calendário"></div>
 </div></div>
 
+<!-- Férias / folgas -->
+<div id="feriasFundo" class="modal-fundo" hidden><div class="modal">
+<div class="modal-top"><button id="feriasVoltar" class="voltar" type="button">‹ Voltar</button><h3>🏖️ Férias e folgas</h3></div>
+<div class="hint" style="margin-bottom:10px;font-size:12px">Nos dias marcados aqui o app não cobra lançamento: não aparece pendente nem atraso, e o calendário mostra 🏖️.</div>
+<div class="ed-grid">
+<div><div class="label">COMEÇA EM</div><input id="ferIni" class="fer-data" type="date"></div>
+<div><div class="label">TERMINA EM</div><input id="ferFimData" class="fer-data" type="date"></div>
+<div class="full"><div class="label">OU QUANTOS DIAS</div><input id="ferDias" type="number" inputmode="numeric" min="1" placeholder="Ex.: 12"></div>
+<div class="full fer-rapido"><button type="button" data-d="10">10 dias</button><button type="button" data-d="12">12 dias</button><button type="button" data-d="15">15 dias</button><button type="button" data-d="18">18 dias</button><button type="button" data-d="20">20 dias</button><button type="button" data-d="30">30 dias</button></div>
+<div class="full"><div class="label">TIPO</div><select id="ferTipo"><option>Férias</option><option>Folga</option><option>Atestado</option><option>Outro</option></select></div>
+</div>
+<div id="ferFim" class="hint" style="margin-top:8px;font-weight:800"></div>
+<button id="ferAdd" class="action" type="button" style="width:100%;margin-top:10px">➕ Adicionar</button>
+<div id="ferLista" style="margin-top:12px"></div>
+</div></div>
+
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
@@ -262,7 +286,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span>❓ Lida atrasada no mês passado</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
+<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Férias / folga</span><span>❓ Lida atrasada no mês passado</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
 <button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
 <div id="calGrid" class="cal-grid"></div>
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
@@ -271,6 +295,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="calCompMes" class="action" type="button">📤 Enviar este mês</button>
 <button id="calCompTabela" class="action sec" type="button">📤 Enviar o ano</button>
 <button id="calCompFoto" class="action sec full" type="button">🖼️ Enviar foto original</button>
+<button id="feriasBtn" class="action sec full" type="button">🏖️ Minhas férias / folgas</button>
 <button id="calFechar" class="action sec full" type="button">Fechar</button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
@@ -313,6 +338,12 @@ function salvarCal(){
   const mud={};Object.keys(cal).forEach(m=>{const pad=CAL_PADRAO[m]?CAL_PADRAO[m].map(d=>m+"-"+p2(d)):null;if(!pad||JSON.stringify(pad)!==JSON.stringify(cal[m]))mud[m]=cal[m]});
   try{localStorage.setItem(CALKEY,JSON.stringify(mud))}catch(e){}
 }
+// ---------- Férias / folga: períodos em que você não lança ----------
+const FERIASKEY=KEY+"_ferias";
+let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
+function salvarFerias(){try{localStorage.setItem(FERIASKEY,JSON.stringify(ferias))}catch(e){}}
+function emFerias(d){return d?ferias.find(f=>d>=f.ini&&d<=f.fim):null}
+function somaDias(iso,n){const [a,m,d]=iso.split("-").map(Number),x=new Date(a,m-1,d+n);return x.getFullYear()+"-"+p2(x.getMonth()+1)+"-"+p2(x.getDate())}
 function etapaDoDia(d){for(const m in cal){const i=cal[m].indexOf(d);if(i>-1)return i+1}return 0}
 // Dia sem leitura (domingo, feriado): qual é a próxima etapa do calendário?
 function proximaEtapa(d){let melhor=null;for(const m in cal)cal[m].forEach((x,i)=>{if(x&&x>d&&(!melhor||x<melhor.dia))melhor={dia:x,etapa:i+1}});return melhor}
@@ -571,6 +602,13 @@ function atualizarChip(){
   const info=$("calTexto"),cor=e?corDoDia(h):"";let txt="";
   const [da,dm,dd]=h.split("-").map(Number),dsem=new Date(da,dm-1,dd).getDay();
   $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][dsem]+"</em>";
+  const fe=emFerias(h);
+  if(fe){
+    $("cicloBadge").hidden=true;$("dataTxt").parentNode.classList.remove("atrasado");
+    info.hidden=false;info.className="cal-info ferias";
+    info.textContent="🏖️ "+(fe.tipo||"Férias")+" — de "+fe.ini.slice(8)+"/"+fe.ini.slice(5,7)+" até "+fe.fim.slice(8)+"/"+fe.fim.slice(5,7)+". Bom descanso!";
+    return;
+  }
   if(!e&&cal[h.slice(0,7)]){
     // Domingo, feriado ou dia sem etapa: nada de atraso, só mostra a próxima leitura
     const f=nomeFeriado(h),pr=proximaEtapa(h);
@@ -616,6 +654,7 @@ function etapasPendentes(h){
   lista.forEach((dia,i)=>{
     const n=i+1;if(!dia||dia>=h||n===etapa)return;
     if(minEt?n<minEt:dia<limIso)return;
+    if(emFerias(dia))return;
     if(!doMes.some(r=>r.etapa===n))out.push({etapa:n,dia});
   });
   return out;
@@ -649,6 +688,27 @@ function atualizarPendentes(){
     };
   }
 }
+// ---------- Janela de férias ----------
+function fmtCurto(iso){return iso.slice(8)+"/"+iso.slice(5,7)+"/"+iso.slice(2,4)}
+function mostrarFimFerias(){const i=$("ferIni").value,n=+$("ferDias").value;$("ferFim").textContent=i&&n>0?"🏖️ "+n+" dias: de "+fmtCurto(i)+" até "+fmtCurto(somaDias(i,n-1)):""}
+// Mudou os dias → calcula o "termina em". Mudou o "termina em" → calcula os dias.
+function porDias(){const i=$("ferIni").value,n=+$("ferDias").value;if(i&&n>0)$("ferFimData").value=somaDias(i,n-1);mostrarFimFerias()}
+function porFim(){const i=$("ferIni").value,f=$("ferFimData").value;if(i&&f){if(f<i){alert("O fim não pode ser antes do começo.");$("ferFimData").value="";return}$("ferDias").value=diasEntre(f,i)+1}mostrarFimFerias()}
+function desenharFerias(){
+  const l=[...ferias].sort((a,b)=>a.ini.localeCompare(b.ini));
+  $("ferLista").innerHTML=l.length?'<div class="label">CADASTRADAS</div>'+l.map(f=>`<div class="fer-item"><span>🏖️ <b>${esc(f.tipo||"Férias")}</b> · ${fmtCurto(f.ini)} até ${fmtCurto(f.fim)} (${diasEntre(f.fim,f.ini)+1} dias)</span><button type="button" onclick="apagarFerias('${f.id}')" aria-label="Apagar">🗑️</button></div>`).join(""):'<div class="hint">Nenhuma férias cadastrada.</div>';
+}
+function apagarFerias(id){if(!confirm("Apagar este período?"))return;ferias=ferias.filter(f=>String(f.id)!==String(id));salvarFerias();desenharFerias();desenharCal();render()}
+$("feriasBtn").onclick=()=>{$("ferIni").value="";$("ferDias").value="";$("ferFimData").value="";mostrarFimFerias();desenharFerias();$("feriasFundo").hidden=false};
+$("feriasVoltar").onclick=()=>{$("feriasFundo").hidden=true;desenharCal();render()};
+$("ferIni").onchange=()=>{if($("ferDias").value)porDias();else porFim()};$("ferDias").oninput=porDias;$("ferFimData").onchange=porFim;
+document.querySelectorAll(".fer-rapido button").forEach(b=>b.onclick=()=>{$("ferDias").value=b.dataset.d;porDias()});
+$("ferAdd").onclick=()=>{
+  const i=$("ferIni").value,n=+$("ferDias").value;
+  if(!i)return alert("Escolha o dia que começa.");if(!(n>0))return alert("Escolha o dia que termina ou quantos dias.");
+  ferias.push({id:Date.now(),ini:i,fim:somaDias(i,n-1),tipo:$("ferTipo").value});salvarFerias();
+  $("ferIni").value="";$("ferDias").value="";$("ferFimData").value="";mostrarFimFerias();desenharFerias();render();
+};
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
 // ---------- Editar registro ----------
@@ -698,6 +758,7 @@ function desenharCal(){
       :cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
     // ❓ = no mês passado esta etapa foi lida atrasada (toque para ver)
     const marca=am?`<b class="interroga" onclick="alert('Etapa ${p2(i+1)} — mês passado:\\n\\n📅 No calendário: ${am.previsto?am.previsto.slice(8)+"/"+am.previsto.slice(5,7):"—"}\\n📖 Foi lida em: ${am.lido.slice(8)}/${am.lido.slice(5,7)}${am.previsto?" ("+diasEntre(am.lido,am.previsto)+" dia(s) depois)":""}\\n🔴 Ciclo: ${am.dias} dias (limite ${CICLO_MAX})')">❓</b>`:"";
+    if(emFerias(d)&&!real)return `<span class="cal-dia fer-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em><i class="fer-txt">🏖️ ${(emFerias(d).tipo||"férias").toLowerCase()}</i></span>`;
     return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em>${marca}${linha2}</span>`;
   };
   $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${d&&d===calBuscaDia?" busca":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
