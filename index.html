@@ -79,6 +79,12 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .cal-grid .cal-item.hoje .cal-dia{border:2px solid #2563eb}
 .btn-editar{width:100%;height:42px;border:0;border-radius:10px;background:#4b5563;color:#fff;font-weight:800;font-size:15px;margin-bottom:10px;cursor:pointer}
 .btn-editar.pronto{background:#16a34a}
+.cal-grid .cal-item.busca .cal-dia,.cal-grid .cal-item.busca input{border:3px solid #7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.consulta{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:6px}
+.consulta span{font-size:13px;font-weight:800;color:#374151}.consulta input{height:40px;font-size:15px;min-width:0}
+.consulta-res{border-radius:10px;padding:9px 11px;font-size:14px;font-weight:800;margin-bottom:10px;background:#ede9fe;color:#4c1d95}
+.consulta-res.nao{background:#f3f4f6;color:#4b5563}
+#imgFundo{z-index:30}#imgFundo img{width:100%;border-radius:10px;border:1px solid #d1d5db;-webkit-touch-callout:default}
 .ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
 .ed-grid select{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:#1f2937}
 .ed-chk{display:flex;align-items:center;gap:10px;height:43px;border:1px solid #c4c9d0;border-radius:10px;padding:0 12px;font-weight:800;font-size:14px;color:#4b5563}
@@ -161,7 +167,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 1.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 2.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -180,9 +186,18 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
 </div></div>
 
+<!-- Ver imagem (quando o compartilhar não abre) -->
+<div id="imgFundo" class="modal-fundo" hidden><div class="modal">
+<div class="modal-top"><button class="voltar" type="button" onclick="$('imgFundo').hidden=true">‹ Voltar</button><h3>🖼️ Imagem do calendário</h3></div>
+<div class="hint" style="margin-bottom:8px;font-size:13px"><b>Toque e segure na imagem</b> para salvar nas Fotos ou compartilhar no WhatsApp.</div>
+<img id="imgVer" alt="Calendário">
+</div></div>
+
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
+<div class="consulta"><span>🔎 Consultar dia:</span><input id="calBusca" type="date" aria-label="Consultar um dia"></div>
+<div id="calBuscaRes" class="consulta-res" hidden></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
 <div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span></div>
@@ -445,11 +460,12 @@ function render(){
   pintarEtapas();atualizarChip();
 }
 function atualizarChip(){
-  const h=hoje(),e=etapaDoDia(h),c=$("calChip");
-  const pv=e&&etapaDoDiaProv(h);
+  // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
+  const h=$("data").value||hoje(),e=etapaDoDia(h),c=$("calChip");
+  const pv=e&&etapaDoDiaProv(h),quando=h===hoje()?"Hoje":h.slice(8)+"/"+h.slice(5,7);
   c.classList.toggle("ok",!!e&&!pv);c.classList.toggle("prov",!!pv);
   const extra=e&&textoDoDia(h)?" · "+textoDoDia(h).slice(3):"";
-  $("calTexto").textContent=e?(pv?"🟡 Hoje: Etapa "+p2(e)+extra+" (provisório)":"📅 Hoje é dia da Etapa "+p2(e)+extra):"📅 Hoje não tem etapa no calendário";
+  $("calTexto").textContent=e?(pv?"🟡 "+quando+": Etapa "+p2(e)+extra+" (provisório)":"📅 "+quando+(h===hoje()?" é dia da":":")+" Etapa "+p2(e)+extra):"📅 "+quando+" não tem leitura no calendário";
 }
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
@@ -480,7 +496,7 @@ $("edSalvar").onclick=()=>{
 
 // ---------- Janela do calendário ----------
 let calVer=hoje().slice(0,7);
-function abrirCal(){calEditando=false;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
+function abrirCal(){calEditando=false;calBuscaDia="";$("calBusca").value="";$("calBuscaRes").hidden=true;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
 function desenharCal(){
   const pv=ehProv(calVer);
   $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
@@ -494,7 +510,7 @@ function desenharCal(){
     const [a,mo,di]=d.split("-").map(Number);
     return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em></span>`;
   };
-  $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
+  $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${d&&d===calBuscaDia?" busca":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
   $("calGrid").querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
     const m=calVer,i=+inp.dataset.i;
     if(!cal[m])cal[m]=Array(18).fill("");
@@ -508,6 +524,17 @@ function desenharCal(){
     const e=etapaDoDia($("data").value);if(e&&e!==etapa)sel(e,false);
   });
 }
+// Consultar um dia qualquer: mostra a etapa e leva o calendário até o mês
+let calBuscaDia="";
+$("calBusca").onchange=()=>{
+  const d=$("calBusca").value,r=$("calBuscaRes");calBuscaDia=d;
+  if(!d){r.hidden=true;desenharCal();return}
+  const [a,mo,di]=d.split("-").map(Number),dia=["domingo","segunda","terça","quarta","quinta","sexta","sábado"][new Date(a,mo-1,di).getDay()];
+  const e=etapaDoDia(d),t=textoDoDia(d),pv=ehProv(d.slice(0,7)),txt=d.slice(8)+"/"+d.slice(5,7)+"/"+a+" ("+dia+")";
+  r.className="consulta-res"+(e?"":" nao");r.hidden=false;
+  r.textContent=e?"✅ "+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":""):(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês");
+  calEditando=false;calVer=d.slice(0,7);desenharCal();
+};
 // Editar mês: liga/desliga as datas para corrigir
 let calEditando=false;
 $("calEditar").onclick=()=>{
@@ -523,10 +550,14 @@ $("calProx").onclick=()=>{calEditando=false;calVer=somaMes(calVer,1);desenharCal
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
 $("calFundo").onclick=e=>{if(e.target===$("calFundo"))$("calFundo").hidden=true};
 
-async function compartilharArquivo(blob,nome,titulo){
-  const f=new File([blob],nome,{type:blob.type});
-  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:titulo});return}}catch(e){if(e&&e.name==="AbortError")return}
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nome;a.click();
+function dataURLparaBlob(u){const [cab,b64]=u.split(","),tipo=cab.match(/:(.*?);/)[1],bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:tipo})}
+function mostrarImagem(url){$("imgVer").src=url;$("imgFundo").hidden=false}
+// O iPhone só deixa compartilhar se for no mesmo instante do toque: por isso a imagem é montada na hora, sem esperar
+function compartilharImagem(url,nome,titulo){
+  let f=null;try{f=new File([dataURLparaBlob(url)],nome,{type:url.slice(5,url.indexOf(";"))})}catch(e){}
+  if(f&&navigator.canShare&&navigator.canShare({files:[f]})){
+    navigator.share({files:[f],title:titulo}).catch(e=>{if(!e||e.name!=="AbortError")mostrarImagem(url)});
+  }else mostrarImagem(url);
 }
 // Monta uma imagem só do mês que está aberto (18 etapas, dia da semana e cores)
 $("calCompMes").onclick=()=>{
@@ -553,7 +584,7 @@ $("calCompMes").onclick=()=>{
     else g.fillText("—",cols[1]+6,y+rh/2);
   });
   g.strokeStyle="#d1d5db";g.strokeRect(10,top,W-20,rh*19);
-  cv.toBlob(b=>compartilharArquivo(b,"calendario-leitura-"+m+".png","Calendário de Leitura "+titulo),"image/png");
+  compartilharImagem(cv.toDataURL("image/png"),"calendario-leitura-"+m+".png","Calendário de Leitura "+titulo);
 };
 // Monta uma imagem com a tabela do ano inteiro (18 etapas x 12 meses)
 $("calCompTabela").onclick=()=>{
@@ -575,10 +606,14 @@ $("calCompTabela").onclick=()=>{
     meses.forEach((m,j)=>{const d=cal[m][i],c=corDoDia(d),fundo=c==="sab"?"#fee2e2":c==="fer"?"#ffedd5":ehProv(m)?"#fef9c3":"";if(fundo){g.fillStyle=fundo;g.fillRect(10+ew+cw*j,y,cw,rh)}g.fillStyle=c==="sab"?"#991b1b":c==="fer"?"#9a3412":"#1f2937";g.fillText(d?d.slice(8)+"/"+d.slice(5,7):"—",10+ew+cw*j+cw/2,y+rh/2)});
   }
   g.strokeStyle="#d1d5db";g.strokeRect(10,top,W-20,rh*19);
-  cv.toBlob(b=>compartilharArquivo(b,"calendario-leitura-"+ano+".png","Calendário de Leitura "+ano),"image/png");
+  compartilharImagem(cv.toDataURL("image/png"),"calendario-leitura-"+ano+".png","Calendário de Leitura "+ano);
 };
 // Foto do calendário (a que a empresa manda), guardada reduzida no celular
-function mostrarFoto(){let f=null;try{f=localStorage.getItem(FOTOKEY)}catch(e){}$("fotoPrev").hidden=!f;if(f)$("fotoPrev").src=f}
+// Foto que já vem junto com o app (arquivo calendario-2026.jpg ao lado do index.html no GitHub)
+let fotoPadrao="";
+fetch("calendario-2026.jpg").then(r=>r.ok?r.blob():null).then(b=>{if(!b)return;const rd=new FileReader();rd.onload=()=>{fotoPadrao=rd.result;mostrarFoto()};rd.readAsDataURL(b)}).catch(()=>{});
+function fotoAtual(){let f=null;try{f=localStorage.getItem(FOTOKEY)}catch(e){}return f||fotoPadrao}
+function mostrarFoto(){const f=fotoAtual();$("fotoPrev").hidden=!f;if(f)$("fotoPrev").src=f}
 $("calFotoBtn").onclick=()=>$("calFotoArq").click();
 $("calFotoArq").onchange=e=>{
   const file=e.target.files&&e.target.files[0];if(!file)return;
@@ -654,10 +689,10 @@ async function lerFotoCalendario(img){
     alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.");
   }finally{b.disabled=false;b.textContent=txt}
 }
-$("calCompFoto").onclick=async()=>{
-  let f=null;try{f=localStorage.getItem(FOTOKEY)}catch(e){}
-  if(!f)return alert("Nenhuma foto guardada. Toque em 📷 Guardar foto primeiro.");
-  const b=await (await fetch(f)).blob();compartilharArquivo(b,"calendario-leitura.jpg","Calendário de Leitura");
+$("calCompFoto").onclick=()=>{
+  const f=fotoAtual();
+  if(!f)return alert("Ainda não tem foto guardada.\nToque em 📷 Ler foto do calendário e escolha a foto da empresa: ela fica guardada aqui pra enviar depois.");
+  compartilharImagem(f,"calendario-leitura.jpg","Calendário de Leitura");
 };
 
 // ---------- Exportar, importar, backup, lixeira ----------
