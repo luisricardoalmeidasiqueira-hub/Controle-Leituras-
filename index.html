@@ -92,6 +92,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .consulta{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:6px}
 .consulta span{font-size:13px;font-weight:800;color:#374151}.consulta input{height:40px;font-size:15px;min-width:0}
 .consulta-res{border-radius:10px;padding:9px 11px;font-size:14px;font-weight:800;margin-bottom:10px;background:#ede9fe;color:#4c1d95}
+.consulta-res.fora-res{background:#fee2e2;color:#7f1d1d;font-size:13px;line-height:1.5}.volta-mes{display:block;width:100%;margin-top:8px;height:36px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:14px;text-transform:none}
+.cartao-atraso{position:fixed;left:12px;right:12px;bottom:16px;z-index:40;max-width:500px;margin:auto;background:#fff;border:2px solid #fca5a5;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px #0004;font-size:14px;color:#1f2937;line-height:1.6}
+.cartao-atraso>b{display:block;color:#b91c1c;margin-bottom:4px}.cartao-atraso button{display:block;width:100%;margin-top:8px;height:38px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:15px}
 .consulta-res.nao{background:#f3f4f6;color:#4b5563}
 #calGrid.cal-grid{grid-template-columns:repeat(3,1fr);gap:6px 6px}#calGrid.cal-grid.editando{grid-template-columns:1fr 1fr}
 #calGrid .cal-item{grid-template-columns:20px 1fr;gap:4px}.cal-item b{font-size:11px}
@@ -168,7 +171,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .cal-dia i{flex-basis:100%;font-style:normal;font-size:10px;font-weight:800;color:#15803d}.cal-dia i.fora{color:#dc2626}.cal-dia i.real{color:#2563eb}#calGrid .cal-dia i{white-space:nowrap;letter-spacing:-.2px}
 .date-wrap.atrasado{background:#fee2e2;box-shadow:inset 0 0 0 2px #f87171}.date-wrap.atrasado .data-txt{color:#b91c1c}
 .dt-atraso{color:#dc2626;font-weight:800}.dt-ok{color:#15803d;font-weight:700}
-#calGrid .cal-dia{position:relative}.interroga{position:absolute;top:-7px;right:-5px;font-size:13px;cursor:pointer;background:#fff;border-radius:50%;line-height:1;padding:1px}
+#calGrid .cal-dia{position:relative}.interroga{position:absolute;top:-10px;right:-8px;width:26px;height:26px;border-radius:50%;border:2px solid #fecaca;background:#fff;font-size:13px;line-height:1;padding:0;cursor:pointer;box-shadow:0 1px 3px #0002;display:flex;align-items:center;justify-content:center}
 .cal-info.atraso{background:#e0e7ff;color:#3730a3}.cal-info.sab{background:#fee2e2;color:#991b1b}.cal-info.fer{background:#ffedd5;color:#9a3412}.cal-info.prov{background:#fef9c3;color:#713f12}
 header{padding:14px 15px}header h1{font-size:19px}header p{font-size:12px}
 .cal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cal-btns .full{grid-column:1/-1}
@@ -231,7 +234,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 3.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -266,7 +269,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <!-- Férias / folgas -->
 <div id="feriasFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="feriasVoltar" class="voltar" type="button">‹ Voltar</button><h3>🏖️ Férias e folgas</h3></div>
-<div class="hint" style="margin-bottom:10px;font-size:12px">Nos dias marcados aqui o app não cobra lançamento: não aparece pendente nem atraso, e o calendário mostra 🏖️.</div>
+<div class="hint" style="margin-bottom:10px;font-size:12px">Nos dias marcados aqui o app não cobra lançamento: não aparece pendente nem atraso, e o calendário mostra 🏖️. Dá pra cadastrar <b>todas as férias do ano</b> de uma vez: adicione um período, depois o outro.</div>
 <div class="ed-grid">
 <div><div class="label">COMEÇA EM</div><input id="ferIni" class="fer-data" type="date"></div>
 <div><div class="label">TERMINA EM</div><input id="ferFimData" class="fer-data" type="date"></div>
@@ -278,6 +281,8 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="ferAdd" class="action" type="button" style="width:100%;margin-top:10px">➕ Adicionar</button>
 <div id="ferLista" style="margin-top:12px"></div>
 </div></div>
+
+<div id="cartaoAtraso" class="cartao-atraso" hidden></div>
 
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
@@ -696,7 +701,12 @@ function porDias(){const i=$("ferIni").value,n=+$("ferDias").value;if(i&&n>0)$("
 function porFim(){const i=$("ferIni").value,f=$("ferFimData").value;if(i&&f){if(f<i){alert("O fim não pode ser antes do começo.");$("ferFimData").value="";return}$("ferDias").value=diasEntre(f,i)+1}mostrarFimFerias()}
 function desenharFerias(){
   const l=[...ferias].sort((a,b)=>a.ini.localeCompare(b.ini));
-  $("ferLista").innerHTML=l.length?'<div class="label">CADASTRADAS</div>'+l.map(f=>`<div class="fer-item"><span>🏖️ <b>${esc(f.tipo||"Férias")}</b> · ${fmtCurto(f.ini)} até ${fmtCurto(f.fim)} (${diasEntre(f.fim,f.ini)+1} dias)</span><button type="button" onclick="apagarFerias('${f.id}')" aria-label="Apagar">🗑️</button></div>`).join(""):'<div class="hint">Nenhuma férias cadastrada.</div>';
+  if(!l.length){$("ferLista").innerHTML='<div class="hint">Nenhuma férias cadastrada.</div>';return}
+  const anos={};l.forEach(f=>{(anos[f.ini.slice(0,4)]=anos[f.ini.slice(0,4)]||[]).push(f)});
+  $("ferLista").innerHTML=Object.keys(anos).map(a=>{
+    const tot=anos[a].reduce((t,f)=>t+diasEntre(f.fim,f.ini)+1,0);
+    return `<div class="label" style="margin-top:8px">${a} — ${tot} dias no total</div>`+anos[a].map(f=>`<div class="fer-item"><span>🏖️ <b>${esc(f.tipo||"Férias")}</b> · ${fmtCurto(f.ini)} até ${fmtCurto(f.fim)} (${diasEntre(f.fim,f.ini)+1} dias)</span><button type="button" onclick="apagarFerias('${f.id}')" aria-label="Apagar">🗑️</button></div>`).join("");
+  }).join("");
 }
 function apagarFerias(id){if(!confirm("Apagar este período?"))return;ferias=ferias.filter(f=>String(f.id)!==String(id));salvarFerias();desenharFerias();desenharCal();render()}
 $("feriasBtn").onclick=()=>{$("ferIni").value="";$("ferDias").value="";$("ferFimData").value="";mostrarFimFerias();desenharFerias();$("feriasFundo").hidden=false};
@@ -757,7 +767,7 @@ function desenharCal(){
       ?`<i class="${foraDoLimite(cr)?"fora":"real"}">lida ${real.slice(8)}/${real.slice(5,7)}${cr!=null?" "+cr+"d":""}</i>`
       :cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
     // ❓ = no mês passado esta etapa foi lida atrasada (toque para ver)
-    const marca=am?`<b class="interroga" onclick="alert('Etapa ${p2(i+1)} — mês passado:\\n\\n📅 No calendário: ${am.previsto?am.previsto.slice(8)+"/"+am.previsto.slice(5,7):"—"}\\n📖 Foi lida em: ${am.lido.slice(8)}/${am.lido.slice(5,7)}${am.previsto?" ("+diasEntre(am.lido,am.previsto)+" dia(s) depois)":""}\\n🔴 Ciclo: ${am.dias} dias (limite ${CICLO_MAX})')">❓</b>`:"";
+    const marca=am?`<button type="button" class="interroga" onclick="verAtraso(${i+1})" aria-label="Ver atraso do mês passado">❓</button>`:"";
     if(emFerias(d)&&!real)return `<span class="cal-dia fer-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em><i class="fer-txt">🏖️ ${(emFerias(d).tipo||"férias").toLowerCase()}</i></span>`;
     return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em>${marca}${linha2}</span>`;
   };
@@ -777,6 +787,18 @@ function desenharCal(){
 }
 // Consultar um dia qualquer: mostra a etapa e leva o calendário até o mês
 let calBuscaDia="";
+// Tocou na ❓: vai pro mês passado com a etapa marcada e explica o que aconteceu
+function verAtraso(n){
+  // Mostra ali mesmo, num cartãozinho, sem sair do mês
+  const am=atrasoMesPassado(calVer,n);if(!am)return;
+  const ant=somaMes(calVer,-1),c=$("cartaoAtraso");
+  c.innerHTML=`<b>❓ Etapa ${p2(n)} — ${nomeMes(ant)}</b>
+  <div>📅 No calendário: <b>${am.previsto?am.previsto.slice(8)+"/"+am.previsto.slice(5,7):"—"}</b></div>
+  <div>📖 Foi lida em: <b>${am.lido.slice(8)}/${am.lido.slice(5,7)}</b>${am.previsto?" ("+diasEntre(am.lido,am.previsto)+" dia(s) depois)":""}</div>
+  <div>🔴 Ciclo: <b>${am.dias} dias</b> (limite ${CICLO_MAX})</div>
+  <button type="button" onclick="$('cartaoAtraso').hidden=true">Ok</button>`;
+  c.hidden=false;
+}
 $("calBusca").onchange=()=>{
   const d=$("calBusca").value,r=$("calBuscaRes");calBuscaDia=d;
   if(!d){r.hidden=true;desenharCal();return}
@@ -794,10 +816,10 @@ $("calEditar").onclick=()=>{
   if(ehProv(calVer)&&confirm("Este mês já está igual ao calendário oficial?\n\nOK = fica oficial (sai do amarelo)\nCancelar = continua provisório")){prov.delete(calVer);editados.delete(calVer);salvarProv()}
   desenharCal();render();
 };
-$("calVoltar").onclick=()=>{calEditando=false;$("calFundo").hidden=true};
+$("calVoltar").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;$("calFundo").hidden=true};
 $("calChip").onclick=abrirCal;
-$("calAnt").onclick=()=>{calEditando=false;calVer=somaMes(calVer,-1);desenharCal()};
-$("calProx").onclick=()=>{calEditando=false;calVer=somaMes(calVer,1);desenharCal()};
+$("calAnt").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,-1);desenharCal()};
+$("calProx").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,1);desenharCal()};
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
 $("calFundo").onclick=e=>{if(e.target===$("calFundo"))$("calFundo").hidden=true};
 
