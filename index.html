@@ -89,7 +89,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .btn-editar{width:100%;height:42px;border:0;border-radius:10px;background:#4b5563;color:#fff;font-weight:800;font-size:15px;margin-bottom:10px;cursor:pointer}
 .btn-editar.pronto{background:#16a34a}
 .cal-grid .cal-item.busca .cal-dia,.cal-grid .cal-item.busca input{border:3px solid #7c3aed;box-shadow:0 0 0 3px #ede9fe}
-.consulta{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:6px}
+.consulta{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;margin-bottom:6px}
+.consulta input{-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;box-sizing:border-box;text-align:left}
+.consulta input::-webkit-date-and-time-value{text-align:left}
 .consulta span{font-size:13px;font-weight:800;color:#374151}.consulta input{height:40px;font-size:15px;min-width:0}
 .consulta-res{border-radius:10px;padding:9px 11px;font-size:14px;font-weight:800;margin-bottom:10px;background:#ede9fe;color:#4c1d95}
 .consulta-res.fora-res{background:#fee2e2;color:#7f1d1d;font-size:13px;line-height:1.5}.volta-mes{display:block;width:100%;margin-top:8px;height:36px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:14px;text-transform:none}
@@ -234,7 +236,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 4.1</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -678,13 +680,12 @@ function atualizarPendentes(){
     box.innerHTML=`<span style="flex:1">📝 Lançando a Etapa ${p2(esqueci.etapa)} que você esqueceu, com a data ${esqueci.dia.slice(8)}/${esqueci.dia.slice(5,7)}. Depois de salvar, volta pra hoje.</span><button class="fechar-pend cancelar-esq" type="button">Cancelar</button>`;
     box.querySelector(".fechar-pend").onclick=sairDoEsqueci;return;
   }
-  const h=$("data").value||hoje(),pend=pendFechado===h?[]:etapasPendentes(h);
+  const h=$("data").value||hoje(),pend=etapasPendentes(h);
   box.hidden=!pend.length;if(!pend.length)return;
   const mostra=pend.slice(-6),esc=pend.find(p=>p.etapa===pendEscolha);
-  box.innerHTML="⏳ Pendente"+(pend.length>1?"s":"")+":"+mostra.map(p=>`<button class="pend${p.etapa===pendEscolha?" ativa":""}" type="button" data-e="${p.etapa}" title="Etapa ${p2(p.etapa)}, do dia ${p.dia.slice(8)}/${p.dia.slice(5,7)}">Et. ${p2(p.etapa)} <small>${p.dia.slice(8)}/${p.dia.slice(5,7)}</small></button>`).join("")+(pend.length>mostra.length?` <span>+${pend.length-mostra.length}</span>`:"")+`<button class="fechar-pend" type="button" title="Esconder hoje" aria-label="Esconder">✕</button>`
+  box.innerHTML="⏳ Pendente"+(pend.length>1?"s":"")+":"+mostra.map(p=>`<button class="pend${p.etapa===pendEscolha?" ativa":""}" type="button" data-e="${p.etapa}" title="Etapa ${p2(p.etapa)}, do dia ${p.dia.slice(8)}/${p.dia.slice(5,7)}">Et. ${p2(p.etapa)} <small>${p.dia.slice(8)}/${p.dia.slice(5,7)}</small></button>`).join("")+(pend.length>mostra.length?` <span>+${pend.length-mostra.length}</span>`:"")
     +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">📝 Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
-  box.querySelector(".fechar-pend").onclick=()=>{pendFechado=h;pendEscolha=0;atualizarPendentes()};
   if(esc){
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;sel(esc.etapa,false);irParaLivro()};
     box.querySelector(".op-esqueci").onclick=()=>{
