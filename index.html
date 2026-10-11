@@ -84,6 +84,21 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .consulta span{font-size:13px;font-weight:800;color:#374151}.consulta input{height:40px;font-size:15px;min-width:0}
 .consulta-res{border-radius:10px;padding:9px 11px;font-size:14px;font-weight:800;margin-bottom:10px;background:#ede9fe;color:#4c1d95}
 .consulta-res.nao{background:#f3f4f6;color:#4b5563}
+#calGrid.cal-grid{grid-template-columns:repeat(3,1fr);gap:6px 6px}#calGrid.cal-grid.editando{grid-template-columns:1fr 1fr}
+#calGrid .cal-item{grid-template-columns:20px 1fr;gap:4px}.cal-item b{font-size:11px}
+.cal-dia{height:32px;font-size:13px;padding:0 6px;border-radius:8px}.cal-dia em{font-size:11px;margin-left:4px}
+#calGrid .cal-item small{font-size:9px;line-height:1.1}
+.modal-top .voltar{height:34px;font-size:14px;padding:0 10px}.modal-top h3{font-size:15px}
+#provAviso.prov-aviso{font-size:11px;padding:6px 9px}.btn-editar{height:38px;font-size:14px}
+.cal-nav{grid-template-columns:40px 1fr 40px}.cal-nav button,.cal-nav div{height:38px;font-size:15px}
+.foto-dica{font-size:12px;font-weight:800;color:#2563eb;margin-top:10px;text-align:center}
+#fotoPrev{cursor:zoom-in}
+#zoomFundo{z-index:30;align-items:stretch;padding:0}
+#zoomFundo .modal{max-width:none;max-height:none;height:100%;border-radius:0;display:flex;flex-direction:column;padding:15px 0 0}
+#zoomFundo .modal-top{border-radius:0;margin:-15px 0 0}
+.zoom-area{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#111827}
+.zoom-area img{display:block;max-width:none}
+.zoom-btns{display:flex;gap:6px;margin-left:auto}.zoom-btns button{width:38px;height:34px;border:0;border-radius:9px;background:#e5e7eb;font-size:18px;font-weight:800;color:#374151}
 #imgFundo{z-index:30}#imgFundo img{width:100%;border-radius:10px;border:1px solid #d1d5db;-webkit-touch-callout:default}
 .ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ed-grid .full{grid-column:1/-1}.ed-grid>div{min-width:0}
 .ed-grid select{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:#1f2937}
@@ -109,6 +124,27 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .prov-aviso{background:#fef9c3;border:1px solid #facc15;color:#713f12;border-radius:10px;padding:8px 10px;font-size:12px;margin-bottom:10px}
 .prov-aviso button{margin-top:7px;width:100%;height:38px;border:0;border-radius:9px;background:#16a34a;color:#fff;font-weight:800;font-size:14px}
 .cal-chip.prov{border-style:solid;border-color:#facc15;background:#fef9c3;color:#713f12}
+.topo{grid-template-columns:1fr 1fr 44px;gap:7px}
+.date-wrap{position:relative;height:42px;border-radius:10px;background:#e5e7eb;display:flex;align-items:center;padding:0 10px;min-width:0}
+.data-txt{font-size:15px;font-weight:800;color:#1f2937;white-space:nowrap;pointer-events:none}.data-txt em{font-style:normal;font-weight:600;color:#6b7280;font-size:13px;margin-left:5px}
+.date-wrap input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.etapa-toggle{height:42px}
+.cal-btn{height:42px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;font-size:20px;padding:0;cursor:pointer}
+.linha2{grid-template-columns:34px 1fr 34px auto;gap:6px;margin-top:7px}
+.linha2 button.nav{height:34px;font-size:17px}
+.mes-nome{height:34px;font-size:14px}
+.tot-mes{height:34px;padding:0 10px}.tot-mes b{font-size:16px}
+.cal-info{margin-top:7px;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800;background:#f3f4f6;color:#4b5563}
+.etapa-toggle,.etapa-toggle span{white-space:nowrap}.etapa-toggle{padding:0 8px;font-size:14px;gap:4px}
+.ciclo-badge{font-size:11px;font-weight:800;border-radius:6px;padding:2px 4px;margin-right:4px;background:#dcfce7;color:#166534}.ciclo-badge.cedo{background:#fef3c7;color:#92400e}.ciclo-badge.fora{background:#fee2e2;color:#b91c1c}
+.cal-info.fora{background:#fee2e2;color:#b91c1c}
+#calGrid .cal-dia{height:auto;min-height:32px;flex-wrap:wrap;padding:3px 6px;line-height:1.15;align-content:center}
+.cal-dia i{flex-basis:100%;font-style:normal;font-size:10px;font-weight:800;color:#15803d}.cal-dia i.fora{color:#dc2626}
+.date-wrap.atrasado{background:#fee2e2;box-shadow:inset 0 0 0 2px #f87171}.date-wrap.atrasado .data-txt{color:#b91c1c}
+.dt-atraso{color:#dc2626;font-weight:800}.dt-ok{color:#15803d;font-weight:700}
+#calGrid .cal-dia{position:relative}.interroga{position:absolute;top:-7px;right:-5px;font-size:13px;cursor:pointer;background:#fff;border-radius:50%;line-height:1;padding:1px}
+.cal-info.atraso{background:#e0e7ff;color:#3730a3}.cal-info.sab{background:#fee2e2;color:#991b1b}.cal-info.fer{background:#ffedd5;color:#9a3412}.cal-info.prov{background:#fef9c3;color:#713f12}
+header{padding:14px 15px}header h1{font-size:19px}header p{font-size:12px}
 .cal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cal-btns .full{grid-column:1/-1}
 #fotoPrev{width:100%;border-radius:10px;margin-top:10px;border:1px solid #d1d5db}
 footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{display:block;margin-top:8px;font-size:12px;font-weight:800}
@@ -127,9 +163,11 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <main>
 <section class="card">
 <div class="topo">
-<div class="date-wrap"><input id="data" type="date" aria-label="Data da leitura"></div>
-<button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span id="etapaSeta">▾</span></button>
+<div class="date-wrap"><span id="dataTxt" class="data-txt"></span><input id="data" type="date" aria-label="Data da leitura"></div>
+<button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
+<button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
+<div id="calTexto" class="cal-info" hidden></div>
 <div id="etapas" class="etapas fechado"></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
@@ -137,7 +175,6 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
 <div class="tot-mes"><b id="total">0</b><span>no mês</span></div>
 </div>
-<button id="calChip" class="cal-chip" type="button"><span id="calTexto">📅 Calendário de leitura</span><span>›</span></button>
 </section>
 
 <section class="card">
@@ -167,7 +204,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 2.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 2.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -193,6 +230,12 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <img id="imgVer" alt="Calendário">
 </div></div>
 
+<!-- Ver a foto do calendário em tela cheia -->
+<div id="zoomFundo" class="modal-fundo" hidden><div class="modal">
+<div class="modal-top"><button id="zoomVoltar" class="voltar" type="button">‹ Voltar</button><h3>🖼️ Calendário</h3><div class="zoom-btns"><button id="zoomMenos" type="button" aria-label="Diminuir">−</button><button id="zoomMais" type="button" aria-label="Aumentar">+</button></div></div>
+<div id="zoomArea" class="zoom-area"><img id="zoomImg" alt="Foto do calendário"></div>
+</div></div>
+
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
@@ -200,7 +243,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span></div>
+<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span>❓ Lida atrasada no mês passado</span></div>
 <button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
 <div id="calGrid" class="cal-grid"></div>
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
@@ -212,6 +255,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <button id="calFechar" class="action sec full" type="button">Fechar</button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
+<div id="fotoDica" class="foto-dica" hidden>👆 Toque na foto para ampliar</div>
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
@@ -286,6 +330,23 @@ function textoDoDia(iso){const f=nomeFeriado(iso);return f?"🟠 "+f:ehSabado(is
 function diaUtil(iso){const [a,m,d]=iso.split("-").map(Number),dt=new Date(a,m-1,d);return dt.getDay()%6!==0&&!feriados(a).has(iso)}
 function proximoUtil(iso){let [a,m,d]=iso.split("-").map(Number);do{const dt=new Date(a,m-1,d+1);a=dt.getFullYear();m=dt.getMonth()+1;d=dt.getDate()}while(!diaUtil(a+"-"+p2(m)+"-"+p2(d)));return a+"-"+p2(m)+"-"+p2(d)}
 function diasEntre(x,y){const f=s=>{const [a,m,d]=s.split("-").map(Number);return Date.UTC(a,m-1,d)};return Math.round((f(x)-f(y))/864e5)}
+// ---------- Ciclo: dias entre a leitura deste mês e a do mês anterior (limite de 27 a 33 dias) ----------
+const CICLO_MIN=27,CICLO_MAX=33;
+function foraDoLimite(c){return c!=null&&c>CICLO_MAX}
+function muitoCedo(c){return c!=null&&c<CICLO_MIN}
+// A etapa atrasou no mês anterior? Devolve {dias, lerAte} pra avisar e não repetir
+function atrasoMesPassado(m,n){
+  const ant=somaMes(m,-1),real=ultimaLeituraReal(ant,n);if(!real)return null;
+  const c=cicloReal(real,n);if(!foraDoLimite(c))return null;
+  const [a,mo,d]=real.split("-").map(Number),lim=new Date(a,mo-1,d+CICLO_MAX);
+  return {dias:c,lido:real,lerAte:lim.getFullYear()+"-"+p2(lim.getMonth()+1)+"-"+p2(lim.getDate())};
+}
+// Pelo calendário (o mesmo número da coluna "Cic" da foto da empresa)
+function cicloPlanejado(m,i){const d=cal[m]&&cal[m][i],a=cal[somaMes(m,-1)],b=a&&a[i];return d&&b?diasEntre(d,b):null}
+// Na vida real: conta a partir do dia em que você REALMENTE leu essa etapa no mês passado (se lançou no app);
+// se não lançou, usa a data do calendário
+function ultimaLeituraReal(m,n){let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u)u=r.data});return u}
+function cicloReal(data,n){const ant=somaMes(data.slice(0,7),-1),base=ultimaLeituraReal(ant,n)||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
 // Monta um mês: 18 dias úteis seguidos, com a Etapa 01 uns 30 dias depois da Etapa 01 do mês anterior
 function gerarMes(m){
   const ant=cal[somaMes(m,-1)];if(!ant||!ant[0])return null;
@@ -315,7 +376,7 @@ function ajustarSeguintes(m,i){
 function diaDaEtapa(m,n){return cal[m]&&cal[m][n-1]||""}
 
 // ---------- Etapas ----------
-for(let i=1;i<=18;i++){const b=document.createElement("button");b.type="button";b.className="etapa";b.onclick=()=>sel(i,true);$("etapas").appendChild(b)}
+for(let i=1;i<=18;i++){const b=document.createElement("button");b.type="button";b.className="etapa";b.onclick=()=>sel(i,false);$("etapas").appendChild(b)}
 function pintarEtapas(){
   const m=($("data").value||hoje()).slice(0,7),h=hoje();
   document.querySelectorAll(".etapa").forEach((b,i)=>{
@@ -456,16 +517,38 @@ function render(){
   const rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
   $("nreg").textContent=rs.length+(rs.length===1?" livro":" livros");
   $("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  $("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${fmt(r.data)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
+  $("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}<br>${(()=>{const c=cicloReal(r.data,r.etapa);return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
   pintarEtapas();atualizarChip();
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
   const h=$("data").value||hoje(),e=etapaDoDia(h),c=$("calChip");
   const pv=e&&etapaDoDiaProv(h),quando=h===hoje()?"Hoje":h.slice(8)+"/"+h.slice(5,7);
-  c.classList.toggle("ok",!!e&&!pv);c.classList.toggle("prov",!!pv);
-  const extra=e&&textoDoDia(h)?" · "+textoDoDia(h).slice(3):"";
-  $("calTexto").textContent=e?(pv?"🟡 "+quando+": Etapa "+p2(e)+extra+" (provisório)":"📅 "+quando+(h===hoje()?" é dia da":":")+" Etapa "+p2(e)+extra):"📅 "+quando+" não tem leitura no calendário";
+  // A etapa já aparece no botão ao lado: este aviso só aparece quando o dia tem algo diferente
+  const info=$("calTexto"),cor=e?corDoDia(h):"";let txt="";
+  const diaDaMinha=diaDaEtapa(h.slice(0,7),etapa),ciclo=cicloReal(h,etapa),fora=foraDoLimite(ciclo);
+  const bd=$("cicloBadge");bd.hidden=ciclo==null;bd.textContent=ciclo+"d";bd.title="Ciclo de "+ciclo+" dias";bd.className="ciclo-badge"+(fora?" fora":muitoCedo(ciclo)?" cedo":"");
+  const txtCiclo=ciclo==null?"":fora?" · 🔴 "+ciclo+" dias, passou do limite de "+CICLO_MAX:muitoCedo(ciclo)?" · "+ciclo+" dias (abaixo de "+CICLO_MIN+")":" · ciclo de "+ciclo+" dias";
+  // Data vermelhinha quando passou de 33 dias
+  $("dataTxt").parentNode.classList.toggle("atrasado",fora);
+  // Etapa que atrasou no mês passado: mostra até quando ler pra não atrasar de novo
+  const am=atrasoMesPassado(h.slice(0,7),etapa);
+  const txtAntes=am?" · ⚠️ Mês passado atrasou ("+am.dias+" dias): leia até "+am.lerAte.slice(8)+"/"+am.lerAte.slice(5,7):"";
+  if(e!==etapa&&diaDaMinha){
+    // Etapa escolhida na mão, diferente da do calendário: lançando atrasado ou adiantado
+    const atras=diaDaMinha<h;
+    txt=(atras?"⏰ Etapa "+p2(etapa)+" atrasada":"⏩ Etapa "+p2(etapa)+" adiantada")+" — no calendário era "+diaDaMinha.slice(8)+"/"+diaDaMinha.slice(5,7)+(e?" ("+(h===hoje()?"hoje":"dia "+quando)+" seria a "+p2(e)+")":"");
+    info.hidden=false;info.textContent=txt+txtCiclo+txtAntes;info.className="cal-info "+(fora?"fora":"atraso");
+  }else{
+    if(!e)txt="⚪ "+quando+" não tem leitura no calendário";
+    else if(cor||pv)txt=(cor?textoDoDia(h):"🟡 Etapa "+p2(e))+(pv?" · provisório":"");
+    if(fora&&e===etapa){txt=(txt?txt+" · ":"")+"🔴 Ciclo de "+ciclo+" dias, passou do limite de "+CICLO_MAX}
+    if(am)txt=(txt?txt+" · ":"")+txtAntes.slice(3);
+    info.hidden=!txt;info.textContent=txt;info.className="cal-info"+(fora&&e===etapa?" fora":am?" atraso":cor?" "+cor:pv?" prov":"");
+  }
+  // Data escrita curtinha (o campo do iPhone cortava: "13 de out. de")
+  const [da,dm,dd]=h.split("-").map(Number);
+  $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][new Date(da,dm-1,dd).getDay()]+"</em>";
 }
 function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
@@ -500,7 +583,7 @@ function abrirCal(){calEditando=false;calBuscaDia="";$("calBusca").value="";$("c
 function desenharCal(){
   const pv=ehProv(calVer);
   $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
-  $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);
+  $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);$("calGrid").classList.toggle("editando",calEditando);
   const lista=cal[calVer]||Array(18).fill(""),h=hoje(),sem=["dom","seg","ter","qua","qui","sex","sáb"];
   const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar mês";b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
@@ -508,7 +591,11 @@ function desenharCal(){
     if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
     if(!d)return `<span class="cal-dia">—</span>`;
     const [a,mo,di]=d.split("-").map(Number);
-    return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em></span>`;
+    const cc=cicloPlanejado(calVer,i),am=atrasoMesPassado(calVer,i+1);
+    const linha2=cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
+    // ❓ = no mês passado esta etapa foi lida atrasada (toque para ver)
+    const marca=am?`<b class="interroga" onclick="alert('Etapa ${p2(i+1)}: no mês passado foi lida atrasada, com ${am.dias} dias (em ${am.lido.slice(8)}/${am.lido.slice(5,7)}).')">❓</b>`:"";
+    return `<span class="cal-dia">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em>${marca}${linha2}</span>`;
   };
   $("calGrid").innerHTML=lista.map((d,i)=>{const c=corDoDia(d),t=textoDoDia(d);return `<div class="cal-item${d===h?" hoje":""}${d&&d===calBuscaDia?" busca":""}${c?" "+c:""}"><b>${p2(i+1)}</b>${campo(d,i)}${t?"<small>"+t+"</small>":""}</div>`}).join("");
   $("calGrid").querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
@@ -563,16 +650,16 @@ function compartilharImagem(url,nome,titulo){
 $("calCompMes").onclick=()=>{
   const m=calVer,lista=cal[m];
   if(!lista||!lista.some(Boolean))return alert("Não há calendário para "+nomeMes(m)+".");
-  const pv=ehProv(m),W=440,rh=34,top=pv?92:74,H=top+rh*19+20;
+  const pv=ehProv(m),W=460,rh=34,top=pv?92:74,H=top+rh*19+20;
   const cv=document.createElement("canvas");cv.width=W*2;cv.height=H*2;const g=cv.getContext("2d");g.scale(2,2);
   g.fillStyle="#fff";g.fillRect(0,0,W,H);
   const titulo=nomeMes(m).replace(/^./,c=>c.toUpperCase());
   g.fillStyle="#1f2937";g.font="bold 20px Arial";g.fillText("Calendário de Leitura",12,30);
   g.font="bold 16px Arial";g.fillStyle="#4b5563";g.fillText(titulo,12,54);
   if(pv){g.font="bold 12px Arial";g.fillStyle="#a16207";g.fillText("PROVISÓRIO — pode mudar quando sair o oficial",12,76)}
-  const cols=[12,92,172,262];g.fillStyle="#4b5563";g.fillRect(10,top,W-20,rh);
+  const cols=[12,80,160,240,300];g.fillStyle="#4b5563";g.fillRect(10,top,W-20,rh);
   g.fillStyle="#fff";g.font="bold 13px Arial";g.textBaseline="middle";
-  ["Etapa","Data","Dia","Obs."].forEach((t,i)=>g.fillText(t,cols[i]+6,top+rh/2));
+  ["Etapa","Data","Dia","Ciclo","Obs."].forEach((t,i)=>g.fillText(t,cols[i]+6,top+rh/2));
   const sem=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
   lista.forEach((d,i)=>{
     const y=top+rh*(i+1),c=corDoDia(d);
@@ -580,7 +667,9 @@ $("calCompMes").onclick=()=>{
     g.fillStyle=c==="sab"?"#991b1b":c==="fer"?"#9a3412":"#1f2937";
     g.font="bold 13px Arial";g.fillText(p2(i+1),cols[0]+12,y+rh/2);
     if(d){const [a,mo,di]=d.split("-").map(Number);g.fillText(d.slice(8)+"/"+d.slice(5,7)+"/"+d.slice(2,4),cols[1]+6,y+rh/2);
-      g.font="13px Arial";g.fillText(sem[new Date(a,mo-1,di).getDay()],cols[2]+6,y+rh/2);g.fillText(nomeFeriado(d),cols[3]+6,y+rh/2)}
+      g.font="13px Arial";g.fillText(sem[new Date(a,mo-1,di).getDay()],cols[2]+6,y+rh/2);
+      const cc=cicloPlanejado(m,i),cor0=g.fillStyle;if(cc!=null){g.font="bold 13px Arial";if(foraDoLimite(cc))g.fillStyle="#dc2626";g.fillText(cc+" d",cols[3]+6,y+rh/2);g.fillStyle=cor0}
+      g.font="12px Arial";g.fillText(nomeFeriado(d),cols[4]+4,y+rh/2)}
     else g.fillText("—",cols[1]+6,y+rh/2);
   });
   g.strokeStyle="#d1d5db";g.strokeRect(10,top,W-20,rh*19);
@@ -613,7 +702,14 @@ $("calCompTabela").onclick=()=>{
 let fotoPadrao="";
 fetch("calendario-2026.jpg").then(r=>r.ok?r.blob():null).then(b=>{if(!b)return;const rd=new FileReader();rd.onload=()=>{fotoPadrao=rd.result;mostrarFoto()};rd.readAsDataURL(b)}).catch(()=>{});
 function fotoAtual(){let f=null;try{f=localStorage.getItem(FOTOKEY)}catch(e){}return f||fotoPadrao}
-function mostrarFoto(){const f=fotoAtual();$("fotoPrev").hidden=!f;if(f)$("fotoPrev").src=f}
+function mostrarFoto(){const f=fotoAtual();$("fotoPrev").hidden=!f;$("fotoDica").hidden=!f;if(f)$("fotoPrev").src=f}
+// Ampliar a foto: começa grande o bastante pra ler, arrasta pros lados e usa − / + para ajustar
+let zoom=2.5;
+function aplicarZoom(){const a=$("zoomArea");$("zoomImg").style.width=Math.round(a.clientWidth*zoom)+"px"}
+$("fotoPrev").onclick=()=>{$("zoomImg").src=fotoAtual();$("zoomFundo").hidden=false;zoom=Math.max(1,Math.min(4,1282/$("zoomArea").clientWidth*0.9));aplicarZoom();$("zoomArea").scrollTo(0,0)};
+$("zoomMais").onclick=()=>{zoom=Math.min(6,zoom*1.3);aplicarZoom()};
+$("zoomMenos").onclick=()=>{zoom=Math.max(1,zoom/1.3);aplicarZoom()};
+$("zoomVoltar").onclick=()=>$("zoomFundo").hidden=true;
 $("calFotoBtn").onclick=()=>$("calFotoArq").click();
 $("calFotoArq").onchange=e=>{
   const file=e.target.files&&e.target.files[0];if(!file)return;
