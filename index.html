@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#4b5563">
 <title>Controle de Leituras</title>
@@ -315,7 +318,7 @@ footer{font-size:10px;padding:10px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 5.9</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1264,6 +1267,26 @@ $("atualizarApp").onclick=async()=>{
   }catch(e){}
   location.replace(location.pathname+"?v="+Date.now());
 };
+
+// ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
+const VERSAO_APP="6.0";
+function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
+async function conferirAtualizacao(){
+  if(location.protocol==="file:")return;
+  try{
+    // cópias antigas guardadas (service worker / cache) atrapalham: limpa
+    if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();if(regs.length){await Promise.all(regs.map(r=>r.unregister()));if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}}
+    const r=await fetch(location.pathname+"?chk="+Date.now(),{cache:"no-store"});if(!r.ok)return;
+    const m=(await r.text()).match(/Versão (\d+(?:\.\d+)*)/);if(!m)return;
+    let tentou="";try{tentou=sessionStorage.getItem("atualizando")||""}catch(e){}
+    if(versaoMaior(m[1],VERSAO_APP)&&tentou!==m[1]){
+      try{sessionStorage.setItem("atualizando",m[1])}catch(e){}
+      location.replace(location.pathname+"?v="+Date.now());
+    }
+  }catch(e){}
+}
+setTimeout(conferirAtualizacao,800);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirAtualizacao()});
 
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
