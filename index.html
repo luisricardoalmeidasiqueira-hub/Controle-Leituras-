@@ -187,6 +187,19 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .fer-item button{border:0;background:transparent;font-size:17px}
 .loc-pront{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:8px}.loc-pront>div{min-width:0}
 .pront-tag{color:#6b7280;font-weight:600}
+.grupo-cid{margin-top:8px;padding:5px 8px;border-radius:8px;background:#f3f4f6;font-size:12px;font-weight:800;color:#374151;display:flex;justify-content:space-between;gap:6px}.grupo-cid span{font-weight:700;color:#6b7280}
+.tot-toque{cursor:pointer}
+ .ajuda-linha{display:flex;justify-content:flex-end;margin:-2px 0 6px}
+.ajuda-btn{border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;height:28px;padding:0 11px;font-size:12px;font-weight:800;cursor:pointer}
+#cardLancar.em-ajuda{border:2px solid #fb923c;background:#fffaf5}
+#cardLancar.em-ajuda .ajuda-btn{background:#fb923c;color:#fff;border-color:#fb923c}
+.ajuda-faixa{display:flex;align-items:center;gap:8px;background:#ffedd5;color:#9a3412;border-radius:9px;padding:6px 9px;font-size:11.5px;font-weight:800;margin-bottom:8px}
+.ajuda-faixa span{flex:1}.ajuda-faixa button{border:0;background:transparent;color:#9a3412;font-weight:800;text-decoration:underline;font-size:12px;cursor:pointer}
+.ajuda-tag{display:inline-block;background:#ffedd5;color:#9a3412;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
+.cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
+.cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
+.et-tag{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
 .cal-info{margin-top:7px;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800;background:#f3f4f6;color:#4b5563}
 .etapa-toggle,.etapa-toggle span{white-space:nowrap}.etapa-toggle{padding:0 8px;font-size:14px;gap:4px}
 .ciclo-badge{font-size:11px;font-weight:800;border-radius:6px;padding:2px 4px;margin-right:4px;background:#dcfce7;color:#166534}.ciclo-badge.cedo{background:#fef3c7;color:#92400e}.ciclo-badge.fora{background:#fee2e2;color:#b91c1c}
@@ -201,6 +214,36 @@ header{padding:14px 15px}header h1{font-size:19px}header p{font-size:12px}
 .cal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cal-btns .full{grid-column:1/-1}
 #fotoPrev{width:100%;border-radius:10px;margin-top:10px;border:1px solid #d1d5db}
 footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{display:block;margin-top:8px;font-size:12px;font-weight:800}
+
+/* ===== Versão compacta: letras e quadros menores ===== */
+header{padding:10px 14px}header h1{font-size:17px}header p{font-size:11px}
+.hbtn{width:38px;height:38px;font-size:18px;border-radius:10px}
+main{padding:9px}.card{padding:10px;margin-bottom:8px;border-radius:12px}
+.label{font-size:10.5px;margin-bottom:4px}.row-label{font-size:9.5px}
+input{height:38px;border-radius:9px}
+.topo{grid-template-columns:minmax(0,1fr) 28px minmax(0,1.15fr) 28px 36px;gap:5px}
+.date-wrap{height:36px;padding:0 8px;border-radius:9px}.data-txt{font-size:13.5px}.data-txt em{font-size:11px;margin-left:3px}
+.etapa-toggle{height:36px;font-size:13px;padding:0 7px;border-radius:9px}.etapa-toggle b{font-size:13px}
+.et-seta{height:36px;border:0;border-radius:9px;background:#e5e7eb;color:#374151;font-size:18px;font-weight:800;padding:0;cursor:pointer}
+.et-seta:disabled{opacity:.35}
+.cal-btn{height:36px;font-size:17px;border-radius:9px}
+.ciclo-badge{font-size:10px;padding:1px 4px;margin-right:3px}
+.cal-info,.pendentes{font-size:11px;padding:5px 8px;margin-top:6px}
+.pendentes button.pend{height:26px;font-size:11px}
+.linha2{grid-template-columns:30px minmax(0,1fr) 30px auto;gap:5px;margin-top:6px}
+.linha2 button.nav{height:30px;font-size:15px;border-radius:8px}
+.mes-nome{height:30px;font-size:13px;border-radius:8px}
+.tot-mes{height:30px;border-radius:8px}.tot-mes b{font-size:14px}.tot-mes span{font-size:10px}
+.etapa{height:32px;font-size:10.5px}
+.cab{margin-top:7px}
+.livro-row{gap:6px;margin-bottom:6px}.livro-row input{height:38px}
+.part-chk{height:38px;border-radius:9px}.part-chk input{width:17px;height:17px}.part-chk span{font-size:7.5px}
+.hint{font-size:10.5px}
+.save-all{width:46px;height:36px;border-radius:9px}
+.lista-head strong{font-size:13px}.lista-head small{font-size:11px}.pill{font-size:11px!important;padding:4px 9px!important}
+.tools{margin-top:7px}.ic{height:32px;font-size:15px;border-radius:8px}
+.item{font-size:12px;padding:7px 0}
+footer{font-size:10px;padding:10px}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -217,38 +260,44 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <section class="card">
 <div class="topo">
 <div class="date-wrap"><span id="dataTxt" class="data-txt"></span><input id="data" type="date" aria-label="Data da leitura"></div>
+<button id="etapaMenos" class="et-seta" type="button" aria-label="Etapa anterior">‹</button>
 <button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
+<button id="etapaMais" class="et-seta" type="button" aria-label="Próxima etapa">›</button>
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
 <div id="pendentes" class="pendentes" hidden></div>
-<div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasado ou adiantado? Escolha a etapa que você está lendo — a data continua a mesma.</div></div>
+<div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasou? Escolha a etapa que está lendo — a data não muda.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
 <div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
-<div class="tot-mes"><b id="total">0</b><span id="noMes">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
+<div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
 </section>
 
-<section class="card">
-<div class="livro-title"><div class="troca-etapa"><button id="etapaMenos" type="button" aria-label="Etapa anterior">‹</button><label class="etapa-escolha"><strong id="titulo">ETAPA 01</strong><span class="seta-esc">▾</span><select id="etapaSelect" aria-label="Escolher etapa"></select></label><button id="etapaMais" type="button" aria-label="Próxima etapa">›</button></div><span class="troca-dica">atrasou? toque<br>no nome ou ‹</span></div>
+<section id="cardLancar" class="card">
+<div class="ajuda-linha"><button id="ajudaBtn" class="ajuda-btn" type="button">🤝 Ajudar outra cidade</button></div>
+<div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
+<datalist id="cidadesAjuda"></datalist>
+<span id="titulo" hidden></span><select id="etapaSelect" hidden aria-hidden="true"></select>
 <div class="loc-pront"><div><div class="label">LOCALIDADE</div><input id="localidade" type="text" placeholder="Digite a localidade"></div>
 <div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div></div>
 <div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div></div>
 <div id="livroRows"></div>
 <datalist id="nomesDivididos"></datalist>
 <div class="save-row">
-<div class="hint">Livro já lançado antes? A quantidade aparece sozinha (em azul) — dá pra corrigir. Particionado: marque PART.</div>
+<div class="hint">Azul = quantidade da última vez (dá pra corrigir).</div>
 <button id="saveAll" class="save-all" type="button" title="Salvar leitura" aria-label="Salvar leitura"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
 </div>
 </section>
 
 <section class="card">
 <div id="listaHead" class="lista-head">
-<div><strong>📋 ETAPA <span id="etapaLista">01</span> · <span id="mesLista" style="text-transform:capitalize"></span></strong><small id="nreg">0 livros</small></div>
+<div><strong><span id="listaTit">📋 ETAPA <span id="etapaLista">01</span></span> · <span id="mesLista" style="text-transform:capitalize"></span></strong><small id="nreg">0 livros</small></div>
 <span id="totEtapa" class="pill">0 leituras</span><span id="listaSeta" class="seta">▼</span>
 </div>
+<div id="cidades" class="cidades" hidden></div>
 <div id="lista" hidden></div>
 <div class="tools">
 <button id="csv" class="ic escuro" type="button" title="Exportar" aria-label="Exportar">📄</button>
@@ -259,7 +308,7 @@ footer{text-align:center;color:#6b7280;font-size:11px;padding:14px}footer .ver{d
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 5.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 5.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -435,7 +484,11 @@ function normLoc(t){return String(t||"").normalize("NFD").replace(/[\u0300-\u036
 function locAtual(){return normLoc($("localidade").value)}
 function mesmaCidade(r,loc){return !loc||normLoc(r.localidade)===loc}
 function ultimaLeituraReal(m,n,loc){if(loc===undefined)loc=locAtual();let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u&&mesmaCidade(r,loc))u=r.data});return u}
-function cicloReal(data,n,loc){const ant=somaMes(data.slice(0,7),-1),base=ultimaLeituraReal(ant,n,loc)||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
+// Cidade principal = onde você mais lança. O calendário do app é dela; cidade de ajuda só tem ciclo com leitura real.
+function cidadePrincipal(){const c={};registros.forEach(r=>{if(r.ajuda)return;const k=normLoc(r.localidade);if(k)c[k]=(c[k]||0)+1});let m="",n=0;for(const k in c)if(c[k]>n){n=c[k];m=k}return m}
+function cicloReal(data,n,loc){const ant=somaMes(data.slice(0,7),-1),real=ultimaLeituraReal(ant,n,loc),cp=cidadePrincipal();
+  if(!real&&loc&&cp&&loc!==cp)return null;
+  const base=real||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
 // Monta um mês: 18 dias úteis seguidos, com a Etapa 01 uns 30 dias depois da Etapa 01 do mês anterior
 function gerarMes(m){
   const ant=cal[somaMes(m,-1)];if(!ant||!ant[0])return null;
@@ -480,7 +533,7 @@ function pintarEtapas(){
 function sel(n,porData){
   etapa=n;
   if(porData){const d=diaDaEtapa(($("data").value||hoje()).slice(0,7),n);if(d){$("data").value=d;mesVer=d.slice(0,7)}}
-  $("titulo").textContent="ETAPA "+p2(n);$("etapaSelect").value=n;$("etapaMenos").disabled=n<=1;$("etapaMais").disabled=n>=18;$("etapaLista").textContent=p2(n);$("etapaAtual").textContent=p2(n);
+  $("titulo").textContent="ETAPA "+p2(n);$("etapaSelect").value=n;$("etapaMenos").disabled=n<=1;$("etapaMais").disabled=n>=18;if($("etapaLista"))$("etapaLista").textContent=p2(n);$("etapaAtual").textContent=p2(n);
   abrirEtapas(false);render();
 }
 function abrirEtapas(abrir){$("etapas").classList.toggle("fechado",!abrir);$("etapaSeta").textContent=abrir?"▴":"▾"}
@@ -509,7 +562,7 @@ const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellc
 function nomesDaLinha(r){return [...r.querySelectorAll(".r-com")].map(i=>i.value.trim()).filter(Boolean)}
 function salvarRascunho(){
   const linhas=[...$("livroRows").children].map(r=>({livro:r.querySelector(".r-livro").value,qtd:r.querySelector(".r-qtd").value,de:r.querySelector(".r-de").value,ate:r.querySelector(".r-ate").value,com:nomesDaLinha(r),part:r.classList.contains("part")})).filter(l=>l.livro||l.qtd||l.de||l.ate);
-  try{localStorage.setItem(RASC,JSON.stringify({localidade:$("localidade").value,prontuario:$("prontuario").value,linhas}))}catch(e){}
+  try{localStorage.setItem(RASC,JSON.stringify({localidade:ajuda?ajuda.loc:$("localidade").value,prontuario:ajuda?ajuda.pront:$("prontuario").value,linhas}))}catch(e){}
 }
 $("localidade").addEventListener("input",salvarRascunho);$("prontuario").addEventListener("input",salvarRascunho);
 // Cada cidade lembra o seu prontuário: trocou a localidade, o prontuário daquela cidade aparece sozinho
@@ -635,9 +688,11 @@ $("saveAll").onclick=()=>{
   const ja=r.saida.filter(x=>registros.some(g=>g.data===data&&g.etapa===etapa&&g.livro===x.livro)).map(x=>x.livro);
   if(ja.length&&!confirm("O(s) livro(s) "+ja.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   const prontuario=$("prontuario").value.trim();guardarPront(localidade,prontuario);
-  r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x}));
+  const ehAjuda=!!ajuda;
+  r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x,...(ehAjuda?{ajuda:true}:{})}));
   localStorage.setItem(KEY,JSON.stringify(registros));
   mesVer=data.slice(0,7);limparLancamentos();render();
+  if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
   alert(r.saida.length+" livro(s) salvo(s) na Etapa "+p2(etapa)+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":""));
 };
@@ -646,6 +701,9 @@ $("saveAll").onclick=()=>{
 let mesVer=hoje().slice(0,7);
 function mes(){return mesVer}
 function mudarMes(d){mesVer=somaMes(mesVer,d);render()}
+document.querySelectorAll(".tot-toque").forEach(e=>e.onclick=abrirTotalCidades);
+$("ajudaBtn").onclick=()=>ajuda?sairAjuda():entrarAjuda();
+$("localidade").addEventListener("input",()=>{if(ajuda)atualizarFaixaAjuda()});
 $("mesAnt").onclick=()=>mudarMes(-1);$("mesProx").onclick=()=>mudarMes(1);
 $("mesPicker").onchange=e=>{if(e.target.value){mesVer=e.target.value;render()}};
 $("listaHead").onclick=()=>{const l=$("lista");l.hidden=!l.hidden;$("listaSeta").textContent=l.hidden?"▼":"▲"};
@@ -684,14 +742,66 @@ function abrirComparacao(m){
   box.querySelector(".comp-ok").onclick=()=>box.hidden=true;
   box.hidden=false;
 }
+// ---------- Botõezinhos de cidade ----------
+let filtroCidade="";
+function nomeCidade(k,m){const r=registros.find(x=>x.data.startsWith(m)&&normLoc(x.localidade)===k)||registros.find(x=>normLoc(x.localidade)===k);return r?(r.localidade||"Sem localidade").trim():k}
+function desenharCidades(m){
+  const tot={};registros.forEach(r=>{if(!r.data.startsWith(m))return;const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+r.qtd});
+  const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
+  if(ks.length<2){box.hidden=true;if(filtroCidade&&!tot[filtroCidade])filtroCidade="";return}
+  if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
+  box.hidden=false;
+  box.innerHTML=`<button type="button" class="cid${!filtroCidade?" ativa":""}" data-k="">Todas</button>`+ks.map(k=>`<button type="button" class="cid${filtroCidade===k?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join("");
+  box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{filtroCidade=b.dataset.k;$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
+}
+function abrirTotalCidades(){
+  const m=mes(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+r.qtd}});
+  const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),geral=ks.reduce((t,k)=>t+tot[k],0),cp=cidadePrincipal(),box=$("cartaoComp");
+  if(!geral)return;
+  const ajuda=ks.filter(k=>k!==cp).reduce((t,k)=>t+tot[k],0);
+  box.innerHTML=`<b class="comp-tit">📊 Leituras de ${nomeMes(m)}</b>`+ks.map(k=>`<div class="comp-linha" style="cursor:default"><div><b>📍 ${esc(nomeCidade(k,m))}</b><small>${k===cp?"sua cidade":"ajuda"}</small></div><b>${tot[k].toLocaleString("pt-BR")}</b></div>`).join("")+
+    `<div class="comp-linha sel" style="cursor:default"><div><b>Total geral</b>${ajuda&&cp&&tot[cp]?`<small>${esc(nomeCidade(cp,m))} ${tot[cp].toLocaleString("pt-BR")} + ajuda ${ajuda.toLocaleString("pt-BR")}</small>`:""}</div><b>${geral.toLocaleString("pt-BR")}</b></div><button type="button" class="comp-ok">Ok</button>`;
+  box.querySelector(".comp-ok").onclick=()=>box.hidden=true;box.hidden=false;
+}
+// ---------- 🤝 Ajuda em outra cidade ----------
+let ajuda=null; // {loc,pront,etapa} = o que estava antes, pra voltar depois
+function cidadesJaAjudadas(){const set={};registros.forEach(r=>{if(r.ajuda&&r.localidade)set[normLoc(r.localidade)]=r.localidade.trim()});return Object.values(set)}
+function entrarAjuda(){
+  ajuda={loc:$("localidade").value,pront:$("prontuario").value,etapa};
+  $("cardLancar").classList.add("em-ajuda");$("ajudaBtn").textContent="🤝 Ajuda ligada";
+  $("cidadesAjuda").innerHTML=cidadesJaAjudadas().map(c=>`<option value="${esc(c)}">`).join("");
+  $("localidade").setAttribute("list","cidadesAjuda");$("localidade").value="";$("localidade").placeholder="Qual cidade?";
+  atualizarFaixaAjuda();render();setTimeout(()=>$("localidade").focus(),50);
+}
+function sairAjuda(){
+  if(!ajuda)return;const a=ajuda;ajuda=null;
+  $("cardLancar").classList.remove("em-ajuda");$("ajudaBtn").textContent="🤝 Ajudar outra cidade";$("ajudaFaixa").hidden=true;
+  $("localidade").removeAttribute("list");$("localidade").placeholder="Digite a localidade";
+  $("localidade").value=a.loc;$("prontuario").value=a.pront;salvarRascunho();sel(a.etapa,false);
+}
+function atualizarFaixaAjuda(){
+  if(!ajuda)return;const c=$("localidade").value.trim(),f=$("ajudaFaixa");f.hidden=false;
+  f.innerHTML=`<span>🤝 Ajuda${c?" em "+esc(c):""} · escolha a etapa deles lá em cima. Depois de salvar volta pra ${esc(ajuda.loc.trim()||"sua cidade")}.</span><button type="button" id="ajudaCancelar">Cancelar</button>`;
+  $("ajudaCancelar").onclick=sairAjuda;
+}
 function render(){atualizarNomes();
   const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);
   $("total").textContent=tot.toLocaleString("pt-BR");
   atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
-  const rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)).sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
+  desenharCidades(m);
+  // Cidade escolhida: mostra todos os livros dela no mês (com a etapa de cada um). "Todas": só a etapa atual, como sempre.
+  const rs=(filtroCidade
+    ?registros.filter(r=>r.data.startsWith(m)&&normLoc(r.localidade)===filtroCidade)
+    :registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m))).sort((a,b)=>filtroCidade?(a.etapa-b.etapa||a.data.localeCompare(b.data)):(b.data.localeCompare(a.data)||b.id-a.id));
+  $("listaTit").innerHTML=filtroCidade?"📍 "+esc(nomeCidade(filtroCidade,m)):'📋 ETAPA <span id="etapaLista">'+p2(etapa)+'</span>';
   $("nreg").textContent=rs.length+(rs.length===1?" livro":" livros");
   $("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  $("lista").innerHTML=rs.length?rs.map(r=>`<div class="item"><div><b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}<br>${(()=>{const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
+  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}<br>${(()=>{const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
+  if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
+    // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
+    $("lista").innerHTML=cidadesDaLista.map(k=>{const g=rs.filter(r=>normLoc(r.localidade)===k);return `<div class="grupo-cid">📍 ${esc(nomeCidade(k,m))} <span>${g.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras · ${g.length} livro(s)</span></div>`+g.map(itemHtml).join("")}).join("");
+  }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>";
   pintarEtapas();atualizarChip();atualizarPendentes();
 }
 function atualizarChip(){
@@ -702,6 +812,12 @@ function atualizarChip(){
   const info=$("calTexto"),cor=e?corDoDia(h):"";let txt="";
   const [da,dm,dd]=h.split("-").map(Number),dsem=new Date(da,dm-1,dd).getDay();
   $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][dsem]+"</em>";
+  if(ajuda){
+    $("cicloBadge").hidden=true;$("dataTxt").parentNode.classList.remove("atrasado");
+    info.hidden=false;info.className="cal-info ferias";info.style.background="#ffedd5";info.style.color="#9a3412";
+    info.textContent="🤝 Ajuda — a etapa é da outra cidade, sem conta de atraso da sua rota.";return;
+  }
+  info.style.background="";info.style.color="";
   const fe=emFerias(h);
   if(fe){
     $("cicloBadge").hidden=true;$("dataTxt").parentNode.classList.remove("atrasado");
@@ -742,6 +858,7 @@ function atualizarChip(){
 // ---------- Etapas pendentes: já passou a data e não tem nada lançado ----------
 let pendFechado="";
 function etapasPendentes(h){
+  if(ajuda)return [];
   const m=h.slice(0,7),lista=cal[m];if(!lista)return [];
   const loc=locAtual(),doMes=registros.filter(r=>r.data.startsWith(m)&&mesmaCidade(r,loc));
   // Cidade que você só ajudou (não tem nada seu no mês passado nem neste): não mostra pendentes
@@ -1072,7 +1189,7 @@ $("calCompFoto").onclick=()=>{
 };
 
 // ---------- Exportar, importar, backup, lixeira ----------
-$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+".csv";a.click()};
+$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m)&&(!filtroCidade||normLoc(r.localidade)===filtroCidade));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));a.download="controle-leituras-"+m+(filtroCidade?"-"+filtroCidade.replace(/[^a-z0-9]+/g,"-"):"")+".csv";a.click()};
 $("importar").onclick=()=>$("arquivoImportar").click();
 $("arquivoImportar").onchange=e=>{
   const file=e.target.files&&e.target.files[0];if(!file)return;
