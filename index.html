@@ -255,6 +255,28 @@ input{height:38px;border-radius:9px}
 .tools{margin-top:7px}.ic{height:32px;font-size:15px;border-radius:8px}
 .item{font-size:12px;padding:7px 0}
 footer{font-size:10px;padding:10px}
+.ajuda-linha{gap:6px}.pda-btn{background:#eff6ff!important;border-color:#93c5fd!important;color:#1e3a8a!important}
+.pda-end{grid-column:1/-1;min-width:0}
+.pill-rel{background:#d97706!important}.pills-col{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}.cal-tag{color:#2563eb;font-weight:700}
+.linha2{grid-template-columns:30px auto 30px 1fr;gap:6px}
+.mes-nome{background:#eef0f3;color:#374151;border:1px solid #d1d5db;padding:0 14px;height:30px;font-size:13px;border-radius:8px}
+.linha2 .tot-mes{justify-self:end;background:transparent;padding:0}
+.desfazer{width:100%;height:40px;margin:8px 0 0;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:14px;font-weight:800;cursor:pointer}
+.pda-copiar{display:block;width:100%;margin-top:6px;height:34px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;color:#374151;font-size:13px;font-weight:800;cursor:pointer}
+.rel-tag{display:inline-block;background:#fef3c7;color:#92400e;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
+.cab{grid-template-columns:minmax(0,1fr) 46px 46px;gap:6px}.cab .row-label:nth-child(2){text-align:center}
+.livro-row{grid-template-columns:minmax(0,1fr) 84px 46px 46px;grid-template-areas:"livro qtd chk rel"}
+.livro-row.part{grid-template-columns:1fr 1fr 1fr 46px;grid-template-areas:"livro livro livro chk" "de ate qtd rel" "com com com com"}
+.rel-chk{grid-area:rel}.livro-row.part .rel-chk{background:#fff;border-color:#c4c9d0}.rel-chk input{accent-color:#d97706}
+.part-chk.rel-chk:has(input:checked),.livro-row.part .part-chk.rel-chk:has(input:checked){background:#fef3c7;border-color:#f59e0b}
+details.pda-item{margin-top:6px}details.pda-item summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;padding:6px 12px;font-size:12px;font-weight:800;color:#374151}
+details.pda-item summary::-webkit-details-marker{display:none}details.pda-item summary::after{content:"▾";flex:none;color:#6b7280}details.pda-item[open] summary::after{content:"▴"}details.pda-item[open] summary{background:#eff6ff;border-color:#93c5fd}
+.pda-pin{width:auto;display:inline-flex;align-items:center;gap:10px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;color:#374151;font-size:12px;font-weight:800;padding:7px 9px;cursor:pointer;text-align:left}
+.pda-pin span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pda-seta{flex:none;color:#6b7280;transition:transform .2s}.pda-pin.open .pda-seta{transform:rotate(180deg)}.pda-pin.open{background:#eff6ff;border-color:#93c5fd}
+.pda-box{margin-top:6px;border:1px dashed #93c5fd;border-radius:9px;background:#f8fbff;padding:9px;font-size:13px;line-height:1.4;color:#1f2937}
+.pda-box b{display:block;margin-bottom:4px}.pda-tags{display:flex;gap:6px;flex-wrap:wrap}.pda-tags span{font-size:11px;font-weight:800;background:#e5e7eb;border-radius:6px;padding:2px 7px}
+.pda-box a{display:block;margin-top:8px;text-align:center;height:36px;line-height:36px;border-radius:9px;background:#2563eb;color:#fff;font-weight:800;text-decoration:none;font-size:13px}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -289,13 +311,14 @@ footer{font-size:10px;padding:10px}
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="ajudaBtn" class="ajuda-btn" type="button">🤝 Ajudar outra cidade</button></div>
+<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn" type="button">📷 Foto do PDA</button><button id="ajudaBtn" class="ajuda-btn" type="button">🤝 Ajudar outra cidade</button><input id="pdaArq" type="file" accept="image/*" hidden></div>
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
+<div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
 <span id="titulo" hidden></span><select id="etapaSelect" hidden aria-hidden="true"></select>
 <div class="loc-pront"><div><div class="label">LOCALIDADE</div><input id="localidade" type="text" placeholder="Digite a localidade"></div>
 <div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div></div>
-<div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div></div>
+<div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div><div class="row-label">REL.</div></div>
 <div id="livroRows"></div>
 <datalist id="nomesDivididos"></datalist>
 <div class="save-row">
@@ -308,10 +331,11 @@ footer{font-size:10px;padding:10px}
 <section class="card">
 <div id="listaHead" class="lista-head">
 <div><strong><span id="listaTit">📋 ETAPA <span id="etapaLista">01</span></span> · <span id="mesLista" style="text-transform:capitalize"></span></strong><small id="nreg">0 livros</small></div>
-<span id="totEtapa" class="pill">0 leituras</span><span id="listaSeta" class="seta">▼</span>
+<div class="pills-col"><span id="totEtapa" class="pill">0 leituras</span><span id="totRel" class="pill pill-rel" hidden></span></div><span id="listaSeta" class="seta">▼</span>
 </div>
 <div id="cidades" class="cidades" hidden></div>
 <div id="lista" hidden></div>
+<button id="desfazer" class="desfazer" type="button" hidden></button>
 <div class="tools">
 <button id="csv" class="ic escuro" type="button" title="Exportar" aria-label="Exportar">📄</button>
 <button id="importar" class="ic" type="button" title="Importar" aria-label="Importar">📥</button>
@@ -321,7 +345,7 @@ footer{font-size:10px;padding:10px}
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.3</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -334,6 +358,7 @@ footer{font-size:10px;padding:10px}
 <div><div class="label">PRONTUÁRIO</div><input id="edPront" type="text" inputmode="numeric" autocomplete="off"></div>
 <div><div class="label">LIVRO</div><input id="edLivro" type="text" autocomplete="off" spellcheck="false"></div>
 <div><div class="label">&nbsp;</div><label class="ed-chk"><input id="edPart" type="checkbox"> Particionado</label></div>
+<div class="full"><label class="ed-chk"><input id="edRel" type="checkbox"> 🔁 Releitura</label></div>
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
@@ -499,7 +524,7 @@ function cicloPlanejado(m,i){const d=cal[m]&&cal[m][i],a=cal[somaMes(m,-1)],b=a&
 function normLoc(t){return String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
 function locAtual(){return normLoc($("localidade").value)}
 function mesmaCidade(r,loc){return !loc||normLoc(r.localidade)===loc}
-function ultimaLeituraReal(m,n,loc){if(loc===undefined)loc=locAtual();let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u&&mesmaCidade(r,loc))u=r.data});return u}
+function ultimaLeituraReal(m,n,loc){if(loc===undefined)loc=locAtual();let u="";registros.forEach(r=>{if(r.etapa===n&&r.data.startsWith(m)&&r.data>u&&mesmaCidade(r,loc)&&!r.releitura)u=r.data});return u}
 // Cidade principal = onde você mais lança. O calendário do app é dela; cidade de ajuda só tem ciclo com leitura real.
 function cidadePrincipal(){const c={};registros.forEach(r=>{if(r.ajuda)return;const k=normLoc(r.localidade);if(k)c[k]=(c[k]||0)+1});let m="",n=0;for(const k in c)if(c[k]>n){n=c[k];m=k}return m}
 function cicloReal(data,n,loc){const ant=somaMes(data.slice(0,7),-1),real=ultimaLeituraReal(ant,n,loc),cp=cidadePrincipal();
@@ -556,7 +581,7 @@ function pintarEtapas(){
 }
 // porData=true: escolheu a etapa na mão → a data vai para o dia dessa etapa no calendário
 function sel(n,porData){
-  etapa=n;
+  etapa=n;pdaMostrar(n);
   if(porData){const d=diaDaEtapa(($("data").value||hoje()).slice(0,7),n);if(d){$("data").value=d;mesVer=d.slice(0,7)}}
   $("titulo").textContent="ETAPA "+p2(n);$("etapaSelect").value=n;$("etapaMenos").disabled=n<=1;$("etapaMais").disabled=n>=18;if($("etapaLista"))$("etapaLista").textContent=p2(n);$("etapaAtual").textContent=p2(n);
   abrirEtapas(false);render();
@@ -586,7 +611,7 @@ let contLinha=0;
 const SEM_AUTO='autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
 function nomesDaLinha(r){return [...r.querySelectorAll(".r-com")].map(i=>i.value.trim()).filter(Boolean)}
 function salvarRascunho(){
-  const linhas=[...$("livroRows").children].map(r=>({livro:r.querySelector(".r-livro").value,qtd:r.querySelector(".r-qtd").value,de:r.querySelector(".r-de").value,ate:r.querySelector(".r-ate").value,com:nomesDaLinha(r),part:r.classList.contains("part")})).filter(l=>l.livro||l.qtd||l.de||l.ate);
+  const linhas=[...$("livroRows").children].map(r=>({livro:r.querySelector(".r-livro").value,qtd:r.querySelector(".r-qtd").value,de:r.querySelector(".r-de").value,ate:r.querySelector(".r-ate").value,com:nomesDaLinha(r),part:r.classList.contains("part"),end:r._end||null,rel:r.querySelector(".r-rel").checked})).filter(l=>l.livro||l.qtd||l.de||l.ate);
   try{localStorage.setItem(RASC,JSON.stringify({localidade:ajuda?ajuda.loc:$("localidade").value,prontuario:ajuda?ajuda.pront:$("prontuario").value,linhas}))}catch(e){}
 }
 $("localidade").addEventListener("input",salvarRascunho);$("prontuario").addEventListener("input",salvarRascunho);
@@ -634,9 +659,10 @@ function criarLinha(foco=true,dados={}){
   `<div class="c-ate so-part"><div class="mini">ATÉ</div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
   `<div class="c-qtd"><div class="mini">QTD</div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
   `<div class="c-com so-part"><div class="com-lbl">👥 DIVIDIDO COM</div><div class="com-lista"><span class="com-item"><input class="r-com" ${SEM_AUTO} list="nomesDivididos" type="text" placeholder="Nome"><button type="button" class="com-x" aria-label="Tirar este nome">✕</button></span><button type="button" class="com-mais" aria-label="Mais uma pessoa">＋</button></div></div>`+
-  `<label class="part-chk" title="Livro particionado"><input type="checkbox" class="r-part"${part?" checked":""}><span>PART.</span></label>`;
+  `<label class="part-chk" title="Livro particionado"><input type="checkbox" class="r-part"${part?" checked":""}><span>PART.</span></label>`+
+  `<label class="part-chk rel-chk" title="Releitura"><input type="checkbox" class="r-rel"><span>REL.</span></label>`;
   r.querySelector(".r-livro").value=dados.livro||"";r.querySelector(".r-qtd").value=dados.qtd||"";
-  r.querySelector(".r-de").value=dados.de||"";r.querySelector(".r-ate").value=dados.ate||"";
+  r.querySelector(".r-de").value=dados.de||"";r.querySelector(".r-ate").value=dados.ate||"";r.querySelector(".r-rel").checked=!!dados.rel;r.querySelector(".r-rel").addEventListener("change",salvarRascunho);
   // pessoas com quem dividiu o livro (o ＋ abre mais um nome)
   const lista=r.querySelector(".com-lista"),mais=r.querySelector(".com-mais");
   const novoNome=(v,foco)=>{
@@ -653,6 +679,7 @@ function criarLinha(foco=true,dados={}){
   (dados.com||[]).forEach((n,k)=>{if(k===0)r.querySelector(".r-com").value=n;else novoNome(n)});
   mais.onclick=()=>novoNome("",true);
   $("livroRows").appendChild(r);
+  if(dados.end)pdaPin(r,dados.end);
   r.querySelector(".r-part").addEventListener("change",e=>{
     r.classList.toggle("part",e.target.checked);abrirProxima(r);salvarRascunho();
     if(r.querySelector(".r-livro").value.trim())setTimeout(()=>(e.target.checked?r.querySelector(".r-de"):r.querySelector(".r-qtd")).focus(),30);
@@ -693,11 +720,11 @@ function coletarLancamentos(){
       if(de===""||ate===""||b<a)return {erro:"Confira os campos DE e ATÉ do livro "+livro+"."};
       const qv=r.querySelector(".r-qtd").value,q=qv===""?b-a+1:Number(qv);
       if(!(q>0))return {erro:"Informe uma quantidade válida para o livro "+livro+"."};
-      saida.push({livro,de:a,ate:b,qtd:q,particionado:true,com:nomesDaLinha(r)});
+      saida.push({livro,de:a,ate:b,qtd:q,particionado:true,com:nomesDaLinha(r),etapa:(r._end&&r._end.etapa)||0,pda:r._end?{end:r._end.end,lim:r._end.lim,km:r._end.km}:undefined,releitura:r.querySelector(".r-rel").checked||undefined});
     }else{
       const q=Number(r.querySelector(".r-qtd").value);
       if(!(q>0))return {erro:"Informe uma quantidade válida para o livro "+livro+"."};
-      saida.push({livro,de:null,ate:null,qtd:q,particionado:false});
+      saida.push({livro,de:null,ate:null,qtd:q,particionado:false,etapa:(r._end&&r._end.etapa)||0,pda:r._end?{end:r._end.end,lim:r._end.lim,km:r._end.km}:undefined,releitura:r.querySelector(".r-rel").checked||undefined});
     }
   }
   const vistos=new Set(),unicos=[];let repetidos=0;
@@ -713,16 +740,21 @@ $("saveAll").onclick=()=>{
   if(!r.saida.length&&!imp)return alert("Digite pelo menos um livro e a quantidade.");
   if(imp){impedimentos.push({id:Date.now()+Math.random(),data,etapa,localidade,qtd:imp,...(ajuda?{ajuda:true}:{})});salvarImp();$("impQtd").value=""}
   if(!r.saida.length){mesVer=data.slice(0,7);render();if(ajuda)setTimeout(sairAjuda,60);if(esqueci)setTimeout(sairDoEsqueci,50);return alert("⛔ "+imp+" não lido(s) salvo(s) na Etapa "+p2(etapa)+".")}
-  const ja=r.saida.filter(x=>registros.some(g=>g.data===data&&g.etapa===etapa&&g.livro===x.livro)).map(x=>x.livro);
+  const ja=r.saida.filter(x=>!x.pda&&registros.some(g=>g.data===data&&g.etapa===(x.etapa||etapa)&&g.livro===x.livro)).map(x=>x.livro);
   if(ja.length&&!confirm("O(s) livro(s) "+ja.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   const prontuario=$("prontuario").value.trim();guardarPront(localidade,prontuario);
   const ehAjuda=!!ajuda;
-  r.saida.forEach(x=>registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x,...(ehAjuda?{ajuda:true}:{})}));
+  r.saida.forEach(x=>{
+    // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
+    const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===data&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
+    if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura)ex.releitura=true;return}
+    registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})});
+  });
   localStorage.setItem(KEY,JSON.stringify(registros));
-  mesVer=data.slice(0,7);limparLancamentos();render();
+  mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
   if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
-  alert(r.saida.length+" livro(s) salvo(s) na Etapa "+p2(etapa)+(imp?" + ⛔ "+imp+" não lido(s)":"")+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":""));
+  if(!(r.saida.length&&r.saida.every(x=>x.pda))||pdaAviso)alert(r.saida.length+" livro(s) salvo(s) na Etapa "+[...new Set(r.saida.map(x=>x.etapa||etapa))].map(n=>p2(n)).join(" e ")+(imp?" + ⛔ "+imp+" não lido(s)":"")+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":"")+pdaAviso);
 };
 
 // ---------- Mês, totais e lista ----------
@@ -740,7 +772,7 @@ function atualizarNomes(){const set=new Set();registros.forEach(r=>(r.com||[]).f
 const COMPKEY=KEY+"_comparar";let modoComp="dia";try{modoComp=localStorage.getItem(COMPKEY)||"dia"}catch(e){}
 function somaQtd(lista){return lista.reduce((t,r)=>t+r.qtd,0)}
 function calcComparacoes(m){
-  const ant=somaMes(m,-1),doMes=registros.filter(r=>r.data.startsWith(m)),doAnt=registros.filter(r=>r.data.startsWith(ant));
+  const ant=somaMes(m,-1),doMes=registros.filter(r=>r.data.startsWith(m)&&!r.releitura),doAnt=registros.filter(r=>r.data.startsWith(ant)&&!r.releitura);
   const emAndamento=m===hoje().slice(0,7),dia=emAndamento?hoje().slice(8):"31";
   const maxEt=doMes.length?Math.max(...doMes.map(r=>r.etapa)):0;
   const pct=(a,b)=>b?Math.round((a-b)/b*100):null;
@@ -780,7 +812,7 @@ function delImp(id){if(!confirm("Apagar este lançamento de não lidos?"))return
 let filtroCidade="";
 function nomeCidade(k,m){const r=registros.find(x=>x.data.startsWith(m)&&normLoc(x.localidade)===k)||registros.find(x=>normLoc(x.localidade)===k);return r?(r.localidade||"Sem localidade").trim():k}
 function desenharCidades(m){
-  const tot={};registros.forEach(r=>{if(!r.data.startsWith(m))return;const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+r.qtd});
+  const tot={};registros.forEach(r=>{if(!r.data.startsWith(m))return;const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+(r.releitura?0:r.qtd)});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
   if(ks.length<2){box.hidden=true;if(filtroCidade&&!tot[filtroCidade])filtroCidade="";return}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
@@ -789,7 +821,7 @@ function desenharCidades(m){
   box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{filtroCidade=b.dataset.k;$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
 }
 function abrirTotalCidades(){
-  const m=mes(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+r.qtd}});
+  const m=mes(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+(r.releitura?0:r.qtd)}});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),geral=ks.reduce((t,k)=>t+tot[k],0),cp=cidadePrincipal(),box=$("cartaoComp");
   if(!geral)return;
   const ajuda=ks.filter(k=>k!==cp).reduce((t,k)=>t+tot[k],0);
@@ -825,9 +857,9 @@ function atualizarFaixaAjuda(){
   $("ajudaCancelar").onclick=sairAjuda;
 }
 function render(){atualizarNomes();
-  const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)).reduce((s,r)=>s+r.qtd,0);
+  const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((s,r)=>s+r.qtd,0);
   $("total").textContent=tot.toLocaleString("pt-BR");
-  atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m);$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
+  atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m).slice(0,3)+"/"+m.slice(2,4);atualizarDesfazer();$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
   desenharCidades(m);
   // Cidade escolhida: mostra todos os livros dela no mês (com a etapa de cada um). "Todas": só a etapa atual, como sempre.
   const rs=(filtroCidade
@@ -836,9 +868,11 @@ function render(){atualizarNomes();
   $("listaTit").innerHTML=filtroCidade?"📍 "+esc(nomeCidade(filtroCidade,m)):'📋 ETAPA <span id="etapaLista">'+p2(etapa)+'</span>';
   const imps=impDoMes(m,x=>filtroCidade?normLoc(x.localidade)===filtroCidade:x.etapa===etapa).sort((a,b)=>a.etapa-b.etapa||a.data.localeCompare(b.data));
   const totImp=imps.reduce((t,x)=>t+x.qtd,0);
-  $("nreg").innerHTML=rs.length+(rs.length===1?" livro":" livros")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos</span>`:"");
-  $("totEtapa").textContent=rs.reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}<br>${(()=>{const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> leituras${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
+  $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos</span>`:"");
+  $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
+  const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
+  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -903,7 +937,7 @@ let pendFechado="";
 function etapasPendentes(h){
   if(ajuda)return [];
   const m=h.slice(0,7),lista=cal[m];if(!lista)return [];
-  const loc=locAtual(),doMes=registros.filter(r=>r.data.startsWith(m)&&mesmaCidade(r,loc));
+  const loc=locAtual(),doMes=registros.filter(r=>r.data.startsWith(m)&&mesmaCidade(r,loc)&&!r.releitura);
   // Cidade que você só ajudou (não tem nada seu no mês passado nem neste): não mostra pendentes
   const mAnt=somaMes(m,-1);if(!doMes.length&&!registros.some(r=>r.data.startsWith(mAnt)&&mesmaCidade(r,loc)))return [];
   // Só considera a partir da primeira etapa que você já lançou no mês (pra não acusar o que foi antes de usar o app).
@@ -973,7 +1007,7 @@ $("ferAdd").onclick=()=>{
   ferias.push({id:Date.now(),ini:i,fim:somaDias(i,n-1),tipo:$("ferTipo").value});salvarFerias();
   $("ferIni").value="";$("ferDias").value="";$("ferFimData").value="";mostrarFimFerias();desenharFerias();render();
 };
-function del(id){if(confirm("Excluir este registro?")){registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
+function del(id){if(confirm("Excluir este registro?")){guardarDesfazer(registros.filter(r=>String(r.id)===String(id)));registros=registros.filter(r=>String(r.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(registros));render()}}
 
 // ---------- Editar registro ----------
 let editId=null;
@@ -984,7 +1018,7 @@ $("edPart").onchange=()=>{edMostrarPart();edCalcQtd()};$("edDe").oninput=edCalcQ
 function editar(id){
   const r=registros.find(x=>String(x.id)===String(id));if(!r)return;editId=String(id);
   $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";$("edPront").value=r.prontuario||"";$("edLivro").value=r.livro;
-  $("edPart").checked=!!r.particionado;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edCom").value=(r.com||[]).join(", ");
+  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edCom").value=(r.com||[]).join(", ");
   edMostrarPart();$("editFundo").hidden=false;
 }
 function fecharEdicao(){$("editFundo").hidden=true;editId=null}
@@ -996,7 +1030,7 @@ $("edSalvar").onclick=()=>{
   let de=null,ate=null;
   if(part){if($("edDe").value===""||$("edAte").value==="")return alert("Preencha DE e ATÉ.");de=Number($("edDe").value);ate=Number($("edAte").value);if(ate<de)return alert("O ATÉ não pode ser menor que o DE.")}
   if(!(q>0))return alert("Informe uma quantidade válida.");
-  Object.assign(r,{data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),prontuario:$("edPront").value.trim(),livro,particionado:part,de,ate,qtd:q,com:part?$("edCom").value.split(",").map(x=>x.trim()).filter(Boolean):[]});
+  Object.assign(r,{data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),prontuario:$("edPront").value.trim(),livro,particionado:part,de,ate,qtd:q,com:part?$("edCom").value.split(",").map(x=>x.trim()).filter(Boolean):[],releitura:$("edRel").checked});
   localStorage.setItem(KEY,JSON.stringify(registros));fecharEdicao();render();
 };
 
@@ -1250,7 +1284,7 @@ $("calCompFoto").onclick=()=>{
 };
 
 // ---------- Exportar, importar, backup, lixeira ----------
-$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m)&&(!filtroCidade||normLoc(r.localidade)===filtroCidade));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));const imp0=impDoMes(m,x=>!filtroCidade||normLoc(x.localidade)===filtroCidade);if(imp0.length){c+="\n\nNão lidos\nData;Etapa;Localidade;Quantidade\n"+imp0.map(x=>`${fmt(x.data)};${x.etapa};"${(x.localidade||"").replaceAll('"','""')}";${x.qtd}`).join("\n");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}))}
+$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m)&&(!filtroCidade||normLoc(r.localidade)===filtroCidade));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário;Tipo\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""};${r.releitura?"Releitura":"Leitura"}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));const imp0=impDoMes(m,x=>!filtroCidade||normLoc(x.localidade)===filtroCidade);if(imp0.length){c+="\n\nNão lidos\nData;Etapa;Localidade;Quantidade\n"+imp0.map(x=>`${fmt(x.data)};${x.etapa};"${(x.localidade||"").replaceAll('"','""')}";${x.qtd}`).join("\n");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}))}
   a.download="controle-leituras-"+m+(filtroCidade?"-"+filtroCidade.replace(/[^a-z0-9]+/g,"-"):"")+".csv";a.click()};
 $("importar").onclick=()=>$("arquivoImportar").click();
 $("arquivoImportar").onchange=e=>{
@@ -1299,13 +1333,38 @@ $("calApagar").onclick=()=>{
   salvarCal();salvarProv();desenharCal();render();alert("🗑️ Calendário de "+ano+" apagado.");
 };
 $("zoomComp").onclick=()=>{const f=fotoAtual();if(f)compartilharImagem(f,"calendario-leitura.jpg","Calendário de Leitura")};
+// Copiar o endereço (para colar no mapa se ele não achar sozinho)
+document.addEventListener("click",async e=>{
+  const b=e.target.closest(".pda-copiar");if(!b)return;
+  const t=b.dataset.end||"";
+  try{await navigator.clipboard.writeText(t);const x=b.textContent;b.textContent="✔ Copiado";setTimeout(()=>{b.textContent=x},1500)}
+  catch(err){prompt("Copie o endereço:",t)}
+});
+// ---------- Desfazer a última exclusão ----------
+function lerDesfazer(){try{const a=JSON.parse(localStorage.getItem(KEY+"_desfazer")||"[]");return Array.isArray(a)?a:[]}catch(e){return []}}
+function guardarDesfazer(recs){try{localStorage.setItem(KEY+"_desfazer",JSON.stringify(recs))}catch(e){}}
+function atualizarDesfazer(){
+  const b=$("desfazer");if(!b)return;const a=lerDesfazer();
+  b.hidden=!a.length;if(a.length)b.textContent="↩️ Desfazer: "+a.length+(a.length===1?" livro apagado":" livros apagados");
+}
+$("desfazer").onclick=()=>{
+  const a=lerDesfazer();if(!a.length)return;
+  const ids=new Set(registros.map(r=>String(r.id)));
+  a.forEach(r=>{if(!ids.has(String(r.id)))registros.push(r)});
+  localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);render();
+};
 $("lixeira").onclick=()=>{
-  const m=mes(),rs=registros.filter(r=>r.data.startsWith(m));
-  if(!rs.length){alert("A lixeira não tem registros deste mês.");return}
-  if(confirm("Mover todos os registros deste mês para a lixeira?")){
-    localStorage.setItem(KEY+"_lixeira",JSON.stringify(rs));registros=registros.filter(r=>!r.data.startsWith(m));
-    localStorage.setItem(KEY,JSON.stringify(registros));render();alert("Registros movidos para a lixeira. O backup permanece salvo neste celular.");
-  }
+  // Apaga só o que está na lista: a etapa mostrada (ou a cidade escolhida), não o mês inteiro
+  const m=mes(),alvo=r=>r.data.startsWith(m)&&(filtroCidade?normLoc(r.localidade)===filtroCidade:r.etapa===etapa);
+  const rs=registros.filter(alvo);
+  if(!rs.length)return;
+  const quem=filtroCidade?"de "+nomeCidade(filtroCidade,m):"da Etapa "+p2(etapa);
+  if(!confirm("Mover "+rs.length+" livro(s) "+quem+" para a lixeira?\n\nOs outros livros do mês não são apagados."))return;
+  let antes=[];try{antes=JSON.parse(localStorage.getItem(KEY+"_lixeira")||"[]");if(!Array.isArray(antes))antes=[]}catch(e){}
+  guardarDesfazer(rs);
+  localStorage.setItem(KEY+"_lixeira",JSON.stringify([...antes,...rs]));
+  registros=registros.filter(r=>!alvo(r));
+  localStorage.setItem(KEY,JSON.stringify(registros));render();
 };
 
 // ---------- Compartilhar e atualizar o app ----------
@@ -1325,7 +1384,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.3";
+const VERSAO_APP="6.4";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -1344,6 +1403,110 @@ async function conferirAtualizacao(){
 setTimeout(conferirAtualizacao,800);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirAtualizacao()});
 
+// ---------- 📷 Foto do PDA: lê livro, quantidade e endereço da Caixa de Entrada ----------
+function pdaPin(r,e){
+  r._end=e;const o=r.querySelector(".pda-end");if(o)o.remove();
+  const q=encodeURIComponent(e.end),w=document.createElement("div");w.className="pda-end";
+  w.innerHTML='<button type="button" class="pda-pin"><span>📍'+(e.etapa?" Et. "+p2(e.etapa):"")+'</span><span class="pda-seta">▾</span></button>'+
+    '<div class="pda-box" hidden><b>'+esc(e.end||"")+'</b><div class="pda-tags">'+(e.etapa?'<span>Etapa '+p2(e.etapa)+'</span>':'')+(e.lim?'<span>Limite '+esc(e.lim)+'</span>':'')+(e.km?'<span>'+esc(e.km)+' km</span>':'')+'</div>'+
+    '<a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q+'" target="_blank" rel="noopener">🗺️ Abrir no mapa</a><button type="button" class="pda-copiar" data-end="'+esc(e.end||"")+'">📋 Copiar endereço</button></div>';
+  const bt=w.querySelector(".pda-pin"),bx=w.querySelector(".pda-box");
+  bt.onclick=()=>{bx.hidden=!bx.hidden;bt.classList.toggle("open",!bx.hidden)};
+  r.appendChild(w);
+}
+// Preparo da foto do PDA: pega o menor valor de cor de cada ponto, assim as letras laranja (Limite) e azul (km) ficam escuras como as pretas
+function prepararPDA(img,largura){
+  const s=largura/img.width,c=document.createElement("canvas");
+  c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+  const g=c.getContext("2d");g.imageSmoothingQuality="high";g.drawImage(img,0,0,c.width,c.height);
+  const px=g.getImageData(0,0,c.width,c.height),d=px.data;
+  for(let i=0;i<d.length;i+=4){const v=Math.min(d[i],d[i+1],d[i+2]);d[i]=d[i+1]=d[i+2]=v}
+  g.putImageData(px,0,0);return c;
+}
+function lerListaPDA(texto){
+  const out=[];let cur=null;
+  const kmDe=l=>{let k=l.match(/(\d+[,.]\d+)\s*km/i);if(k)return k[1].replace(".",",");k=l.match(/(\d{3,4})\s*km/i);return k?k[1].slice(0,-2)+","+k[1].slice(-2):""};
+  texto.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(l=>{
+    // linha do limite/km fecha o livro
+    if(cur&&(/limite/i.test(l)||/\bkm\b/i.test(l))){const d=l.match(/(\d{2}\/\d{2}\/\d{4})/);if(d)cur.lim=d[1];const k=kmDe(l);if(k)cur.km=k;cur=null;return}
+    const h=l.match(/(\d{4})\D{1,3}(\d{1,2})\D{1,3}(\d{5,6})\D*?(\d+)\s*[\/|]\s*(\d+)/);
+    if(h){cur={livro:h[3],etapa:+h[2],qtd:+h[5],end:"",lim:"",km:""};out.push(cur);return}
+    if(cur){const t=l.replace(/^[^A-Za-z0-9]+/,"");if(t.replace(/[^A-Za-z0-9]/g,"").length>=2)cur.end+=(cur.end?" ":"")+t}
+  });
+  return out.filter(x=>x.qtd>0).map(x=>({...x,end:x.end.replace(/^R(?=\d)/,"R ").replace(/\s+/g," ").trim()}));
+}
+let pdaFila=[];try{pdaFila=JSON.parse(localStorage.getItem(KEY+"_pda_fila")||"[]")}catch(e){}
+function pdaSalvarFila(){try{localStorage.setItem(KEY+"_pda_fila",JSON.stringify(pdaFila))}catch(e){}}
+function pdaFaixa(){
+  const f=$("pdaFaixa");if(!f)return;
+  if(!pdaFila.length){f.hidden=true;return}
+  const g={};pdaFila.forEach(x=>g[x.etapa]=(g[x.etapa]||0)+1);
+  const txt=Object.keys(g).sort((a,b)=>a-b).map(e=>"Etapa "+p2(+e)+" ("+g[e]+")").join(" · ");
+  f.hidden=false;f.innerHTML='<span>📷 Da foto: '+txt+'. Um toque no ✔ salva cada livro na sua etapa.</span><button type="button" id="pdaLimpar">Descartar</button>';
+  $("pdaLimpar").onclick=()=>{
+    if(!confirm("Descartar os livros lidos da foto que ainda não foram salvos?"))return;
+    pdaFila=[];pdaSalvarFila();[...$("livroRows").children].forEach(r=>{if(r._end)r.remove()});
+    if(!$("livroRows").children.length)criarLinha(false,{part:false});salvarRascunho();pdaFaixa();
+  };
+}
+// guarda de volta o que você corrigiu nas barrinhas (livro e quantidade) antes de trocar de etapa
+function pdaSync(){[...$("livroRows").children].forEach(r=>{const it=r._it;if(!it)return;const l=r.querySelector(".r-livro").value.trim(),q=Number(r.querySelector(".r-qtd").value);if(l)it.livro=l;if(q>0)it.qtd=q;it.rel=r.querySelector(".r-rel").checked})}
+// Qualquer mudança nas barrinhas (livro, quantidade, REL.) já vai para a fila guardada: não perde se o app recarregar
+["input","change"].forEach(ev=>$("livroRows").addEventListener(ev,()=>{if(pdaFila.length){pdaSync();pdaSalvarFila()}}));
+// Mostra no formulário os livros da foto, cada um com a sua etapa
+function pdaMostrar(n){
+  pdaFaixa();if(!pdaFila.length)return;
+  pdaSync();
+  [...$("livroRows").children].forEach(r=>{const vazio=!r.querySelector(".r-livro").value.trim()&&r.querySelector(".r-qtd").value==="";if(r._end||vazio)r.remove()});
+  pdaFila.forEach(x=>{criarLinha(false,{livro:x.livro,qtd:x.qtd,part:false,rel:x.rel});const r=$("livroRows").lastElementChild;r._it=x;r.querySelector(".r-qtd").classList.add("auto");pdaPin(r,{end:x.end,lim:x.lim,km:x.km,etapa:x.etapa})});
+  criarLinha(false,{part:false});salvarRascunho();pdaSalvarFila();
+}
+// Salvou: tira da fila o que foi salvo
+function pdaConcluir(){
+  [...$("livroRows").children].forEach(r=>{if(r._it&&r.querySelector(".r-livro").value.trim())pdaFila=pdaFila.filter(x=>x!==r._it)});
+  pdaSalvarFila();pdaFaixa();
+}
+// Ainda tem livro de outra etapa na fila? Vai pra ela e avisa
+function pdaProxima(){
+  if(!pdaFila.length)return "";
+  const e=pdaFila[0].etapa,n=pdaFila.filter(x=>x.etapa===e).length;
+  escolherEtapa(e);
+  return "\n\n📷 Agora falta a Etapa "+p2(e)+" ("+n+" livro"+(n>1?"s":"")+"), já está na tela.";
+}
+// Endereço guardado no livro salvo: aparece na lista da etapa
+function pdaDetalhe(r){
+  if(!r.pda||!r.pda.end)return "";
+  const q=encodeURIComponent(r.pda.end);
+  return '<details class="pda-item"><summary>📍</summary><div class="pda-box"><b>'+esc(r.pda.end)+'</b><div class="pda-tags">'+(r.pda.lim&&!r.releitura?'<span>Limite '+esc(r.pda.lim)+'</span>':'')+(r.pda.km?'<span>'+esc(r.pda.km)+' km</span>':'')+'</div>'+
+    '<a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q+'" target="_blank" rel="noopener">🗺️ Abrir no mapa</a><button type="button" class="pda-copiar" data-end="'+esc(r.pda.end)+'">📋 Copiar endereço</button></div></details>';
+}
+function preencherDoPDA(itens,et){
+  pdaFila=itens.map(x=>({...x}));pdaSalvarFila();
+  escolherEtapa(pdaFila[0].etapa);
+}
+$("pdaBtn").onclick=()=>$("pdaArq").click();
+$("pdaArq").onchange=e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  const b=$("pdaBtn"),txt=b.textContent,img=new Image();
+  img.onload=async()=>{
+    b.disabled=true;
+    try{
+      b.textContent="⏳ Preparando leitor...";await carregarOCR();
+      const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
+      await w.setParameters({tessedit_pageseg_mode:"6"});
+      const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
+      const r=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
+      await w.terminate();
+      const itens=lerListaPDA(r.data.text);
+      if(!itens.length){alert("Não consegui ler os livros desta foto.\nTente uma foto reta, com boa luz, mostrando só a Caixa de Entrada do PDA.");return}
+      const ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
+      if(!confirm("📷 Li "+itens.length+" livro(s)"+(et?" da Etapa "+p2(et):"")+":\n\n"+itens.map(x=>"• "+x.livro+" — "+x.qtd+" (Etapa "+p2(x.etapa)+")").join("\n")+"\n\nPreencher o lançamento?"))return;
+      preencherDoPDA(itens,et);
+    }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
+    finally{b.disabled=false;b.textContent=txt;URL.revokeObjectURL(img.src);e.target.value=""}
+  };img.src=URL.createObjectURL(file);
+};
+
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
 iniciarLinhas();
@@ -1351,6 +1514,6 @@ completarProvisorio();
 // Ao abrir: usa o prontuário que já está escrito pra completar os livros antigos daquela cidade
 setTimeout(()=>{const l=$("localidade").value,p=$("prontuario").value.trim();if(l&&p)guardarPront(l,p)},400);
 const eHoje=etapaAmarrada(hoje())||etapaAutomatica(hoje());
-sel(eHoje||1,false);
+sel(pdaFila.length?pdaFila[0].etapa:(eHoje||1),false);
 </script>
 </body></html>
