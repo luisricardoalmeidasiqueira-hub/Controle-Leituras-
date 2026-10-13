@@ -258,7 +258,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .md-grid b{font-size:11px;text-align:center;color:#6b7280}.md-grid b.dom,.md-grid b.sab{color:#b91c1c}
 .md{position:relative;height:52px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;padding:0;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
 .md i{font-style:normal;font-size:12px;color:#6b7280}.md.dom i,.md.sab i{color:#b91c1c}
-.md em{font-style:normal;font-size:13px;font-weight:800;color:#1e3a8a}.md u{text-decoration:none;font-size:10px;font-weight:800;color:#15803d;margin-top:1px}.md u.fora{color:#dc2626}
+.md.et i{font-size:11.5px;letter-spacing:-.3px}#calMesTodo .md{height:58px;padding-top:8px}#calMesTodo .md-bol,#calMesTodo .md-at{top:2px;width:8px;height:8px}#calMesTodo .md-bol{right:2px}#calMesTodo .md-at{left:2px}.md em small{font-size:9px;font-weight:700;color:#64748b}.md em{white-space:nowrap;font-style:normal;font-size:13px;font-weight:800;color:#1e3a8a}.md u{text-decoration:none;font-size:10px;font-weight:800;color:#15803d;margin-top:1px}.md u.fora{color:#dc2626}
 .md-at{position:absolute;top:3px;left:3px;width:9px;height:9px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px #fecaca;z-index:1}
 .md-at::after{content:"";position:absolute;inset:-10px}.md-at-leg{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px #fecaca;vertical-align:middle}
 .md-q{position:absolute;top:-7px;left:-5px;width:18px;height:18px;border-radius:50%;background:#fff;border:1.5px solid #fecaca;font-size:10px;line-height:15px;text-align:center;z-index:1}
@@ -267,6 +267,12 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .md.et.sab{background:#fee2e2;border-color:#f87171}.md.et.fer{background:#ffedd5;border-color:#fb923c}
 .md.fe:not(.et){background:#ede9fe}.md.hj{border:2px solid #2563eb}
 .md-leg{font-size:11px;color:#6b7280;margin-top:5px}.md-leg .et{display:inline-block;background:#dbeafe;border:1px solid #93c5fd;border-radius:5px;padding:0 4px;font-weight:800;color:#1e3a8a}.md-leg .et.lida{background:#dcfce7;border-color:#86efac;color:#166534}
+.conf.grupo{display:block}.conf.grupo>.full{margin-bottom:5px}
+.reg-lin{border-top:1px dashed #d1d5db;padding-top:5px;margin-top:5px}.reg-lin.feito .conf-info{color:#15803d}.reg-lin.outro-fez{opacity:.75}
+.reg-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}.reg-top .conf-info{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reg-top .conf-btns button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:26px;min-width:28px;padding:0 5px;font-size:12px;cursor:pointer}
+.reg-campos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:5px}.reg-campos input{height:34px;font-size:14px}
+.reg-lin.feito .ok{background:#22c55e!important;color:#fff}
 .conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
@@ -286,7 +292,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .rota-tag{color:#1d4ed8;font-weight:700;font-size:11.5px}
 .ajuda-btn.ic-only{min-width:44px;height:32px;font-size:17px;padding:0 10px}
 .rel-btn{position:relative;border-color:#fcd34d!important;background:#fffbeb!important}.rel-btn.ativa{background:#d97706!important;border-color:#d97706!important}
-.rel-badge{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;border-radius:9px;background:#dc2626;color:#fff;font-size:10px;font-weight:800;line-height:17px;padding:0 4px}
+.rel-badge{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #fff;padding:0}
 .rel-mini{font-size:12px;align-items:center}.rel-mini .conf-chip{margin:0 0 0 4px}
 .cid.rel{border-color:#fcd34d;background:#fffbeb;color:#92400e}.cid.rel.ativa{background:#d97706;border-color:#d97706;color:#fff}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
@@ -465,7 +471,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 9.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 9.9</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -993,13 +999,13 @@ function desenharCidades(m){
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
   const rels=registros.filter(r=>r.releitura&&r.data.startsWith(m)),pend=rels.filter(r=>confDe(r).some(x=>!x.ok)).length;
   if(!rels.length)filtroRel=false;
-  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=!pend;bd.textContent=pend}}
+  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=!pend;bd.textContent="";rb.title=pend?"Tem releitura pra confirmar":"Releituras"}}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
   const mostraCid=ks.length>=2;
   if(!mostraCid&&!rels.length){box.hidden=true;return}
   box.hidden=false;
   box.innerHTML=(mostraCid||filtroRel?`<button type="button" class="cid${!filtroCidade&&!filtroRel?" ativa":""}" data-k="">${mostraCid?"Todas":"📋 Etapa"}</button>`:"")+
-    (rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?pend+" pendente"+(pend>1?"s":""):rels.length+" ✔"}</small></button>`:"")+
+    (rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?"🟠 a confirmar":"✔"}</small></button>`:"")+
     (mostraCid?ks.map(k=>`<button type="button" class="cid${filtroCidade===k&&!filtroRel?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join(""):"");
   box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{if(b.dataset.rel){filtroRel=!filtroRel;filtroCidade=""}else{filtroRel=false;filtroCidade=b.dataset.k}$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
 }
@@ -1266,6 +1272,7 @@ function confDe(r){
 }
 function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
 let confAbertas=new Set();
+function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
 function abrirConf(id){rcModo="conf";if(rcChave!==String(id))confAbertas=new Set();rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
 function desenharConf(){
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
@@ -1274,17 +1281,23 @@ function desenharConf(){
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
     (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Faltam <b>${nf}</b> de ${c.length}`:`✔ Todas as ${c.length} feitas`}</div>`})()+
-    c.map((x,i)=>({x,i})).sort((a,b)=>(a.x.ok-b.x.ok)||a.i-b.i).map(({x,i})=>{
-      const nc=numeroCasa(x.end),done=x.ok||x.outro;
-      if(!confAbertas.has(i))return `<button type="button" class="conf-linha${x.outro?" outro":done?"":" pend"}" data-abre="${i}"><span class="cl-n">${x.outro?"👥":done?"✔":"⏳"} ${i+1}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x.end||"sem endereço")}<small>${x.reg?esc(x.reg)+" · ":""}${esc(x.med||"")}${x.outro?" · recusada"+(x.agente?" · "+esc(x.agente):""):x.leit?" · leitura "+esc(x.leit):done?"":" · falta a leitura"}${done&&x.quando?" · "+fmt(x.quando).slice(0,5):""}</small></span><span class="cl-ab">▾</span></button>`;
-      return `<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}"><div class="full conf-top"><span class="conf-info">${i+1}${x.reg?` · <b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${i}" aria-label="Fechar">▲</button>${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div><div class="full"><textarea data-i="${i}" data-k="end" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x.end)}</textarea></div>
-      <div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"></div>
-      <div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"></div>
-      <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button>
-      ${x.outro?`<div class="full conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="full conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("")+
+    // Mesmo endereço = um cartão só, com os medidores/registros dele dentro (sem numeração)
+    (()=>{const gs=[],por={};c.forEach((x,i)=>{const k=chaveEnd(x,i);if(!por[k]){por[k]={k,itens:[]};gs.push(por[k])}por[k].itens.push(i)});
+      gs.forEach(g=>g.pend=g.itens.some(i=>!c[i].ok));gs.sort((a,b)=>(b.pend-a.pend)||a.itens[0]-b.itens[0]);
+      return gs.map(g=>{
+        const x0=c[g.itens[0]],nc=numeroCasa(x0.end),falt=g.itens.filter(i=>!c[i].ok).length,todosOutro=g.itens.every(i=>c[i].outro);
+        const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
+        const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
+        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?(falt===g.itens.length?(falt>1?"faltam "+falt:"falta a leitura"):"faltam "+falt+" de "+g.itens.length):todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+          <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
+          ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
+        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?`⏳ falta${falt>1?"m "+falt:" 1"}`:"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
     `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
   const b=$("rcCorpo");
   ajustarAltura(b);
+  // endereço do cartão vale pra todos os registros dele
+  b.querySelectorAll("textarea[data-g]").forEach(t=>t.onchange=()=>{const v=t.value.replace(/\s+/g," ").trim(),ids=t.dataset.g.split(",").map(Number);const eraAberto=[...confAbertas].length;ids.forEach(i=>c[i].end=v);confAbertas=new Set([chaveEnd(c[ids[0]],ids[0])]);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("input[data-i],textarea[data-i]").forEach(inp=>inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.replace(/\s+/g," ").trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   $("confFotoBtn").onclick=()=>$("confArq").click();
   // 👥 Repassada: sai das pendentes sem precisar da leitura (fica anotado)
@@ -1301,14 +1314,16 @@ function desenharConf(){
   b.querySelectorAll("[data-tira]").forEach(bt=>bt.onclick=()=>{
     const i=+bt.dataset.tira;
     if(c.length===1){if(confirm("Esta é a única confirmação do livro "+r.livro+".\nApagar a releitura inteira?")){registros=registros.filter(x=>x!==r);localStorage.setItem(KEY,JSON.stringify(registros));$("rcFundo").hidden=true;render()}return}
-    if(!confirm("Tirar a confirmação "+(i+1)+(c[i].med?" (medidor "+c[i].med+")":"")+"?\nO livro passa a ter "+(c.length-1)+" releitura(s)."))return;
-    c.splice(i,1);r.qtd=c.length;confAbertas.clear();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
-  b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([+bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
+    if(!confirm("Tirar esta confirmação"+(c[i].reg?" "+c[i].reg:"")+(c[i].med?" (medidor "+c[i].med+")":"")+"?\nO livro passa a ter "+(c.length-1)+" releitura(s)."))return;
+    c.splice(i,1);r.qtd=c.length;confAbertas=new Set();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
   // ↩ volta pra pendente (confirmada ou recusada)
   b.querySelectorAll("[data-volta]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.volta];x.ok=false;x.outro=false;delete x.agente;delete x.quando;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // depois de resolver uma, já abre a próxima que falta
-  const proxPend=j=>{confAbertas=new Set();const k=c.findIndex((y,n)=>n!==j&&!y.ok);if(k>=0)confAbertas.add(k)};
-  b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(+bt.dataset.fecha);desenharConf()});
+  // se o endereço ainda tem registro faltando, fica aberto; senão abre o próximo endereço que falta
+  const proxPend=j=>{const kj=chaveEnd(c[j],j);if(c.some((y,n)=>n!==j&&!y.ok&&chaveEnd(y,n)===kj)){confAbertas=new Set([kj]);return}
+    confAbertas=new Set();const k=c.findIndex((y,n)=>n!==j&&!y.ok);if(k>=0)confAbertas.add(chaveEnd(c[k],k))};
+  b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(bt.dataset.fecha);desenharConf()});
   b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
@@ -1461,9 +1476,9 @@ function desenharMesTodo(){
       else if(fer)bol=(fer.tipo||"Férias")==="Férias"?"azul":"roxo";
       else if(iso<h)bol="cinza";
     }
-    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:""}<i>${d}</i>${i>-1?`<em>${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
+    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
   }
-  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · ⚪ passou e não lançou · toque num dia pra ver</div>`;
+  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · ⚪ passou e não lançou · toque num dia pra ver</div>`;
   box.querySelectorAll("[data-q]").forEach(q=>q.onclick=e=>{e.stopPropagation();verAtraso(+q.dataset.q)});
   box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
 }
@@ -1832,7 +1847,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="9.6";
+const VERSAO_APP="9.9";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
