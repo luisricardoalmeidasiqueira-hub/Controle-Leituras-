@@ -377,7 +377,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -394,6 +394,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
+<div class="full"><div class="label" style="color:#991b1b">⛔ NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca"></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
@@ -771,7 +772,7 @@ $("saveAll").onclick=()=>{
   const imp=Math.max(0,Math.round(Number($("impQtd").value)||0));
   if(!r.saida.length&&!imp)return alert("Digite pelo menos um livro e a quantidade.");
   if(imp){impedimentos.push({id:Date.now()+Math.random(),data,etapa,localidade,qtd:imp,...(ajuda?{ajuda:true}:{})});salvarImp();$("impQtd").value=""}
-  if(!r.saida.length){mesVer=data.slice(0,7);render();if(ajuda)setTimeout(sairAjuda,60);if(esqueci)setTimeout(sairDoEsqueci,50);return alert("⛔ "+imp+" não lido(s) salvo(s) na Etapa "+p2(etapa)+".")}
+  if(!r.saida.length){mesVer=data.slice(0,7);render();if(ajuda)setTimeout(sairAjuda,60);if(esqueci)setTimeout(sairDoEsqueci,50);return}
   const ja=r.saida.filter(x=>!x.pda&&registros.some(g=>g.data===data&&g.etapa===(x.etapa||etapa)&&g.livro===x.livro)).map(x=>x.livro);
   if(ja.length&&!confirm("O(s) livro(s) "+ja.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   const prontuario=$("prontuario").value.trim();guardarPront(localidade,prontuario);
@@ -786,7 +787,7 @@ $("saveAll").onclick=()=>{
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
   if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
-  if(!(r.saida.length&&r.saida.every(x=>x.pda))||pdaAviso)alert(r.saida.length+" livro(s) salvo(s) na Etapa "+[...new Set(r.saida.map(x=>x.etapa||etapa))].map(n=>p2(n)).join(" e ")+(imp?" + ⛔ "+imp+" não lido(s)":"")+(r.repetidos?"\n"+r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).":"")+pdaAviso);
+  if(r.repetidos)alert(r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).");
 };
 
 // ---------- Mês, totais e lista ----------
@@ -858,7 +859,7 @@ function abrirTotalCidades(){
   if(!geral)return;
   const ajuda=ks.filter(k=>k!==cp).reduce((t,k)=>t+tot[k],0);
   box.innerHTML=`<b class="comp-tit">📊 Leituras de ${nomeMes(m)}</b>`+ks.map(k=>`<div class="comp-linha" data-cid="${esc(k)}"><div><b>📍 ${esc(nomeCidade(k,m))}</b><small>${k===cp?"sua cidade":"ajuda"} · toque pra ver os livros</small></div><b>${tot[k].toLocaleString("pt-BR")} ›</b></div>`).join("")+
-    (()=>{const im=impDoMes(m,()=>true).reduce((t,x)=>t+x.qtd,0),ia=impDoMes(somaMes(m,-1),()=>true).reduce((t,x)=>t+x.qtd,0);if(!im&&!ia)return "";
+    (()=>{const nlLiv=mm=>registros.filter(r=>r.data.startsWith(mm)).reduce((t,r)=>t+(r.nl||0),0),im=impDoMes(m,()=>true).reduce((t,x)=>t+x.qtd,0)+nlLiv(m),ia=impDoMes(somaMes(m,-1),()=>true).reduce((t,x)=>t+x.qtd,0)+nlLiv(somaMes(m,-1));if(!im&&!ia)return "";
       const pc=geral?(im/geral*100).toFixed(1).replace(".",","):"0",dif=ia?Math.round((im-ia)/ia*100):null;
       return `<div class="comp-linha" style="cursor:default;border-color:#fecaca;background:#fef2f2"><div><b style="color:#b91c1c">⛔ Não lidos</b><small>${pc}% do total${ia?` · ${nomeMes(somaMes(m,-1))}: ${ia}`:""}</small></div><span style="text-align:right"><b style="color:#b91c1c">${im}</b>${dif!=null?`<small style="display:block;font-size:10px;font-weight:800;color:${dif>0?"#b91c1c":"#15803d"}">${dif>0?"▲ "+dif+"% a mais":dif<0?"▼ "+Math.abs(dif)+"% a menos":"igual"}</small>`:""}</span></div>`})()+
     `<div class="comp-linha sel" style="cursor:default"><div><b>Total geral</b>${ajuda&&cp&&tot[cp]?`<small>${esc(nomeCidade(cp,m))} ${tot[cp].toLocaleString("pt-BR")} + ajuda ${ajuda.toLocaleString("pt-BR")}</small>`:""}</div><b>${geral.toLocaleString("pt-BR")}</b></div><button type="button" class="comp-ok">Ok</button>`;
@@ -899,12 +900,12 @@ function render(){atualizarNomes();
     :registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m))).sort((a,b)=>filtroCidade?(a.etapa-b.etapa||a.data.localeCompare(b.data)):(b.data.localeCompare(a.data)||b.id-a.id));
   $("listaTit").innerHTML=filtroCidade?"📍 "+esc(nomeCidade(filtroCidade,m)):'📋 ETAPA <span id="etapaLista">'+p2(etapa)+'</span>';
   const imps=impDoMes(m,x=>filtroCidade?normLoc(x.localidade)===filtroCidade:x.etapa===etapa).sort((a,b)=>a.etapa-b.etapa||a.data.localeCompare(b.data));
-  const totImp=imps.reduce((t,x)=>t+x.qtd,0);
+  const totImp=imps.reduce((t,x)=>t+x.qtd,0)+rs.reduce((t,r)=>t+(r.nl||0),0);
   const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
   $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos</span>`:"");
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
-  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?`<span class="dt-atraso">${fmt(r.data)} · ${c} dias</span>`:fmt(r.data)+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1050,7 +1051,7 @@ $("edPart").onchange=()=>{edMostrarPart();edCalcQtd()};$("edDe").oninput=edCalcQ
 function editar(id){
   const r=registros.find(x=>String(x.id)===String(id));if(!r)return;editId=String(id);
   $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";$("edPront").value=r.prontuario||"";$("edLivro").value=r.livro;
-  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edCom").value=(r.com||[]).join(", ");
+  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edNl").value=r.nl||"";$("edCom").value=(r.com||[]).join(", ");
   edMostrarPart();$("editFundo").hidden=false;
 }
 function fecharEdicao(){$("editFundo").hidden=true;editId=null}
@@ -1062,7 +1063,8 @@ $("edSalvar").onclick=()=>{
   let de=null,ate=null;
   if(part){if($("edDe").value===""||$("edAte").value==="")return alert("Preencha DE e ATÉ.");de=Number($("edDe").value);ate=Number($("edAte").value);if(ate<de)return alert("O ATÉ não pode ser menor que o DE.")}
   if(!(q>0))return alert("Informe uma quantidade válida.");
-  Object.assign(r,{data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),prontuario:$("edPront").value.trim(),livro,particionado:part,de,ate,qtd:q,com:part?$("edCom").value.split(",").map(x=>x.trim()).filter(Boolean):[],releitura:$("edRel").checked});
+  const nl=Math.max(0,Math.round(Number($("edNl").value)||0));if(nl>q)return alert("Os não lidos não podem passar da quantidade do livro.");
+  Object.assign(r,{nl:nl||undefined,data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),prontuario:$("edPront").value.trim(),livro,particionado:part,de,ate,qtd:q,com:part?$("edCom").value.split(",").map(x=>x.trim()).filter(Boolean):[],releitura:$("edRel").checked});
   localStorage.setItem(KEY,JSON.stringify(registros));fecharEdicao();render();
 };
 
@@ -1316,7 +1318,7 @@ $("calCompFoto").onclick=()=>{
 };
 
 // ---------- Exportar, importar, backup, lixeira ----------
-$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m)&&(!filtroCidade||normLoc(r.localidade)===filtroCidade));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário;Tipo\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""};${r.releitura?"Releitura":"Leitura"}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));const imp0=impDoMes(m,x=>!filtroCidade||normLoc(x.localidade)===filtroCidade);if(imp0.length){c+="\n\nNão lidos\nData;Etapa;Localidade;Quantidade\n"+imp0.map(x=>`${fmt(x.data)};${x.etapa};"${(x.localidade||"").replaceAll('"','""')}";${x.qtd}`).join("\n");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}))}
+$("csv").onclick=()=>{const m=mes(),rs=registros.filter(r=>r.data.startsWith(m)&&(!filtroCidade||normLoc(r.localidade)===filtroCidade));if(!rs.length)return alert("Não há leituras neste mês.");let c="﻿Data;Etapa;Localidade;Livro;De;Até;Quantidade;Dividido com;Prontuário;Tipo;Não lidos\n"+rs.map(r=>`${fmt(r.data)};${r.etapa};"${(r.localidade||"").replaceAll('"','""')}";"${String(r.livro).replaceAll('"','""')}";${r.de??""};${r.ate??""};${r.qtd};"${(r.com||[]).join(", ").replaceAll('"','""')}";${r.prontuario||""};${r.releitura?"Releitura":"Leitura"};${r.nl||""}`).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}));const imp0=impDoMes(m,x=>!filtroCidade||normLoc(x.localidade)===filtroCidade);if(imp0.length){c+="\n\nNão lidos\nData;Etapa;Localidade;Quantidade\n"+imp0.map(x=>`${fmt(x.data)};${x.etapa};"${(x.localidade||"").replaceAll('"','""')}";${x.qtd}`).join("\n");a.href=URL.createObjectURL(new Blob([c],{type:"text/csv;charset=utf-8"}))}
   a.download="controle-leituras-"+m+(filtroCidade?"-"+filtroCidade.replace(/[^a-z0-9]+/g,"-"):"")+".csv";a.click()};
 $("importar").onclick=()=>$("arquivoImportar").click();
 $("arquivoImportar").onchange=e=>{
@@ -1439,7 +1441,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.6";
+const VERSAO_APP="6.7";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
