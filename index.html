@@ -233,6 +233,18 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .conf-acoes{flex-wrap:nowrap}.conf-acoes>span:first-child{flex:1;min-width:0}
 .conf-btns{display:flex;flex:none;gap:5px}.conf-btns button{margin-left:0!important;white-space:nowrap}
 .conf-outro b{color:#374151}
+.conf{padding:6px 7px;gap:5px;margin-bottom:6px;align-items:center}.conf input{height:34px;font-size:14px}.conf button.ok{height:34px}
+.conf textarea.end-txt{min-height:32px;padding:5px 9px;font-size:13.5px}
+.conf-top{display:flex;align-items:center;gap:6px}.conf-top .conf-info{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conf-top .num-casa{font-size:12px;padding:1px 6px}
+.conf-top .conf-btns button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:28px;min-width:30px;padding:0 5px;font-size:13px;cursor:pointer}
+.conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
+.conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
+.conf-linha.outro{border-color:#d1d5db;background:#f3f4f6}
+.conf-linha .cl-n{flex:none;font-weight:800;font-size:12.5px;color:#15803d}.conf-linha.outro .cl-n{color:#4b5563}
+.conf-linha .cl-tx{flex:1;min-width:0;font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conf-linha .cl-tx small{display:block;color:#6b7280;font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.conf-linha .cl-ab{flex:none;color:#6b7280}
 .rel-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:1px solid #fcd34d;background:#fffbeb;border-radius:11px;padding:10px;margin-bottom:8px;cursor:pointer;font:inherit;color:#1f2937}
 .rel-item.ok{border-color:#86efac;background:#f0fdf4}
 .rel-item .et{flex:none;background:#e0e7ff;color:#3730a3;border-radius:7px;padding:2px 6px;font-size:12px;font-weight:800}
@@ -423,7 +435,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.5</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1069,7 +1081,8 @@ function atualizarChip(){
   $("dataTxt").parentNode.classList.toggle("atrasado",fora);
   // Etapa que atrasou no mês passado: mostra até quando ler pra não atrasar de novo
   const am=atrasoMesPassado(h.slice(0,7),etapa);
-  const txtAntes=am?" · ⚠️ Mês passado atrasou ("+am.dias+" dias): leia até "+am.lerAte.slice(8)+"/"+am.lerAte.slice(5,7):"";
+  // Regra da ANEEL: o atraso do mês passado não conta neste mês (o ciclo segue o calendário). Só fica de lembrete, sem amarelo.
+  const txtAntes=am?" · ℹ️ Mês passado essa etapa foi lida atrasada ("+am.dias+" dias) — não conta: o ciclo deste mês segue o calendário":"";
   if(e!==etapa&&diaDaMinha){
     // Etapa escolhida na mão, diferente da do calendário: lançando atrasado ou adiantado
     const atras=diaDaMinha<h;
@@ -1080,7 +1093,7 @@ function atualizarChip(){
     else if(cor||pv)txt=(cor?textoDoDia(h):"🟡 Etapa "+p2(e))+(pv?" · provisório":"");
     if(fora&&e===etapa){txt=(txt?txt+" · ":"")+"🔴 Ciclo de "+ciclo+" dias, passou do limite de "+CICLO_MAX}
     if(am)txt=(txt?txt+" · ":"")+txtAntes.slice(3);
-    info.hidden=!txt;info.textContent=txt;info.className="cal-info"+(fora&&e===etapa?" fora":am?" atraso":cor?" "+cor:pv?" prov":"");
+    info.hidden=!txt;info.textContent=txt;info.className="cal-info"+(fora&&e===etapa?" fora":cor?" "+cor:pv?" prov":am?" nota":"");
   }
 
 }
@@ -1222,18 +1235,23 @@ function confDe(r){
   return r.conf;
 }
 function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
-function abrirConf(id){rcModo="conf";rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
+let confAbertas=new Set();
+function abrirConf(id){rcModo="conf";if(rcChave!==String(id))confAbertas=new Set();rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
 function desenharConf(){
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
   const c=confDe(r),cid=r.localidade||"",falta=[...new Set(c.filter(x=>!x.ok&&x.end.trim()).map(x=>comCidade(x.end,cid)))],lk=linkMaps(falta);
   $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
-    c.map((x,i)=>`<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}">${x.uc||x.reg?`<div class="full conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</div>`:""}<div class="full"><div class="label end-lbl">${i+1}. ENDEREÇO${numeroCasa(x.end)?`<span class="num-casa">🏠 Nº ${esc(numeroCasa(x.end))}</span>`:""}</div><textarea data-i="${i}" data-k="end" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x.end)}</textarea></div>
-      <div><div class="label">MEDIDOR</div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Nº" autocomplete="off"></div>
-      <div><div class="label">LEITURA</div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" autocomplete="off"></div>
+    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Faltam <b>${nf}</b> de ${c.length}`:`✔ Todas as ${c.length} feitas`}</div>`})()+
+    c.map((x,i)=>({x,i})).sort((a,b)=>(a.x.ok-b.x.ok)||a.i-b.i).map(({x,i})=>{
+      const nc=numeroCasa(x.end),done=x.ok||x.outro;
+      if(done&&!confAbertas.has(i))return `<button type="button" class="conf-linha${x.outro?" outro":""}" data-abre="${i}"><span class="cl-n">${x.outro?"👥":"✔"} ${i+1}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x.end||"sem endereço")}<small>${x.reg?esc(x.reg)+" · ":""}${esc(x.med||"")}${x.outro?" · feita por "+(x.agente?esc(x.agente):"outro agente"):x.leit?" · leitura "+esc(x.leit):""}${x.quando?" · "+fmt(x.quando).slice(0,5):""}</small></span><span class="cl-ab">▾</span></button>`;
+      return `<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}"><div class="full conf-top"><span class="conf-info">${i+1}${x.reg?` · <b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${done?`<button type="button" data-fecha="${i}" aria-label="Recolher">▴</button>`:""}<button type="button" data-outro="${i}" title="${x.outro?"Desfazer":"Recusada (outro agente fez)"}">${x.outro?"↩":"🙅"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div><div class="full"><textarea data-i="${i}" data-k="end" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x.end)}</textarea></div>
+      <div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"></div>
+      <div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"></div>
       <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button>
-      <div class="full conf-acoes">${x.outro?`<span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span>`:x.ok&&x.quando?`<span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span>`:"<span></span>"}<span class="conf-btns"><button type="button" data-outro="${i}">${x.outro?"↩ Desfazer":"🙅 Recusada"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div></div>`).join("")+
+      ${x.outro?`<div class="full conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="full conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("")+
     `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
   const b=$("rcCorpo");
   ajustarAltura(b);
@@ -1245,7 +1263,7 @@ function desenharConf(){
       let ult="";try{ult=localStorage.getItem(KEY+"_ultimo_agente")||""}catch(e){}
       const nome=prompt("🙅 Recusada — feita por outro agente de faturamento.\n\nNome do agente (pode deixar em branco):",ult);
       if(nome===null)return;
-      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();
+      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();confAbertas.delete(+bt.dataset.outro);
       try{if(x.agente)localStorage.setItem(KEY+"_ultimo_agente",x.agente)}catch(e){}
     }localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // 🗑️ tira a confirmação (ex.: foi cancelada)
@@ -1253,8 +1271,10 @@ function desenharConf(){
     const i=+bt.dataset.tira;
     if(c.length===1){if(confirm("Esta é a única confirmação do livro "+r.livro+".\nApagar a releitura inteira?")){registros=registros.filter(x=>x!==r);localStorage.setItem(KEY,JSON.stringify(registros));$("rcFundo").hidden=true;render()}return}
     if(!confirm("Tirar a confirmação "+(i+1)+(c[i].med?" (medidor "+c[i].med+")":"")+"?\nO livro passa a ter "+(c.length-1)+" releitura(s)."))return;
-    c.splice(i,1);r.qtd=c.length;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
-  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok)x.quando=hoje();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+    c.splice(i,1);r.qtd=c.length;confAbertas.clear();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas.add(+bt.dataset.abre);desenharConf()});
+  b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(+bt.dataset.fecha);desenharConf()});
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();confAbertas.delete(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
 // Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
@@ -1678,6 +1698,7 @@ function atualizarDot(){
     else if(t.startsWith("🤝")||t.startsWith("⚪")||/não tem leitura|sem leitura/.test(t))cor="cinza";
     else if(/\bferias\b/.test(c))cor=/\bazul\b/.test(c)?"azul":"roxo";
     else if(/\b(sab|fer)\b/.test(c))cor="laranja";
+    else if(/\bnota\b/.test(c))cor="verde";
     else cor="amarelo";
   }
   d.className="status-dot "+cor;
@@ -1742,7 +1763,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="8.5";
+const VERSAO_APP="8.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
