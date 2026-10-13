@@ -254,7 +254,9 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .cal-status{font-size:12.5px;font-weight:700;color:#1d4ed8;margin-top:8px;text-align:center}
 #calMes{cursor:pointer}
 .mes-todo{margin-bottom:8px}.md-bol{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1px #fff}
-.md-bol.verde{background:#22c55e}.md-bol.vermelho{background:#ef4444}.md-bol.laranja{background:#ea580c}.md-bol.azul{background:#3b82f6}.md-bol.roxo{background:#a855f7}.md-bol.cinza{background:#d1d5db}.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.md-bol.verde{background:#22c55e}.md-bol.vermelho{background:#ef4444}.md-bol.laranja{background:#ea580c}.md-bol.azul{background:#3b82f6}.md-bol.roxo{background:#a855f7}.md-bol.cinza{background:#d1d5db}.md-bol.rosa,.md-at.rosa{background:#ec4899}.md-at.rosa{box-shadow:0 0 0 2px #fbcfe8}.bol-rosa{display:inline-block;width:11px;height:11px;border-radius:50%;background:#ec4899;vertical-align:-1px}.md.et.naofiz{background:#fdf2f8;border-color:#f9a8d4}.md.et.naofiz em,.md.et.naofiz u{color:#6b7280}
+.nf-linha{margin-top:6px;font-size:12.5px;font-weight:700;color:#374151;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.nf-linha button{border:1px solid #9ca3af;background:#fff;border-radius:8px;height:30px;padding:0 9px;font-size:12.5px;font-weight:800;color:#374151;cursor:pointer}
+.pend-opcoes .op-naofiz{grid-column:1/-1;height:36px!important;background:#f3f4f6!important;color:#374151!important}.pend-opcoes .op-naofiz small{display:inline;margin-left:5px}.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
 .md-grid b{font-size:11px;text-align:center;color:#6b7280}.md-grid b.dom,.md-grid b.sab{color:#b91c1c}
 .md{position:relative;height:52px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;padding:0;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
 .md i{font-style:normal;font-size:12px;color:#6b7280}.md.dom i,.md.sab i{color:#b91c1c}
@@ -472,7 +474,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.3</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -599,6 +601,9 @@ function salvarCal(){
 }
 // ---------- Férias / folga: períodos em que você não lança ----------
 const FERIASKEY=KEY+"_ferias";
+// 🚫 Etapa que você não fez (trabalhou, mas em outro serviço): {"2026-09-25":"outro serviço"} pelo dia do calendário
+const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
+function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
 function salvarFerias(){try{localStorage.setItem(FERIASKEY,JSON.stringify(ferias))}catch(e){}}
 function emFerias(d){return d?ferias.find(f=>d>=f.ini&&d<=f.fim):null}
@@ -1150,7 +1155,7 @@ function etapasPendentes(h){
   lista.forEach((dia,i)=>{
     const n=i+1;if(!dia||dia>=h||n===etapa)return;
     if(minEt?n<minEt:dia<limIso)return;
-    if(emFerias(dia))return;
+    if(emFerias(dia)||naoFiz[dia])return;
     if(!doMes.some(r=>r.etapa===n))out.push({etapa:n,dia});
   });
   return out;
@@ -1173,9 +1178,10 @@ function atualizarPendentes(){
   box.hidden=!pend.length;if(!pend.length)return;
   const mostra=pend.slice(-6),esc=pend.find(p=>p.etapa===pendEscolha);
   box.innerHTML="⏳ Pendente"+(pend.length>1?"s":"")+":"+mostra.map(p=>`<button class="pend${p.etapa===pendEscolha?" ativa":""}" type="button" data-e="${p.etapa}" title="Etapa ${p2(p.etapa)}, do dia ${p.dia.slice(8)}/${p.dia.slice(5,7)}">Et. ${p2(p.etapa)} <small>${p.dia.slice(8)}/${p.dia.slice(5,7)}</small></button>`).join("")+(pend.length>mostra.length?` <span>+${pend.length-mostra.length}</span>`:"")
-    +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button></div>`:"");
+    +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button><button type="button" class="op-naofiz"><b class="bol-rosa"></b> Não fiz<small>li em outro lugar</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
   if(esc){
+    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha rosa no calendário."))return;naoFiz[esc.dia]="li em outro lugar";salvarNaoFiz();pendEscolha=0;render()};
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;escolherEtapa(esc.etapa);irParaLivro()};
     box.querySelector(".op-esqueci").onclick=()=>{
       pendEscolha=0;esqueci={etapa:esc.etapa,dia:esc.dia,voltar:h};dataManual=true;
@@ -1290,7 +1296,7 @@ function desenharConf(){
         const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
         if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
-        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${x.ok&&!x.outro?`<button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
         return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
@@ -1476,12 +1482,13 @@ function desenharMesTodo(){
     let bol="";
     if(i>-1){
       if(lida)bol=lida>iso?"vermelho":(corDoDia(lida)?"laranja":"verde");
+      else if(naoFiz[iso])bol="rosa";
       else if(fer)bol=(fer.tipo||"Férias")==="Férias"?"azul":"roxo";
       else if(iso<h)bol="cinza";
     }
-    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
+    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${naoFiz[iso]?" naofiz":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol==="rosa"?`<span class="md-bol rosa"></span>`:bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:i>-1&&naoFiz[diaDaEtapa(somaMes(calVer,-1),i+1)]?`<span class="md-at rosa" title="Mês passado você não fez esta etapa (leu em outro lugar)"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
   }
-  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · ⚪ passou e não lançou · toque num dia pra ver</div>`;
+  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div>`;
   box.querySelectorAll("[data-q]").forEach(q=>q.onclick=e=>{e.stopPropagation();verAtraso(+q.dataset.q)});
   box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
 }
@@ -1550,7 +1557,11 @@ $("calBusca").onchange=()=>{
   r.className="consulta-res"+(e?"":" nao");r.hidden=false;
   const mD=d.slice(0,7),realD=e&&ultimaLeituraReal(mD,e),amD=e&&atrasoMesPassado(mD,e),ccD=e&&cicloPlanejado(mD,e-1);
   const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
-  r.textContent=e?"✅ "+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês");
+  r.textContent=(e?(naoFiz[d]?"":"✅ ")+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês"));
+  if(e&&d<=hoje()&&!realD){r.insertAdjacentHTML("beforeend",naoFiz[d]?`<div class="nf-linha"><b class="bol-rosa"></b> Você não fez esta etapa (${esc(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d])}) <button type="button" id="nfDesfaz">↩ Desfazer</button></div>`:`<div class="nf-linha"><button type="button" id="nfMarca"><b class="bol-rosa"></b> Não fiz esta etapa (li em outro lugar)</button></div>`);
+    const mk=$("nfMarca"),dz=$("nfDesfaz");
+    if(mk)mk.onclick=()=>{naoFiz[d]="li em outro lugar";salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};
+    if(dz)dz.onclick=()=>{delete naoFiz[d];salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};}
   calEditando=false;calVer=d.slice(0,7);desenharCal();
 };
 // Editar mês: liga/desliga as datas para corrigir
@@ -1746,7 +1757,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -1757,6 +1768,7 @@ function importarBackupCompleto(d){
   let nC=0;Object.entries(d.calendario||{}).forEach(([m,v])=>{const oficialNoBackup=!(d.provisorios||[]).includes(m);if(Array.isArray(v)&&(!cal[m]||(prov.has(m)&&oficialNoBackup))){if(oficialNoBackup){prov.delete(m);editados.delete(m)}cal[m]=v;nC++;calApagados=calApagados.filter(x=>x!==m);try{localStorage.setItem(CALDELKEY,JSON.stringify(calApagados))}catch(e){};if((d.provisorios||[]).includes(m))prov.add(m)}});
   Object.entries(d.prontuarios||{}).forEach(([k,v])=>{if(!prontPorCidade[k])prontPorCidade[k]=v});
   Object.entries(d.rotas||{}).forEach(([k,v])=>{if(!rotas[k])rotas[k]=v});salvarRotas();
+  Object.entries(d.naoFiz||{}).forEach(([k,v])=>{if(!naoFiz[k])naoFiz[k]=v});salvarNaoFiz();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -1850,7 +1862,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.0";
+const VERSAO_APP="10.3";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
