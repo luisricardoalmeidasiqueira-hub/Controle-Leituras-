@@ -221,6 +221,10 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .conf .label{font-size:10px;margin-bottom:2px}.conf input{height:36px;font-size:15px}
 .conf button.ok{height:36px;font-size:18px}.conf.feito button.ok{background:#22c55e;color:#fff}
 .conf-info{font-size:11.5px;color:#0f766e;font-weight:700}.conf-info b{color:#115e59}
+.conf-acoes{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11.5px;font-weight:700}
+.conf-acoes button{border:1px solid #d1d5db;background:#fff;border-radius:8px;height:30px;padding:0 9px;font-size:12px;font-weight:800;color:#374151;margin-left:5px;cursor:pointer}
+.conf-outro{color:#6b7280}.conf-feita{color:#15803d}
+.conf.outro-fez{background:#f3f4f6;border-color:#d1d5db}
 .conf-chip{display:inline-block;margin-top:4px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:800;cursor:pointer}
 .conf-chip.ok{border-color:#86efac;background:#f0fdf4;color:#166534}
 .voltar-lista{margin-top:6px;border:1px solid #fcd34d;background:#fffbeb;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:800;color:#92400e;cursor:pointer;width:100%;text-align:left}
@@ -406,7 +410,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.1</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -466,6 +470,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="modal-top"><button id="rcVoltar" class="voltar" type="button">‹ Voltar</button><h3 id="rcTit"></h3></div>
 <div id="rcCorpo"></div>
 <input id="confArq" type="file" accept="image/*" multiple hidden>
+<input id="rotaArq" type="file" accept="image/*" multiple hidden>
 </div></div>
 
 <!-- Calendário de leitura -->
@@ -1159,11 +1164,13 @@ function desenharRota(){
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa||0)} · ${esc(cid||"")} · anote as ruas na ordem que você faz. Fica salvo pros próximos meses.</div>`+
     r.ruas.map((x,i)=>`<div class="rua"><b>${i+1}</b><input data-i="${i}" type="text" value="${esc(x)}" placeholder="Rua e número" autocomplete="off"><button type="button" data-up="${i}" aria-label="Subir">↑</button>${x.trim()?`<a href="${linkMaps([comCidade(x,cid)])}" target="_blank" rel="noopener" aria-label="Abrir no mapa">📍</a>`:`<span></span>`}<button type="button" data-del="${i}" aria-label="Tirar">✕</button></div>`).join("")+
     `<button type="button" class="rc-add">＋ Rua</button>`+
+    `<button type="button" id="rotaFotoBtn" class="rc-maps" style="background:#0f766e;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler ruas de uma foto</button>`+
     `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Abrir a rota inteira no Maps${ends.length>10?" (10 primeiras)":""}</a>`;
   const c=$("rcCorpo");
   c.querySelectorAll("input[data-i]").forEach(inp=>inp.onchange=()=>{r.ruas[+inp.dataset.i]=inp.value.trim();salvarRotas();desenharRota();render()});
   c.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{r.ruas.splice(+b.dataset.del,1);if(!r.ruas.length)r.ruas.push("");salvarRotas();desenharRota();render()});
   c.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>{const i=+b.dataset.up;if(i>0){[r.ruas[i-1],r.ruas[i]]=[r.ruas[i],r.ruas[i-1]];salvarRotas();desenharRota()}});
+  $("rotaFotoBtn").onclick=()=>$("rotaArq").click();
   c.querySelector(".rc-add").onclick=()=>{r.ruas.push("");salvarRotas();desenharRota();const l=c.querySelectorAll("input[data-i]");l[l.length-1].focus()};
 }
 // ---------- 📝 Confirmações de leitura (livros marcados REL.) ----------
@@ -1182,15 +1189,24 @@ function desenharConf(){
   $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
-    c.map((x,i)=>`<div class="conf${x.ok?" feito":""}">${x.uc||x.reg?`<div class="full conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</div>`:""}<div class="full"><div class="label">${i+1}. ENDEREÇO</div><input data-i="${i}" data-k="end" type="text" value="${esc(x.end)}" placeholder="Rua e número" autocomplete="off"></div>
+    c.map((x,i)=>`<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}">${x.uc||x.reg?`<div class="full conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</div>`:""}<div class="full"><div class="label">${i+1}. ENDEREÇO</div><input data-i="${i}" data-k="end" type="text" value="${esc(x.end)}" placeholder="Rua e número" autocomplete="off"></div>
       <div><div class="label">MEDIDOR</div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Nº" autocomplete="off"></div>
       <div><div class="label">LEITURA</div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" autocomplete="off"></div>
-      <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>`).join("")+
+      <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button>
+      <div class="full conf-acoes">${x.outro?`<span class="conf-outro">👥 Feita por outro agente de faturamento${x.quando?" · "+fmt(x.quando):""}</span>`:x.ok&&x.quando?`<span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span>`:"<span></span>"}<span><button type="button" data-outro="${i}">${x.outro?"↩ Desfazer":"👥 Repassada"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div></div>`).join("")+
     `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
   const b=$("rcCorpo");
   b.querySelectorAll("input[data-i]").forEach(inp=>inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   $("confFotoBtn").onclick=()=>$("confArq").click();
-  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;if(x.ok)x.quando=hoje();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  // 👥 Repassada: sai das pendentes sem precisar da leitura (fica anotado)
+  b.querySelectorAll("[data-outro]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.outro];if(x.outro){x.outro=false;x.ok=false}else{x.outro=true;x.ok=true;x.quando=hoje()}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  // 🗑️ tira a confirmação (ex.: foi cancelada)
+  b.querySelectorAll("[data-tira]").forEach(bt=>bt.onclick=()=>{
+    const i=+bt.dataset.tira;
+    if(c.length===1){if(confirm("Esta é a única confirmação do livro "+r.livro+".\nApagar a releitura inteira?")){registros=registros.filter(x=>x!==r);localStorage.setItem(KEY,JSON.stringify(registros));$("rcFundo").hidden=true;render()}return}
+    if(!confirm("Tirar a confirmação "+(i+1)+(c[i].med?" (medidor "+c[i].med+")":"")+"?\nO livro passa a ter "+(c.length-1)+" releitura(s)."))return;
+    c.splice(i,1);r.qtd=c.length;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok)x.quando=hoje();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
 // Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
@@ -1231,6 +1247,49 @@ $("confArq").onchange=async e=>{
     let k=0;r.conf.forEach(x=>{if(k>=fichas.length||x.med)return;const f=fichas[k++];x.uc=f.uc;x.reg=f.reg;x.med=f.med;if(f.end)x.end=f.end});
     localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();
     alert("📷 Li "+fichas.length+" confirmação(ões):\n\n"+fichas.map(f=>"• "+(f.med||"?")+(f.reg?" · "+f.reg:"")+"\n   "+(f.end||"")).join("\n")+"\n\nAgora é só digitar a leitura de cada uma.");
+  }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
+  finally{b.disabled=false;b.textContent=txt}
+};
+// Tira os endereços (R, AV, AL, TV...) de qualquer foto: tela do PDA, lista, papel
+function lerRuasDaFoto(t){
+  // só letras maiúsculas (como no PDA): evita pegar sujeira da foto
+  const limpa=x=>x.replace(/\s*[|“"”‘’'`]+.*$/,"").replace(/\b(TATUI|SP)\b.*$/,"").replace(/[\s,.-]+$/,"").trim();
+  const L=t.split(/\n+/).map(x=>x.trim()).filter(Boolean),out=[];
+  for(let i=0;i<L.length;i++){
+    const m=L[i].match(/(?:^|[^A-Za-z])((?:R|AV|AL|TV|TRAV|EST|ROD|PC|PCA|RUA|AVENIDA|ALAMEDA|TRAVESSA|ESTRADA)\.?\s+[A-ZÀ-Ú0-9][A-ZÀ-Ú0-9 ,.ºª-]{3,})/);
+    if(!m)continue;
+    let e=limpa(m[1]);
+    // continua na linha de baixo? (sem número ainda, ou termina em vírgula / LOT, JD, VILA...)
+    const nx=L[i+1]||"";
+    if(nx&&!/LIMITE|KM\b|UC\s*:|CON-|MD\s*:|SEQ|^\s*(R|AV|AL|TV)\.?\s/i.test(nx)&&(!/\d/.test(e)||/,$/.test(m[1].trim())||/\b(LOT|JD|JARDIM|VL|VILA|PQ|PARQUE|BAIRRO|RES)$/.test(e))){
+      const w=(nx.match(/[A-ZÀ-Ú0-9][A-ZÀ-Ú0-9 ,.ºª-]*/g)||[]).sort((a,b)=>b.length-a.length)[0]||"";
+      const n=limpa(w);if(n.length>=3&&n.length<45){e+=(/,$/.test(e)?" ":(/\d/.test(e)?" ":" "))+n;i++}
+    }
+    e=e.replace(/^R(?=\d)/,"R ").replace(/\s+/g," ").replace(/\s,/g,",");
+    if(/[A-Z]{3}/.test(e)&&/\d/.test(e))out.push(e);
+  }
+  return out;
+}
+$("rotaArq").onchange=async e=>{
+  const files=[...(e.target.files||[])];e.target.value="";if(!files.length)return;
+  const r=rotaDoLivro(rcChave),b=$("rotaFotoBtn"),txt=b.textContent;b.disabled=true;
+  try{
+    b.textContent="⏳ Preparando leitor...";await carregarOCR();
+    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
+    await w.setParameters({tessedit_pageseg_mode:"6"});
+    let ruas=[];
+    for(const f of files){
+      const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
+      const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
+      const res=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));URL.revokeObjectURL(img.src);
+      ruas=ruas.concat(lerRuasDaFoto(res.data.text));
+    }
+    await w.terminate();
+    // não repete rua que já está na rota
+    const ja=new Set(r.ruas.filter(Boolean).map(x=>normLoc(x)));ruas=ruas.filter(x=>{const k=normLoc(x);if(ja.has(k))return false;ja.add(k);return true});
+    if(!ruas.length)return alert("Não achei endereço novo nesta(s) foto(s).\nTente uma foto reta, com boa luz, onde dê pra ler as ruas.");
+    if(!confirm("📷 Achei "+ruas.length+" rua(s):\n\n"+ruas.map((x,i)=>(i+1)+". "+x).join("\n")+"\n\nColocar na rota (no fim da lista)?"))return;
+    r.ruas=r.ruas.filter(Boolean).concat(ruas);salvarRotas();desenharRota();render();
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.textContent=txt}
 };
@@ -1631,7 +1690,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="7.7";
+const VERSAO_APP="8.1";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
