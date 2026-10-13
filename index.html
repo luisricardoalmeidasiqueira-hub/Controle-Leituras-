@@ -307,6 +307,8 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 .usar-data button{border:1.5px solid #93c5fd;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;flex:none}
 .desf-linha{display:flex;gap:6px;margin:8px 0 0}.desf-linha[hidden]{display:none}.desf-linha .desfazer{margin:0;flex:1;width:auto}
 .desf-x{flex:none;width:40px;height:40px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:16px;font-weight:800;cursor:pointer}
+.voltar-hoje{width:auto;padding:0 10px;font-size:13px;font-weight:800;color:#1d4ed8;background:#eff6ff;border:1.5px solid #93c5fd}.voltar-hoje[hidden]{display:none}
+.topo-q{position:absolute;top:-9px;right:-8px;z-index:4;width:22px;height:22px;border-radius:50%;border:2px solid #fecaca;background:#fff;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px #0002}.topo-q[hidden]{display:none}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -322,7 +324,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <main>
 <section class="card">
 <div class="topo">
-<div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><input id="data" type="date" aria-label="Data da leitura"></div>
+<div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><span id="topoInterroga" class="topo-q" role="button" aria-label="Atraso do mês passado" hidden>❓</span><input id="data" type="date" aria-label="Data da leitura"></div>
 <button id="etapaMenos" class="et-seta" type="button" aria-label="Etapa anterior">‹</button>
 <button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
 <button id="etapaMais" class="et-seta" type="button" aria-label="Próxima etapa">›</button>
@@ -338,6 +340,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
 <div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
+<button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
 </section>
@@ -377,7 +380,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -634,7 +637,9 @@ function etapaAutomatica(d){const e=etapaDoDia(d);if(e)return e;const pr=proxima
 let dataManual=false;
 $("data").onchange=()=>{const d=$("data").value;if(!d)return;esqueci=null;dataManual=d!==hoje();mesVer=d.slice(0,7);const e=etapaAmarrada(d)||etapaAutomatica(d);if(e)sel(e,false);else render()};
 // Virou o dia com o app aberto: quando você voltar pro app, ele já passa pra data de hoje e a etapa do dia
-function conferirVirada(){if(dataManual||$("data").value===hoje())return;$("data").value=hoje();mesVer=hoje().slice(0,7);const e=etapaAutomatica(hoje());if(e)sel(e,false);else render()}
+let diaDoApp=hoje();
+// só volta pra hoje quando o DIA realmente virou (não atrapalha quem está olhando outro mês)
+function conferirVirada(){if(hoje()===diaDoApp)return;diaDoApp=hoje();if(dataManual||$("data").value===hoje())return;$("data").value=hoje();mesVer=hoje().slice(0,7);const e=etapaAutomatica(hoje());if(e)sel(e,false);else render()}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirVirada()});
 window.addEventListener("focus",conferirVirada);
 setInterval(conferirVirada,60000);
@@ -1128,10 +1133,10 @@ function desenharCal(){
 // Consultar um dia qualquer: mostra a etapa e leva o calendário até o mês
 let calBuscaDia="";
 // Tocou na ❓: vai pro mês passado com a etapa marcada e explica o que aconteceu
-function verAtraso(n){
+function verAtraso(n,mesRef){
   // Mostra ali mesmo, num cartãozinho, sem sair do mês
-  const am=atrasoMesPassado(calVer,n);if(!am)return;
-  const ant=somaMes(calVer,-1),c=$("cartaoAtraso");
+  const bm=mesRef||calVer,am=atrasoMesPassado(bm,n);if(!am)return;
+  const ant=somaMes(bm,-1),c=$("cartaoAtraso");
   c.innerHTML=`<b>❓ Etapa ${p2(n)} — ${nomeMes(ant)}</b>
   <div>📅 No calendário: <b>${am.previsto?am.previsto.slice(8)+"/"+am.previsto.slice(5,7):"—"}</b></div>
   <div>📖 Foi lida em: <b>${am.lido.slice(8)}/${am.lido.slice(5,7)}</b>${am.previsto?" ("+diasEntre(am.lido,am.previsto)+" dia(s) depois)":""}</div>
@@ -1441,7 +1446,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.7";
+const VERSAO_APP="7.0";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -1578,6 +1583,24 @@ $("usarData").onclick=()=>{
 };
 const _atualizarChip=atualizarChip;
 atualizarChip=function(){_atualizarChip();atualizarUsarData()};
+
+// ---------- Botão "↩ Hoje": volta pra data e pro mês de hoje ----------
+function atualizarVoltarHoje(){const h=hoje();$("voltarHoje").hidden=!(mesVer!==h.slice(0,7)||$("data").value!==h)}
+$("voltarHoje").onclick=()=>{
+  esqueci=null;$("data").value=hoje();dataManual=false;mesVer=hoje().slice(0,7);
+  const e=etapaAutomatica(hoje());if(e)sel(e,false);else render();
+};
+const _atualizarChip2=atualizarChip;
+atualizarChip=function(){_atualizarChip2();atualizarVoltarHoje()};
+
+// ---------- ❓ lá em cima: a etapa atrasou no mês passado (toque mostra os detalhes) ----------
+function atualizarTopoInterroga(){
+  const q=$("topoInterroga"),h=$("data").value||hoje();
+  q.hidden=!(!ajuda&&atrasoMesPassado(h.slice(0,7),etapa));
+}
+$("topoInterroga").onclick=()=>verAtraso(etapa,($("data").value||hoje()).slice(0,7));
+const _atualizarChip3=atualizarChip;
+atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga()};
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
 iniciarLinhas();
