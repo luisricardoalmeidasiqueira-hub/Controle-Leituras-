@@ -254,7 +254,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .cal-status{font-size:12.5px;font-weight:700;color:#1d4ed8;margin-top:8px;text-align:center}
 #calMes{cursor:pointer}
 .mes-todo{margin-bottom:8px}.md-bol{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1px #fff}
-.md-bol.verde{background:#22c55e}.md-bol.vermelho{background:#ef4444}.md-bol.laranja{background:#ea580c}.md-bol.azul{background:#3b82f6}.md-bol.roxo{background:#a855f7}.md-bol.cinza{background:#d1d5db}.md-bol.rosa,.md-at.rosa{background:#ec4899}.md-at.rosa{box-shadow:0 0 0 2px #fbcfe8}.bol-rosa{display:inline-block;width:11px;height:11px;border-radius:50%;background:#ec4899;vertical-align:-1px}.md.et.naofiz{background:#fdf2f8;border-color:#f9a8d4}.md.et.naofiz em,.md.et.naofiz u{color:#6b7280}
+.md-bol.verde{background:#22c55e}.md-bol.vermelho{background:#ef4444}.md-bol.laranja{background:#ea580c}.md-bol.azul{background:#3b82f6}.md-bol.roxo{background:#a855f7}.md-bol.cinza{background:#d1d5db}.md-bol.rosa,.md-at.rosa{background:#111827}.md-at.rosa{box-shadow:0 0 0 2px #d1d5db}.bol-rosa{display:inline-block;width:11px;height:11px;border-radius:50%;background:#111827;vertical-align:-1px}.md.et.naofiz{background:#f3f4f6;border-color:#6b7280}.md.et.naofiz em,.md.et.naofiz u{color:#6b7280}
 .nf-linha{margin-top:6px;font-size:12.5px;font-weight:700;color:#374151;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.nf-linha button{border:1px solid #9ca3af;background:#fff;border-radius:8px;height:30px;padding:0 9px;font-size:12.5px;font-weight:800;color:#374151;cursor:pointer}
 .pend-opcoes .op-naofiz{grid-column:1/-1;height:36px!important;background:#f3f4f6!important;color:#374151!important}.pend-opcoes .op-naofiz small{display:inline;margin-left:5px}.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
 .md-grid b{font-size:11px;text-align:center;color:#6b7280}.md-grid b.dom,.md-grid b.sab{color:#b91c1c}
@@ -474,7 +474,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.3</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1181,7 +1181,7 @@ function atualizarPendentes(){
     +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button><button type="button" class="op-naofiz"><b class="bol-rosa"></b> Não fiz<small>li em outro lugar</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
   if(esc){
-    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha rosa no calendário."))return;naoFiz[esc.dia]="li em outro lugar";salvarNaoFiz();pendEscolha=0;render()};
+    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha preta no calendário."))return;naoFiz[esc.dia]="li em outro lugar";salvarNaoFiz();pendEscolha=0;render()};
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;escolherEtapa(esc.etapa);irParaLivro()};
     box.querySelector(".op-esqueci").onclick=()=>{
       pendEscolha=0;esqueci={etapa:esc.etapa,dia:esc.dia,voltar:h};dataManual=true;
@@ -1862,7 +1862,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.3";
+const VERSAO_APP="10.4";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
