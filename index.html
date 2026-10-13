@@ -272,6 +272,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .reg-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}.reg-top .conf-info{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .reg-top .conf-btns button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:26px;min-width:28px;padding:0 5px;font-size:12px;cursor:pointer}
 .reg-campos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:5px}.reg-campos input{height:34px;font-size:14px}
+.reg-campos input[readonly]{background:#f0fdf4;color:#166534;border-color:#bbf7d0}.reg-campos input.editando{border-color:#2563eb;box-shadow:0 0 0 2px #dbeafe}
 .reg-lin.feito .ok{background:#22c55e!important;color:#fff}
 .conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
@@ -471,7 +472,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 9.9</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1074,7 +1075,7 @@ function render(){atualizarNomes();
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
-  {const cp=confPendentes();$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)} · faltam ${x.f}</button>`).join("")}
+  {const cp=confPendentes();$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
@@ -1280,7 +1281,7 @@ function desenharConf(){
   $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
-    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Faltam <b>${nf}</b> de ${c.length}`:`✔ Todas as ${c.length} feitas`}</div>`})()+
+    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado`}</div>`})()+
     // Mesmo endereço = um cartão só, com os medidores/registros dele dentro (sem numeração)
     (()=>{const gs=[],por={};c.forEach((x,i)=>{const k=chaveEnd(x,i);if(!por[k]){por[k]={k,itens:[]};gs.push(por[k])}por[k].itens.push(i)});
       gs.forEach(g=>g.pend=g.itens.some(i=>!c[i].ok));gs.sort((a,b)=>(b.pend-a.pend)||a.itens[0]-b.itens[0]);
@@ -1288,12 +1289,12 @@ function desenharConf(){
         const x0=c[g.itens[0]],nc=numeroCasa(x0.end),falt=g.itens.filter(i=>!c[i].ok).length,todosOutro=g.itens.every(i=>c[i].outro);
         const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
-        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?(falt===g.itens.length?(falt>1?"faltam "+falt:"falta a leitura"):"faltam "+falt+" de "+g.itens.length):todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
-        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
-          <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
+        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${x.ok&&!x.outro?`<button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+          <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
-        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?`⏳ falta${falt>1?"m "+falt:" 1"}`:"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
-    `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
+        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
+    `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam</a>`;
   const b=$("rcCorpo");
   ajustarAltura(b);
   // endereço do cartão vale pra todos os registros dele
@@ -1323,6 +1324,8 @@ function desenharConf(){
   // se o endereço ainda tem registro faltando, fica aberto; senão abre o próximo endereço que falta
   const proxPend=j=>{const kj=chaveEnd(c[j],j);if(c.some((y,n)=>n!==j&&!y.ok&&chaveEnd(y,n)===kj)){confAbertas=new Set([kj]);return}
     confAbertas=new Set();const k=c.findIndex((y,n)=>n!==j&&!y.ok);if(k>=0)confAbertas.add(chaveEnd(c[k],k))};
+  // ✏️ destrava os campos da leitura confirmada pra corrigir (continua confirmada)
+  b.querySelectorAll("[data-edita]").forEach(bt=>bt.onclick=()=>{const l=bt.closest(".reg-lin");l.querySelectorAll("input").forEach(x=>{x.readOnly=false;x.classList.add("editando")});const f=l.querySelector("input[data-k='leit']");f.focus();f.select&&f.select()});
   b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(bt.dataset.fecha);desenharConf()});
   b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
@@ -1847,7 +1850,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="9.9";
+const VERSAO_APP="10.0";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
