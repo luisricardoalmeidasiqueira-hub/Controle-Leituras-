@@ -230,6 +230,14 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .num-casa{background:#1d4ed8;color:#fff;border-radius:7px;padding:1px 8px;font-size:13px;font-weight:800;white-space:nowrap}
 .rua-cx{min-width:0;position:relative}.rua-cx .num-casa{position:absolute;top:-8px;right:6px;font-size:11px;padding:0 6px;z-index:1}
 .rua{align-items:start}
+.conf-acoes{flex-wrap:nowrap}.conf-acoes>span:first-child{flex:1;min-width:0}
+.conf-btns{display:flex;flex:none;gap:5px}.conf-btns button{margin-left:0!important;white-space:nowrap}
+.conf-outro b{color:#374151}
+.rel-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:1px solid #fcd34d;background:#fffbeb;border-radius:11px;padding:10px;margin-bottom:8px;cursor:pointer;font:inherit;color:#1f2937}
+.rel-item.ok{border-color:#86efac;background:#f0fdf4}
+.rel-item .et{flex:none;background:#e0e7ff;color:#3730a3;border-radius:7px;padding:2px 6px;font-size:12px;font-weight:800}
+.rel-item .tx{flex:1;min-width:0;font-size:13px;line-height:1.35}.rel-item .tx small{display:block;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rel-item .st{flex:none;font-weight:800;font-size:13px;color:#b45309}.rel-item.ok .st{color:#15803d}
 .conf-chip{display:inline-block;margin-top:4px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:800;cursor:pointer}
 .conf-chip.ok{border-color:#86efac;background:#f0fdf4;color:#166534}
 .voltar-lista{margin-top:6px;border:1px solid #fcd34d;background:#fffbeb;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:800;color:#92400e;cursor:pointer;width:100%;text-align:left}
@@ -415,7 +423,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.2</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.5</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -608,7 +616,9 @@ function ultimaLeituraReal(m,n,loc){if(loc===undefined)loc=locAtual();let u="";r
 function cidadePrincipal(){const c={};registros.forEach(r=>{if(r.ajuda)return;const k=normLoc(r.localidade);if(k)c[k]=(c[k]||0)+1});let m="",n=0;for(const k in c)if(c[k]>n){n=c[k];m=k}return m}
 function cicloReal(data,n,loc){const ant=somaMes(data.slice(0,7),-1),real=ultimaLeituraReal(ant,n,loc),cp=cidadePrincipal();
   if(!real&&loc&&cp&&loc!==cp)return null;
-  const base=real||diaDaEtapa(ant,n);return base?diasEntre(data,base):null}
+  // Regra da ANEEL: o ciclo conta sempre a partir do dia do CALENDÁRIO do mês passado (atraso do mês passado não conta).
+  // Só cidade de ajuda, sem calendário, usa o dia em que foi lida de verdade.
+  const base=(!loc||!cp||loc===cp)?(diaDaEtapa(ant,n)||real):(real||diaDaEtapa(ant,n));return base?diasEntre(data,base):null}
 // Monta um mês: 18 dias úteis seguidos, com a Etapa 01 uns 30 dias depois da Etapa 01 do mês anterior
 function gerarMes(m){
   const ant=cal[somaMes(m,-1)];if(!ant||!ant[0])return null;
@@ -911,7 +921,26 @@ let filtroCidade="";
 function nomeCidade(k,m){const r=registros.find(x=>x.data.startsWith(m)&&normLoc(x.localidade)===k)||registros.find(x=>normLoc(x.localidade)===k);return r?(r.localidade||"Sem localidade").trim():k}
 let filtroRel=false;
 // Botão 📝 lá em cima: abre (ou fecha) a aba de releituras do mês
+// 📝 lá em cima: abre direto a releitura (uma pendente) ou a listinha de todas
+let rcVeioDaLista=false;
 function abrirAbaRel(){
+  const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim);
+  if(!rels.length)return alert("📝 Nenhuma releitura nos últimos dias.\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
+  const pend=rels.filter(r=>confDe(r).some(x=>!x.ok));
+  if(pend.length===1){rcVeioDaLista=false;return abrirConf(String(pend[0].id))}
+  abrirListaRel();
+}
+function abrirListaRel(){
+  const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim)
+    .sort((a,b)=>(confDe(a).every(x=>x.ok)-confDe(b).every(x=>x.ok))||b.data.localeCompare(a.data));
+  rcModo="lista";$("rcTit").textContent="📝 Releituras";
+  $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div>`+rels.map(r=>{
+    const c=confDe(r),f=c.filter(x=>x.ok).length,ok=f===c.length,end=(c.find(x=>x.end)||{}).end||(r.pda&&r.pda.end)||"";
+    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small></span><span class="st">${f}/${c.length}${ok?" ✔":""}</span></button>`}).join("");
+  $("rcCorpo").querySelectorAll(".rel-item").forEach(b=>b.onclick=()=>{rcVeioDaLista=true;abrirConf(b.dataset.id)});
+  $("rcFundo").hidden=false;
+}
+function abrirAbaRelAntiga(){
   const m=mes(),tem=registros.some(r=>r.releitura&&r.data.startsWith(m));
   if(!tem&&!filtroRel)return alert("📝 Nenhuma releitura lançada em "+nomeMes(m)+".\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
   filtroRel=!filtroRel;filtroCidade="";$("lista").hidden=false;$("listaSeta").textContent="▲";render();
@@ -1028,8 +1057,13 @@ function atualizarChip(){
     info.hidden=false;info.textContent=txt;info.className="cal-info";
     return;
   }
-  const diaDaMinha=diaDaEtapa(h.slice(0,7),etapa),ciclo=cicloReal(h,etapa),fora=foraDoLimite(ciclo);
-  const bd=$("cicloBadge");bd.hidden=ciclo==null;bd.textContent=ciclo+"d";bd.title="Ciclo de "+ciclo+" dias";bd.className="ciclo-badge"+(fora?" fora":muitoCedo(ciclo)?" cedo":"");
+  // Ciclo: no dia da etapa (ou antes, lançando adiantado) vale o do CALENDÁRIO (igual à coluna "Cic" da empresa);
+  // depois do dia (atrasado) conta a partir da data de hoje.
+  const diaDaMinha=diaDaEtapa(h.slice(0,7),etapa),noPrazo=diaDaMinha&&h<=diaDaMinha;
+  const ciclo=noPrazo?(cicloPlanejado(h.slice(0,7),etapa-1)??cicloReal(diaDaMinha,etapa)):cicloReal(h,etapa),fora=foraDoLimite(ciclo);
+  const antM=somaMes(h.slice(0,7),-1),realAnt=ultimaLeituraReal(antM,etapa),calAnt=diaDaEtapa(antM,etapa);
+  const notaReal=realAnt&&calAnt&&realAnt!==calAnt?" (mês passado você lançou essa etapa em "+realAnt.slice(8)+"/"+realAnt.slice(5,7)+", e no calendário era "+calAnt.slice(8)+"/"+calAnt.slice(5,7)+")":"";
+  const bd=$("cicloBadge");bd.hidden=ciclo==null;bd.textContent=ciclo+"d";bd.title="Ciclo de "+ciclo+" dias (pelo calendário)";bd.className="ciclo-badge"+(fora?" fora":muitoCedo(ciclo)?" cedo":"");
   const txtCiclo=ciclo==null?"":fora?" · 🔴 "+ciclo+" dias, passou do limite de "+CICLO_MAX:muitoCedo(ciclo)?" · "+ciclo+" dias (abaixo de "+CICLO_MIN+")":" · ciclo de "+ciclo+" dias";
   // Data vermelhinha quando passou de 33 dias
   $("dataTxt").parentNode.classList.toggle("atrasado",fora);
@@ -1199,14 +1233,21 @@ function desenharConf(){
       <div><div class="label">MEDIDOR</div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Nº" autocomplete="off"></div>
       <div><div class="label">LEITURA</div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" autocomplete="off"></div>
       <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button>
-      <div class="full conf-acoes">${x.outro?`<span class="conf-outro">👥 Feita por outro agente de faturamento${x.quando?" · "+fmt(x.quando):""}</span>`:x.ok&&x.quando?`<span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span>`:"<span></span>"}<span><button type="button" data-outro="${i}">${x.outro?"↩ Desfazer":"👥 Repassada"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div></div>`).join("")+
+      <div class="full conf-acoes">${x.outro?`<span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span>`:x.ok&&x.quando?`<span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span>`:"<span></span>"}<span class="conf-btns"><button type="button" data-outro="${i}">${x.outro?"↩ Desfazer":"🙅 Recusada"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div></div>`).join("")+
     `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
   const b=$("rcCorpo");
   ajustarAltura(b);
   b.querySelectorAll("input[data-i],textarea[data-i]").forEach(inp=>inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.replace(/\s+/g," ").trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   $("confFotoBtn").onclick=()=>$("confArq").click();
   // 👥 Repassada: sai das pendentes sem precisar da leitura (fica anotado)
-  b.querySelectorAll("[data-outro]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.outro];if(x.outro){x.outro=false;x.ok=false}else{x.outro=true;x.ok=true;x.quando=hoje()}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-outro]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.outro];if(x.outro){x.outro=false;x.ok=false;delete x.agente}else{
+      // pede o nome do agente que fez (sugere o último usado)
+      let ult="";try{ult=localStorage.getItem(KEY+"_ultimo_agente")||""}catch(e){}
+      const nome=prompt("🙅 Recusada — feita por outro agente de faturamento.\n\nNome do agente (pode deixar em branco):",ult);
+      if(nome===null)return;
+      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();
+      try{if(x.agente)localStorage.setItem(KEY+"_ultimo_agente",x.agente)}catch(e){}
+    }localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // 🗑️ tira a confirmação (ex.: foi cancelada)
   b.querySelectorAll("[data-tira]").forEach(bt=>bt.onclick=()=>{
     const i=+bt.dataset.tira;
@@ -1304,7 +1345,7 @@ $("rotaArq").onchange=async e=>{
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.textContent=txt}
 };
-$("rcVoltar").onclick=()=>{$("rcFundo").hidden=true;render()};
+$("rcVoltar").onclick=()=>{if(rcModo==="conf"&&rcVeioDaLista){rcVeioDaLista=false;abrirListaRel();render();return}$("rcFundo").hidden=true;render()};
 // Lista "📍 Voltar pra confirmar" (aparece na tela inicial quando tem confirmação pendente)
 function confPendentes(){const out=[],lim=somaDias(hoje(),-40);registros.forEach(r=>{if(r.releitura&&Array.isArray(r.conf)&&r.data>=lim){const f=r.conf.filter(x=>!x.ok).length;if(f)out.push({r,f})}});return out}
 function editar(id){
@@ -1701,7 +1742,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="8.2";
+const VERSAO_APP="8.5";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
