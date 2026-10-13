@@ -302,6 +302,11 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 .pda-box{margin-top:6px;border:1px dashed #93c5fd;border-radius:9px;background:#f8fbff;padding:9px;font-size:13px;line-height:1.4;color:#1f2937}
 .pda-box b{display:block;margin-bottom:4px}.pda-tags{display:flex;gap:6px;flex-wrap:wrap}.pda-tags span{font-size:11px;font-weight:800;background:#e5e7eb;border-radius:6px;padding:2px 7px}
 .pda-box a{display:block;margin-top:8px;text-align:center;height:36px;line-height:36px;border-radius:9px;background:#2563eb;color:#fff;font-weight:800;text-decoration:none;font-size:13px}
+.usar-data{display:flex;align-items:center;gap:8px;margin:6px 0 0;font-size:11px;color:#6b7280;font-weight:700}
+.usar-data[hidden]{display:none}
+.usar-data button{border:1.5px solid #93c5fd;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;flex:none}
+.desf-linha{display:flex;gap:6px;margin:8px 0 0}.desf-linha[hidden]{display:none}.desf-linha .desfazer{margin:0;flex:1;width:auto}
+.desf-x{flex:none;width:40px;height:40px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:16px;font-weight:800;cursor:pointer}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -324,6 +329,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
+<div id="usarDataBox" class="usar-data" hidden><button id="usarData" type="button"></button><span>só se quiser lançar com a data do calendário</span></div>
 <div id="dotLegenda" class="dot-leg" hidden><div id="dotMsg"></div><div>⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</div></div>
 <div id="pendentes" class="pendentes" hidden></div>
 <button id="bannerCal" class="banner-cal" type="button" hidden></button>
@@ -361,7 +367,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </div>
 <div id="cidades" class="cidades" hidden></div>
 <div id="lista" hidden></div>
-<button id="desfazer" class="desfazer" type="button" hidden></button>
+<div id="desfLinha" class="desf-linha" hidden><button id="desfazer" class="desfazer" type="button"></button><button id="desfazerX" class="desf-x" type="button" aria-label="Dispensar">✕</button></div>
 <div class="tools">
 <button id="csv" class="ic escuro" type="button" title="Exportar" aria-label="Exportar">📄</button>
 <button id="importar" class="ic" type="button" title="Importar" aria-label="Importar">📥</button>
@@ -371,7 +377,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.5</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 6.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -776,7 +782,7 @@ $("saveAll").onclick=()=>{
     if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura)ex.releitura=true;return}
     registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})});
   });
-  localStorage.setItem(KEY,JSON.stringify(registros));
+  localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
   if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
@@ -853,7 +859,7 @@ function abrirTotalCidades(){
   const ajuda=ks.filter(k=>k!==cp).reduce((t,k)=>t+tot[k],0);
   box.innerHTML=`<b class="comp-tit">📊 Leituras de ${nomeMes(m)}</b>`+ks.map(k=>`<div class="comp-linha" data-cid="${esc(k)}"><div><b>📍 ${esc(nomeCidade(k,m))}</b><small>${k===cp?"sua cidade":"ajuda"} · toque pra ver os livros</small></div><b>${tot[k].toLocaleString("pt-BR")} ›</b></div>`).join("")+
     (()=>{const im=impDoMes(m,()=>true).reduce((t,x)=>t+x.qtd,0),ia=impDoMes(somaMes(m,-1),()=>true).reduce((t,x)=>t+x.qtd,0);if(!im&&!ia)return "";
-      const pc=geral?(im/(geral+im)*100).toFixed(1).replace(".",","):"0",dif=ia?Math.round((im-ia)/ia*100):null;
+      const pc=geral?(im/geral*100).toFixed(1).replace(".",","):"0",dif=ia?Math.round((im-ia)/ia*100):null;
       return `<div class="comp-linha" style="cursor:default;border-color:#fecaca;background:#fef2f2"><div><b style="color:#b91c1c">⛔ Não lidos</b><small>${pc}% do total${ia?` · ${nomeMes(somaMes(m,-1))}: ${ia}`:""}</small></div><span style="text-align:right"><b style="color:#b91c1c">${im}</b>${dif!=null?`<small style="display:block;font-size:10px;font-weight:800;color:${dif>0?"#b91c1c":"#15803d"}">${dif>0?"▲ "+dif+"% a mais":dif<0?"▼ "+Math.abs(dif)+"% a menos":"igual"}</small>`:""}</span></div>`})()+
     `<div class="comp-linha sel" style="cursor:default"><div><b>Total geral</b>${ajuda&&cp&&tot[cp]?`<small>${esc(nomeCidade(cp,m))} ${tot[cp].toLocaleString("pt-BR")} + ajuda ${ajuda.toLocaleString("pt-BR")}</small>`:""}</div><b>${geral.toLocaleString("pt-BR")}</b></div><button type="button" class="comp-ok">Ok</button>`;
   box.querySelector(".comp-ok").onclick=()=>box.hidden=true;
@@ -1393,8 +1399,9 @@ function lerDesfazer(){try{const a=JSON.parse(localStorage.getItem(KEY+"_desfaze
 function guardarDesfazer(recs){try{localStorage.setItem(KEY+"_desfazer",JSON.stringify(recs))}catch(e){}}
 function atualizarDesfazer(){
   const b=$("desfazer");if(!b)return;const a=lerDesfazer();
-  b.hidden=!a.length;if(a.length)b.textContent="↩️ Desfazer: "+a.length+(a.length===1?" livro apagado":" livros apagados");
+  $("desfLinha").hidden=!a.length;if(a.length)b.textContent="↩️ Desfazer: "+a.length+(a.length===1?" livro apagado":" livros apagados");
 }
+$("desfazerX").onclick=()=>{guardarDesfazer([]);atualizarDesfazer()};
 $("desfazer").onclick=()=>{
   const a=lerDesfazer();if(!a.length)return;
   const ids=new Set(registros.map(r=>String(r.id)));
@@ -1432,7 +1439,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="6.5";
+const VERSAO_APP="6.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -1555,6 +1562,20 @@ $("pdaArq").onchange=e=>{
   };img.src=URL.createObjectURL(file);
 };
 
+
+// ---------- Botão opcional: usar a data da etapa no calendário ----------
+function atualizarUsarData(){
+  const box=$("usarDataBox"),h=$("data").value||hoje();
+  const d=(!ajuda&&!esqueci)?diaDaEtapa(h.slice(0,7),etapa):"";
+  if(d&&d!==h){$("usarData").textContent="📅 usar "+d.slice(8)+"/"+d.slice(5,7);box.hidden=false}else box.hidden=true;
+}
+$("usarData").onclick=()=>{
+  const d=diaDaEtapa(($("data").value||hoje()).slice(0,7),etapa);if(!d)return;
+  $("data").value=d;dataManual=d!==hoje();esqueci=null;mesVer=d.slice(0,7);
+  escolherEtapa(etapa);
+};
+const _atualizarChip=atualizarChip;
+atualizarChip=function(){_atualizarChip();atualizarUsarData()};
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
 iniciarLinhas();
