@@ -225,6 +225,11 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .conf-chip.ok{border-color:#86efac;background:#f0fdf4;color:#166534}
 .voltar-lista{margin-top:6px;border:1px solid #fcd34d;background:#fffbeb;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:800;color:#92400e;cursor:pointer;width:100%;text-align:left}
 .rota-tag{color:#1d4ed8;font-weight:700;font-size:11.5px}
+.ajuda-btn.ic-only{min-width:44px;height:32px;font-size:17px;padding:0 10px}
+.rel-btn{position:relative;border-color:#fcd34d!important;background:#fffbeb!important}.rel-btn.ativa{background:#d97706!important;border-color:#d97706!important}
+.rel-badge{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;border-radius:9px;background:#dc2626;color:#fff;font-size:10px;font-weight:800;line-height:17px;padding:0 4px}
+.rel-mini{font-size:12px;align-items:center}.rel-mini .conf-chip{margin:0 0 0 4px}
+.cid.rel{border-color:#fcd34d;background:#fffbeb;color:#92400e}.cid.rel.ativa{background:#d97706;border-color:#d97706;color:#fff}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
 .cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
@@ -367,7 +372,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn" type="button">📷 Foto do PDA</button><button id="ajudaBtn" class="ajuda-btn" type="button">🤝 Ajudar outra cidade</button><input id="pdaArq" type="file" accept="image/*" hidden></div>
+<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" hidden></div>
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
 <div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
@@ -401,7 +406,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.4</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -414,7 +419,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div><div class="label">PRONTUÁRIO</div><input id="edPront" type="text" inputmode="numeric" autocomplete="off"></div>
 <div><div class="label">LIVRO</div><input id="edLivro" type="text" autocomplete="off" spellcheck="false"></div>
 <div><div class="label">&nbsp;</div><label class="ed-chk"><input id="edPart" type="checkbox"> Particionado</label></div>
-<div class="full"><label class="ed-chk"><input id="edRel" type="checkbox"> 🔁 Releitura</label></div>
+<div class="full"><label class="ed-chk"><input id="edRel" type="checkbox"> 📝 Releitura</label></div>
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
@@ -812,7 +817,7 @@ $("saveAll").onclick=()=>{
   const ehAjuda=!!ajuda;
   // Releitura digitada (sem foto): o livro já foi lançado antes? usa a etapa dele
   const relOutra=r.saida.filter(x=>x.releitura&&!x.etapa).map(x=>({x,e:etapaDoLivroConhecido(x.livro)})).filter(o=>o.e&&o.e!==etapa);
-  if(relOutra.length&&confirm("🔁 Releitura:\n\n"+relOutra.map(o=>"• Livro "+o.x.livro+" é da Etapa "+p2(o.e)).join("\n")+"\n\nLançar na etapa do livro? (Cancelar = fica na Etapa "+p2(etapa)+")"))relOutra.forEach(o=>o.x.etapa=o.e);
+  if(relOutra.length&&confirm("📝 Releitura:\n\n"+relOutra.map(o=>"• Livro "+o.x.livro+" é da Etapa "+p2(o.e)).join("\n")+"\n\nLançar na etapa do livro? (Cancelar = fica na Etapa "+p2(etapa)+")"))relOutra.forEach(o=>o.x.etapa=o.e);
   const relSalvos=[];
   r.saida.forEach(x=>{
     // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
@@ -844,6 +849,7 @@ let mesVer=hoje().slice(0,7);
 function mes(){return mesVer}
 function mudarMes(d){mesVer=somaMes(mesVer,d);render()}
 document.querySelectorAll(".tot-toque").forEach(e=>e.onclick=abrirTotalCidades);
+$("relBtn").onclick=abrirAbaRel;
 $("ajudaBtn").onclick=()=>ajuda?sairAjuda():entrarAjuda();
 $("localidade").addEventListener("input",()=>{if(ajuda)atualizarFaixaAjuda()});
 $("mesAnt").onclick=()=>mudarMes(-1);$("mesProx").onclick=()=>mudarMes(1);
@@ -893,14 +899,28 @@ function delImp(id){if(!confirm("Apagar este lançamento de não lidos?"))return
 // ---------- Botõezinhos de cidade ----------
 let filtroCidade="";
 function nomeCidade(k,m){const r=registros.find(x=>x.data.startsWith(m)&&normLoc(x.localidade)===k)||registros.find(x=>normLoc(x.localidade)===k);return r?(r.localidade||"Sem localidade").trim():k}
+let filtroRel=false;
+// Botão 📝 lá em cima: abre (ou fecha) a aba de releituras do mês
+function abrirAbaRel(){
+  const m=mes(),tem=registros.some(r=>r.releitura&&r.data.startsWith(m));
+  if(!tem&&!filtroRel)return alert("📝 Nenhuma releitura lançada em "+nomeMes(m)+".\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
+  filtroRel=!filtroRel;filtroCidade="";$("lista").hidden=false;$("listaSeta").textContent="▲";render();
+  if(filtroRel)$("listaHead").scrollIntoView({behavior:"smooth",block:"start"});
+}
 function desenharCidades(m){
   const tot={};registros.forEach(r=>{if(!r.data.startsWith(m))return;const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+(r.releitura?0:r.qtd)});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
-  if(ks.length<2){box.hidden=true;if(filtroCidade&&!tot[filtroCidade])filtroCidade="";return}
+  const rels=registros.filter(r=>r.releitura&&r.data.startsWith(m)),pend=rels.filter(r=>confDe(r).some(x=>!x.ok)).length;
+  if(!rels.length)filtroRel=false;
+  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=!pend;bd.textContent=pend}}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
+  const mostraCid=ks.length>=2;
+  if(!mostraCid&&!rels.length){box.hidden=true;return}
   box.hidden=false;
-  box.innerHTML=`<button type="button" class="cid${!filtroCidade?" ativa":""}" data-k="">Todas</button>`+ks.map(k=>`<button type="button" class="cid${filtroCidade===k?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join("");
-  box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{filtroCidade=b.dataset.k;$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
+  box.innerHTML=(mostraCid||filtroRel?`<button type="button" class="cid${!filtroCidade&&!filtroRel?" ativa":""}" data-k="">${mostraCid?"Todas":"📋 Etapa"}</button>`:"")+
+    (rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?pend+" pendente"+(pend>1?"s":""):rels.length+" ✔"}</small></button>`:"")+
+    (mostraCid?ks.map(k=>`<button type="button" class="cid${filtroCidade===k&&!filtroRel?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join(""):"");
+  box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{if(b.dataset.rel){filtroRel=!filtroRel;filtroCidade=""}else{filtroRel=false;filtroCidade=b.dataset.k}$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
 }
 // Digitou um livro que tem rota salva: mostra o atalho
 document.addEventListener("input",e=>{const i=e.target;if(!i.classList||!i.classList.contains("r-livro"))return;const row=i.closest(".livro-row");if(!row)return;let d=row.querySelector(".rota-dica");const rt=rotas[i.value.trim()];if(rt&&rt.ruas.some(Boolean)){if(!d){d=document.createElement("button");d.type="button";d.className="voltar-lista rota-dica";d.style.gridColumn="1/-1";d.style.background="#eff6ff";d.style.borderColor="#93c5fd";d.style.color="#1e40af";row.appendChild(d)}d.textContent="🗺️ Rota salva deste livro: "+rt.ruas.filter(Boolean).length+" rua(s) — toque pra ver";d.onclick=()=>abrirRota(i.value.trim())}else if(d)d.remove()});
@@ -924,14 +944,14 @@ let ajuda=null; // {loc,pront,etapa} = o que estava antes, pra voltar depois
 function cidadesJaAjudadas(){const set={};registros.forEach(r=>{if(r.ajuda&&r.localidade)set[normLoc(r.localidade)]=r.localidade.trim()});return Object.values(set)}
 function entrarAjuda(){
   ajuda={loc:$("localidade").value,pront:$("prontuario").value,etapa};
-  $("cardLancar").classList.add("em-ajuda");$("ajudaBtn").textContent="🤝 Ajuda ligada";
+  $("cardLancar").classList.add("em-ajuda");$("ajudaBtn").textContent="🤝 Ajuda";
   $("cidadesAjuda").innerHTML=cidadesJaAjudadas().map(c=>`<option value="${esc(c)}">`).join("");
   $("localidade").setAttribute("list","cidadesAjuda");$("localidade").value="";$("localidade").placeholder="Qual cidade?";
   atualizarFaixaAjuda();render();setTimeout(()=>$("localidade").focus(),50);
 }
 function sairAjuda(){
   if(!ajuda)return;const a=ajuda;ajuda=null;
-  $("cardLancar").classList.remove("em-ajuda");$("ajudaBtn").textContent="🤝 Ajudar outra cidade";$("ajudaFaixa").hidden=true;
+  $("cardLancar").classList.remove("em-ajuda");$("ajudaBtn").textContent="🤝";$("ajudaFaixa").hidden=true;
   $("localidade").removeAttribute("list");$("localidade").placeholder="Digite a localidade";
   $("localidade").value=a.loc;$("prontuario").value=a.pront;salvarRascunho();sel(a.etapa,false);
 }
@@ -946,17 +966,20 @@ function render(){atualizarNomes();
   atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m).slice(0,3)+"/"+m.slice(2,4);atualizarDesfazer();$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
   desenharCidades(m);
   // Cidade escolhida: mostra todos os livros dela no mês (com a etapa de cada um). "Todas": só a etapa atual, como sempre.
-  const rs=(filtroCidade
+  const rs=(filtroRel
+    ?registros.filter(r=>r.data.startsWith(m)&&r.releitura).sort((a,b)=>(confDe(a).every(x=>x.ok)-confDe(b).every(x=>x.ok))||a.etapa-b.etapa)
+    :filtroCidade
     ?registros.filter(r=>r.data.startsWith(m)&&normLoc(r.localidade)===filtroCidade)
-    :registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m))).sort((a,b)=>filtroCidade?(a.etapa-b.etapa||a.data.localeCompare(b.data)):(b.data.localeCompare(a.data)||b.id-a.id));
-  $("listaTit").innerHTML=filtroCidade?"📍 "+esc(nomeCidade(filtroCidade,m)):'📋 ETAPA <span id="etapaLista">'+p2(etapa)+'</span>';
-  const imps=impDoMes(m,x=>filtroCidade?normLoc(x.localidade)===filtroCidade:x.etapa===etapa).sort((a,b)=>a.etapa-b.etapa||a.data.localeCompare(b.data));
+    :registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m))).sort((a,b)=>filtroRel?0:filtroCidade?(a.etapa-b.etapa||a.data.localeCompare(b.data)):(b.data.localeCompare(a.data)||b.id-a.id));
+  $("listaTit").innerHTML=filtroRel?"📝 Releituras":filtroCidade?"📍 "+esc(nomeCidade(filtroCidade,m)):'📋 ETAPA <span id="etapaLista">'+p2(etapa)+'</span>';
+  const imps=impDoMes(m,x=>filtroRel?false:filtroCidade?normLoc(x.localidade)===filtroCidade:x.etapa===etapa).sort((a,b)=>a.etapa-b.etapa||a.data.localeCompare(b.data));
   const totImp=imps.reduce((t,x)=>t+x.qtd,0)+rs.reduce((t,r)=>t+(r.nl||0),0);
   const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
   $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos</span>`:"");
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
-  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1049,14 +1072,14 @@ function atualizarPendentes(){
   const box=$("pendentes");
   if(esqueci){
     box.hidden=false;
-    box.innerHTML=`<span style="flex:1">📝 Lançando a Etapa ${p2(esqueci.etapa)} que você esqueceu, com a data ${esqueci.dia.slice(8)}/${esqueci.dia.slice(5,7)}. Depois de salvar, volta pra hoje.</span><button class="fechar-pend cancelar-esq" type="button">Cancelar</button>`;
+    box.innerHTML=`<span style="flex:1">🗓️ Lançando a Etapa ${p2(esqueci.etapa)} que você esqueceu, com a data ${esqueci.dia.slice(8)}/${esqueci.dia.slice(5,7)}. Depois de salvar, volta pra hoje.</span><button class="fechar-pend cancelar-esq" type="button">Cancelar</button>`;
     box.querySelector(".fechar-pend").onclick=sairDoEsqueci;return;
   }
   const h=$("data").value||hoje(),pend=etapasPendentes(h);
   box.hidden=!pend.length;if(!pend.length)return;
   const mostra=pend.slice(-6),esc=pend.find(p=>p.etapa===pendEscolha);
   box.innerHTML="⏳ Pendente"+(pend.length>1?"s":"")+":"+mostra.map(p=>`<button class="pend${p.etapa===pendEscolha?" ativa":""}" type="button" data-e="${p.etapa}" title="Etapa ${p2(p.etapa)}, do dia ${p.dia.slice(8)}/${p.dia.slice(5,7)}">Et. ${p2(p.etapa)} <small>${p.dia.slice(8)}/${p.dia.slice(5,7)}</small></button>`).join("")+(pend.length>mostra.length?` <span>+${pend.length-mostra.length}</span>`:"")
-    +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">📝 Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button></div>`:"");
+    +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
   if(esc){
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;escolherEtapa(esc.etapa);irParaLivro()};
@@ -1143,7 +1166,7 @@ function desenharRota(){
   c.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>{const i=+b.dataset.up;if(i>0){[r.ruas[i-1],r.ruas[i]]=[r.ruas[i],r.ruas[i-1]];salvarRotas();desenharRota()}});
   c.querySelector(".rc-add").onclick=()=>{r.ruas.push("");salvarRotas();desenharRota();const l=c.querySelectorAll("input[data-i]");l[l.length-1].focus()};
 }
-// ---------- 🔁 Confirmações de leitura (livros marcados REL.) ----------
+// ---------- 📝 Confirmações de leitura (livros marcados REL.) ----------
 function confDe(r){
   const n=Math.max(1,Math.min(50,r.qtd||1));
   if(!Array.isArray(r.conf))r.conf=[];
@@ -1151,12 +1174,12 @@ function confDe(r){
   if(r.conf.length>n)r.conf.length=n;
   return r.conf;
 }
-function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">🔁 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
+function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
 function abrirConf(id){rcModo="conf";rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
 function desenharConf(){
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
   const c=confDe(r),cid=r.localidade||"",falta=[...new Set(c.filter(x=>!x.ok&&x.end.trim()).map(x=>comCidade(x.end,cid)))],lk=linkMaps(falta);
-  $("rcTit").textContent="🔁 Confirmações · livro "+r.livro;
+  $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
     c.map((x,i)=>`<div class="conf${x.ok?" feito":""}">${x.uc||x.reg?`<div class="full conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</div>`:""}<div class="full"><div class="label">${i+1}. ENDEREÇO</div><input data-i="${i}" data-k="end" type="text" value="${esc(x.end)}" placeholder="Rua e número" autocomplete="off"></div>
@@ -1608,7 +1631,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="7.4";
+const VERSAO_APP="7.7";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
