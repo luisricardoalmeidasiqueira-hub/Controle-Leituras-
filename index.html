@@ -207,6 +207,24 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .imp-tag{color:#b91c1c;font-weight:800}
 .banner-cal{margin-top:6px;width:100%;min-height:34px;border:1px dashed #2563eb;border-radius:9px;background:#eff6ff;color:#1e40af;font-size:12.5px;font-weight:800;cursor:pointer;padding:5px 8px}
 .banner-cal small{display:block;font-size:10px;font-weight:600;color:#3b82f6}
+#rcFundo{z-index:26}
+.rc-sub{font-size:12px;color:#6b7280;margin:-4px 0 10px}
+.rua{display:grid;grid-template-columns:22px minmax(0,1fr) 34px 34px 34px;gap:5px;align-items:center;margin-bottom:6px}
+.rua b{font-size:12px;color:#6b7280;text-align:center}.rua input{height:38px;font-size:15px}
+.rua button,.conf button.ok{height:38px;border:0;border-radius:9px;background:#e5e7eb;font-size:15px;padding:0;cursor:pointer}
+.rua a{display:flex;align-items:center;justify-content:center;height:38px;border-radius:9px;background:#dbeafe;text-decoration:none;font-size:15px}
+.rc-add{width:100%;height:38px;border:1px dashed #6b7280;border-radius:9px;background:#fff;font-weight:800;font-size:14px;margin:2px 0 10px;cursor:pointer}
+.rc-maps{display:block;text-align:center;height:42px;line-height:42px;border-radius:10px;background:#2563eb;color:#fff;font-weight:800;text-decoration:none;margin-bottom:8px}
+.rc-maps.off{background:#9ca3af;pointer-events:none}
+.conf{border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:6px;align-items:end}
+.conf.feito{background:#f0fdf4;border-color:#86efac}.conf .full{grid-column:1/-1}
+.conf .label{font-size:10px;margin-bottom:2px}.conf input{height:36px;font-size:15px}
+.conf button.ok{height:36px;font-size:18px}.conf.feito button.ok{background:#22c55e;color:#fff}
+.conf-info{font-size:11.5px;color:#0f766e;font-weight:700}.conf-info b{color:#115e59}
+.conf-chip{display:inline-block;margin-top:4px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:800;cursor:pointer}
+.conf-chip.ok{border-color:#86efac;background:#f0fdf4;color:#166534}
+.voltar-lista{margin-top:6px;border:1px solid #fcd34d;background:#fffbeb;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:800;color:#92400e;cursor:pointer;width:100%;text-align:left}
+.rota-tag{color:#1d4ed8;font-weight:700;font-size:11.5px}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
 .cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
@@ -337,6 +355,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="dotLegenda" class="dot-leg" hidden><div id="dotMsg"></div><div>⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</div></div>
 <div id="pendentes" class="pendentes" hidden></div>
 <button id="bannerCal" class="banner-cal" type="button" hidden></button>
+<div id="confFaixa"></div>
 <div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasou? Escolha a etapa que está lendo — a data não muda.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
@@ -382,7 +401,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.1</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 7.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -436,6 +455,13 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 
 <div id="cartaoAtraso" class="cartao-atraso" hidden></div>
 <div id="cartaoComp" class="cartao-atraso cartao-comp" hidden></div>
+
+<!-- Rota do livro / Confirmações -->
+<div id="rcFundo" class="modal-fundo" hidden><div class="modal">
+<div class="modal-top"><button id="rcVoltar" class="voltar" type="button">‹ Voltar</button><h3 id="rcTit"></h3></div>
+<div id="rcCorpo"></div>
+<input id="confArq" type="file" accept="image/*" multiple hidden>
+</div></div>
 
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
@@ -784,19 +810,35 @@ $("saveAll").onclick=()=>{
   if(ja.length&&!confirm("O(s) livro(s) "+ja.join(", ")+" já foi(ram) salvo(s) nesta data e etapa. Salvar de novo?"))return;
   const prontuario=$("prontuario").value.trim();guardarPront(localidade,prontuario);
   const ehAjuda=!!ajuda;
+  // Releitura digitada (sem foto): o livro já foi lançado antes? usa a etapa dele
+  const relOutra=r.saida.filter(x=>x.releitura&&!x.etapa).map(x=>({x,e:etapaDoLivroConhecido(x.livro)})).filter(o=>o.e&&o.e!==etapa);
+  if(relOutra.length&&confirm("🔁 Releitura:\n\n"+relOutra.map(o=>"• Livro "+o.x.livro+" é da Etapa "+p2(o.e)).join("\n")+"\n\nLançar na etapa do livro? (Cancelar = fica na Etapa "+p2(etapa)+")"))relOutra.forEach(o=>o.x.etapa=o.e);
+  const relSalvos=[];
   r.saida.forEach(x=>{
     // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
-    const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===data&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
-    if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura)ex.releitura=true;return}
-    registros.push({id:Date.now()+Math.random(),data,etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})});
+    const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===dataDoLivro(x,et,data)&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
+    if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
+    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);
   });
   localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
   if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
   if(r.repetidos)alert(r.repetidos+" barrinha(s) repetida(s) foi(ram) ignorada(s).");
+  // salvou releitura: já abre a tela das confirmações dela, pronta pras fotos
+  if(relSalvos.length)setTimeout(()=>abrirConf(String(relSalvos[0])),250);
 };
 
+// Livro da foto do PDA: cada um com a data da SUA etapa
+// confirmação (REL.) de etapa que já passou → dia da etapa no calendário; etapa de hoje → hoje; resto → data escolhida
+function etapaDoLivroConhecido(livro){const r=registros.filter(g=>g.livro===livro&&!g.releitura).sort((a,b)=>b.data.localeCompare(a.data))[0];return r?r.etapa:(rotas[livro]&&rotas[livro].etapa)||0}
+function dataDoLivro(x,et,data){
+  if(!x.pda&&!x.releitura)return data;
+  const h=hoje(),d=diaDaEtapa(data.slice(0,7),et);
+  if(x.releitura&&d&&d<=h)return d;
+  if(et===etapaDoDia(h))return h;
+  return data;
+}
 // ---------- Mês, totais e lista ----------
 let mesVer=hoje().slice(0,7);
 function mes(){return mesVer}
@@ -860,6 +902,8 @@ function desenharCidades(m){
   box.innerHTML=`<button type="button" class="cid${!filtroCidade?" ativa":""}" data-k="">Todas</button>`+ks.map(k=>`<button type="button" class="cid${filtroCidade===k?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join("");
   box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{filtroCidade=b.dataset.k;$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
 }
+// Digitou um livro que tem rota salva: mostra o atalho
+document.addEventListener("input",e=>{const i=e.target;if(!i.classList||!i.classList.contains("r-livro"))return;const row=i.closest(".livro-row");if(!row)return;let d=row.querySelector(".rota-dica");const rt=rotas[i.value.trim()];if(rt&&rt.ruas.some(Boolean)){if(!d){d=document.createElement("button");d.type="button";d.className="voltar-lista rota-dica";d.style.gridColumn="1/-1";d.style.background="#eff6ff";d.style.borderColor="#93c5fd";d.style.color="#1e40af";row.appendChild(d)}d.textContent="🗺️ Rota salva deste livro: "+rt.ruas.filter(Boolean).length+" rua(s) — toque pra ver";d.onclick=()=>abrirRota(i.value.trim())}else if(d)d.remove()});
 function abrirTotalCidades(){
   const m=mes(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+(r.releitura?0:r.qtd)}});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),geral=ks.reduce((t,k)=>t+tot[k],0),cp=cidadePrincipal(),box=$("cartaoComp");
@@ -912,7 +956,7 @@ function render(){atualizarNomes();
   $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos</span>`:"");
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
-  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">🔁 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -920,6 +964,7 @@ function render(){atualizarNomes();
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
+  {const cp=confPendentes();$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)} · faltam ${x.f}</button>`).join("")}
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
@@ -1063,6 +1108,112 @@ function mudarDataLivro(id,inp){
   if(!confirm("Trocar a data do livro "+r.livro+"\nde "+fmt(r.data)+" para "+fmt(nova)+"?"+(outroMes?"\n\nAtenção: é outro mês — ele sai da lista deste mês.":""))){inp.value=r.data;return}
   r.data=nova;localStorage.setItem(KEY,JSON.stringify(registros));render();
 }
+// ---------- 🗺️ Caderno de rotas por livro ----------
+const ROTAKEY=KEY+"_rotas";let rotas={};try{rotas=JSON.parse(localStorage.getItem(ROTAKEY)||"{}")}catch(e){}
+function salvarRotas(){try{localStorage.setItem(ROTAKEY,JSON.stringify(rotas))}catch(e){}}
+function cidadeDoLivro(livro){const r=registros.filter(x=>x.livro===livro).sort((a,b)=>b.data.localeCompare(a.data))[0];return r&&r.localidade?r.localidade.trim():$("localidade").value.trim()}
+function comCidade(end,cid){const e=(end||"").trim();if(!e)return "";return /,\s*SP\b/i.test(e)||(cid&&normLoc(e).includes(normLoc(cid)))?e:e+(cid?", "+cid:"")+", SP"}
+function linkMaps(enderecos){
+  const l=enderecos.filter(Boolean);if(!l.length)return "";
+  const dest=encodeURIComponent(l[l.length-1]),way=l.slice(0,-1).slice(0,9).map(encodeURIComponent).join("%7C");
+  return "https://www.google.com/maps/dir/?api=1&travelmode=driving&destination="+dest+(way?"&waypoints="+way:"");
+}
+function rotaDoLivro(livro){
+  if(!rotas[livro]){
+    // primeira vez: começa com o endereço que veio da foto do PDA
+    const comPda=registros.filter(x=>x.livro===livro&&x.pda&&x.pda.end).sort((a,b)=>b.data.localeCompare(a.data))[0];
+    const et=registros.filter(x=>x.livro===livro).sort((a,b)=>b.data.localeCompare(a.data))[0];
+    rotas[livro]={ruas:comPda?[comPda.pda.end]:[""],etapa:et?et.etapa:etapa};
+  }
+  return rotas[livro];
+}
+let rcModo="",rcChave="";
+function abrirRota(livro){rcModo="rota";rcChave=livro;desenharRota();$("rcFundo").hidden=false}
+function desenharRota(){
+  const livro=rcChave,r=rotaDoLivro(livro),cid=cidadeDoLivro(livro);
+  $("rcTit").textContent="🗺️ Rota do livro "+livro;
+  const ends=r.ruas.map(x=>comCidade(x,cid)).filter(Boolean),lk=linkMaps(ends);
+  $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa||0)} · ${esc(cid||"")} · anote as ruas na ordem que você faz. Fica salvo pros próximos meses.</div>`+
+    r.ruas.map((x,i)=>`<div class="rua"><b>${i+1}</b><input data-i="${i}" type="text" value="${esc(x)}" placeholder="Rua e número" autocomplete="off"><button type="button" data-up="${i}" aria-label="Subir">↑</button>${x.trim()?`<a href="${linkMaps([comCidade(x,cid)])}" target="_blank" rel="noopener" aria-label="Abrir no mapa">📍</a>`:`<span></span>`}<button type="button" data-del="${i}" aria-label="Tirar">✕</button></div>`).join("")+
+    `<button type="button" class="rc-add">＋ Rua</button>`+
+    `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Abrir a rota inteira no Maps${ends.length>10?" (10 primeiras)":""}</a>`;
+  const c=$("rcCorpo");
+  c.querySelectorAll("input[data-i]").forEach(inp=>inp.onchange=()=>{r.ruas[+inp.dataset.i]=inp.value.trim();salvarRotas();desenharRota();render()});
+  c.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{r.ruas.splice(+b.dataset.del,1);if(!r.ruas.length)r.ruas.push("");salvarRotas();desenharRota();render()});
+  c.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>{const i=+b.dataset.up;if(i>0){[r.ruas[i-1],r.ruas[i]]=[r.ruas[i],r.ruas[i-1]];salvarRotas();desenharRota()}});
+  c.querySelector(".rc-add").onclick=()=>{r.ruas.push("");salvarRotas();desenharRota();const l=c.querySelectorAll("input[data-i]");l[l.length-1].focus()};
+}
+// ---------- 🔁 Confirmações de leitura (livros marcados REL.) ----------
+function confDe(r){
+  const n=Math.max(1,Math.min(50,r.qtd||1));
+  if(!Array.isArray(r.conf))r.conf=[];
+  while(r.conf.length<n)r.conf.push({med:"",leit:"",end:r.conf.length===0&&r.pda&&r.pda.end?r.pda.end:"",ok:false});
+  if(r.conf.length>n)r.conf.length=n;
+  return r.conf;
+}
+function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">🔁 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
+function abrirConf(id){rcModo="conf";rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
+function desenharConf(){
+  const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
+  const c=confDe(r),cid=r.localidade||"",falta=[...new Set(c.filter(x=>!x.ok&&x.end.trim()).map(x=>comCidade(x.end,cid)))],lk=linkMaps(falta);
+  $("rcTit").textContent="🔁 Confirmações · livro "+r.livro;
+  $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
+    `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
+    c.map((x,i)=>`<div class="conf${x.ok?" feito":""}">${x.uc||x.reg?`<div class="full conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</div>`:""}<div class="full"><div class="label">${i+1}. ENDEREÇO</div><input data-i="${i}" data-k="end" type="text" value="${esc(x.end)}" placeholder="Rua e número" autocomplete="off"></div>
+      <div><div class="label">MEDIDOR</div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Nº" autocomplete="off"></div>
+      <div><div class="label">LEITURA</div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" autocomplete="off"></div>
+      <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>`).join("")+
+    `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam (${falta.length})</a>`;
+  const b=$("rcCorpo");
+  b.querySelectorAll("input[data-i]").forEach(inp=>inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  $("confFotoBtn").onclick=()=>$("confArq").click();
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;if(x.ok)x.quando=hoje();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+}
+// Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
+// Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
+function lerConfirmacaoPDA(t){
+  const L=t.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const uc=((t.match(/UC\s*[:;]?\s*((?:\d\s?){15})/)||[])[1]||"").replace(/\D/g,"");
+  const md=(t.match(/MD\s*[:;.]?\s*([A-Z0-9]{5,12})/)||[])[1]||"";
+  const regs=[...new Set([...t.matchAll(/\b([A-Z]{3})\s?-\s?(\d{3})\b/g)].map(m=>m[1]+"-"+m[2]))];
+  let end="";const iUC=L.findIndex(l=>/UC\s*[:;]/.test(l));
+  for(let i=Math.max(0,iUC);i<L.length;i++){
+    const m=L[i].match(/(?:^|[^A-Za-z])((?:R|AV|AL|TV|TRAV|EST|ROD|PC|PCA|RUA|AVENIDA)\s+[A-Z][A-Z0-9 ,.'ºª-]{3,})/);
+    if(m){end=m[1].replace(/[\s,]+$/,"").trim();
+      if(/\b(LOT|JD|JARDIM|VL|VILA|PQ|PARQUE|CJ|RES|BAIRRO)$/.test(end)&&L[i+1]){const n=L[i+1].match(/\b([A-Z]{3,}(?:\s+[A-Z]{2,})*)\b/);if(n)end+=" "+n[1]}
+      break}
+  }
+  return (regs.length?regs:[""]).map(reg=>({uc,med:md,reg,end}));
+}
+$("confArq").onchange=async e=>{
+  const files=[...(e.target.files||[])];e.target.value="";if(!files.length)return;
+  const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
+  const b=$("confFotoBtn"),txt=b.textContent;b.disabled=true;
+  try{
+    b.textContent="⏳ Preparando leitor...";await carregarOCR();
+    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
+    await w.setParameters({tessedit_pageseg_mode:"6"});
+    let fichas=[];
+    for(const f of files){
+      const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
+      const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
+      const res=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));URL.revokeObjectURL(img.src);
+      fichas=fichas.concat(lerConfirmacaoPDA(res.data.text).filter(x=>x.med||x.end||x.uc));
+    }
+    await w.terminate();
+    if(!fichas.length)return alert("Não consegui ler as confirmações desta(s) foto(s).\nTente uma foto reta, com boa luz, mostrando a tela do PDA.");
+    const c=confDe(r);
+    if(fichas.length>c.length&&confirm("Li "+fichas.length+" confirmação(ões), mas o livro está com "+c.length+".\nAumentar o livro pra "+fichas.length+"?")){r.qtd=fichas.length;confDe(r)}
+    // preenche as fichas vazias primeiro, sem apagar a leitura que você já digitou
+    let k=0;r.conf.forEach(x=>{if(k>=fichas.length||x.med)return;const f=fichas[k++];x.uc=f.uc;x.reg=f.reg;x.med=f.med;if(f.end)x.end=f.end});
+    localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();
+    alert("📷 Li "+fichas.length+" confirmação(ões):\n\n"+fichas.map(f=>"• "+(f.med||"?")+(f.reg?" · "+f.reg:"")+"\n   "+(f.end||"")).join("\n")+"\n\nAgora é só digitar a leitura de cada uma.");
+  }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
+  finally{b.disabled=false;b.textContent=txt}
+};
+$("rcVoltar").onclick=()=>{$("rcFundo").hidden=true;render()};
+// Lista "📍 Voltar pra confirmar" (aparece na tela inicial quando tem confirmação pendente)
+function confPendentes(){const out=[],lim=somaDias(hoje(),-40);registros.forEach(r=>{if(r.releitura&&Array.isArray(r.conf)&&r.data>=lim){const f=r.conf.filter(x=>!x.ok).length;if(f)out.push({r,f})}});return out}
 function editar(id){
   const r=registros.find(x=>String(x.id)===String(id));if(!r)return;editId=String(id);
   $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";$("edPront").value=r.prontuario||"";$("edLivro").value=r.livro;
@@ -1354,7 +1505,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -1364,6 +1515,7 @@ function importarBackupCompleto(d){
   const nI=soma(impedimentos,d.impedimentos),nF=soma(ferias,d.ferias);
   let nC=0;Object.entries(d.calendario||{}).forEach(([m,v])=>{const oficialNoBackup=!(d.provisorios||[]).includes(m);if(Array.isArray(v)&&(!cal[m]||(prov.has(m)&&oficialNoBackup))){if(oficialNoBackup){prov.delete(m);editados.delete(m)}cal[m]=v;nC++;calApagados=calApagados.filter(x=>x!==m);try{localStorage.setItem(CALDELKEY,JSON.stringify(calApagados))}catch(e){};if((d.provisorios||[]).includes(m))prov.add(m)}});
   Object.entries(d.prontuarios||{}).forEach(([k,v])=>{if(!prontPorCidade[k])prontPorCidade[k]=v});
+  Object.entries(d.rotas||{}).forEach(([k,v])=>{if(!rotas[k])rotas[k]=v});salvarRotas();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -1456,7 +1608,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="7.1";
+const VERSAO_APP="7.4";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
