@@ -238,8 +238,13 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .conf-top{display:flex;align-items:center;gap:6px}.conf-top .conf-info{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .conf-top .num-casa{font-size:12px;padding:1px 6px}
 .conf-top .conf-btns button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:28px;min-width:30px;padding:0 5px;font-size:13px;cursor:pointer}
+.conf-top .conf-btns .bt-fecha{font-size:11.5px;font-weight:800;color:#374151}
+.leg-cal{margin:0 0 8px}.leg-cal summary{font-size:12.5px;font-weight:700;color:#4b5563;cursor:pointer;padding:4px 0;list-style:none}.leg-cal summary::-webkit-details-marker{display:none}
+#calGrid .cal-dia{min-height:30px;padding:2px 6px;font-size:13px}#calGrid .cal-dia i{display:inline;flex-basis:auto;margin-left:5px;font-size:10.5px}
+#calGrid .interroga{width:20px;height:20px;font-size:11px;top:-8px;right:-6px}
 .conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
+.conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
 .conf-linha.outro{border-color:#d1d5db;background:#f3f4f6}
 .conf-linha .cl-n{flex:none;font-weight:800;font-size:12.5px;color:#15803d}.conf-linha.outro .cl-n{color:#4b5563}
 .conf-linha .cl-tx{flex:1;min-width:0;font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -435,7 +440,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -505,7 +510,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Lida atrasada no mês passado</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
+<details class="leg-cal"><summary>ℹ️ O que significa cada cor</summary><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Próxima etapa: mês passado foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div></details>
 <button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
 <div id="calGrid" class="cal-grid"></div>
 <div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
@@ -1246,8 +1251,8 @@ function desenharConf(){
     (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Faltam <b>${nf}</b> de ${c.length}`:`✔ Todas as ${c.length} feitas`}</div>`})()+
     c.map((x,i)=>({x,i})).sort((a,b)=>(a.x.ok-b.x.ok)||a.i-b.i).map(({x,i})=>{
       const nc=numeroCasa(x.end),done=x.ok||x.outro;
-      if(done&&!confAbertas.has(i))return `<button type="button" class="conf-linha${x.outro?" outro":""}" data-abre="${i}"><span class="cl-n">${x.outro?"👥":"✔"} ${i+1}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x.end||"sem endereço")}<small>${x.reg?esc(x.reg)+" · ":""}${esc(x.med||"")}${x.outro?" · feita por "+(x.agente?esc(x.agente):"outro agente"):x.leit?" · leitura "+esc(x.leit):""}${x.quando?" · "+fmt(x.quando).slice(0,5):""}</small></span><span class="cl-ab">▾</span></button>`;
-      return `<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}"><div class="full conf-top"><span class="conf-info">${i+1}${x.reg?` · <b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${done?`<button type="button" data-fecha="${i}" aria-label="Recolher">▴</button>`:""}<button type="button" data-outro="${i}" title="${x.outro?"Desfazer":"Recusada (outro agente fez)"}">${x.outro?"↩":"🙅"}</button><button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div><div class="full"><textarea data-i="${i}" data-k="end" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x.end)}</textarea></div>
+      if(!confAbertas.has(i))return `<button type="button" class="conf-linha${x.outro?" outro":done?"":" pend"}" data-abre="${i}"><span class="cl-n">${x.outro?"👥":done?"✔":"⏳"} ${i+1}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x.end||"sem endereço")}<small>${x.reg?esc(x.reg)+" · ":""}${esc(x.med||"")}${x.outro?" · recusada"+(x.agente?" · "+esc(x.agente):""):x.leit?" · leitura "+esc(x.leit):done?"":" · falta a leitura"}${done&&x.quando?" · "+fmt(x.quando).slice(0,5):""}</small></span><span class="cl-ab">▾</span></button>`;
+      return `<div class="conf${x.outro?" outro-fez":x.ok?" feito":""}"><div class="full conf-top"><span class="conf-info">${i+1}${x.reg?` · <b>${esc(x.reg)}</b>`:""}${x.uc?` · UC ${esc(x.uc)}`:""}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${i}" aria-label="Fechar">▲</button>${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div><div class="full"><textarea data-i="${i}" data-k="end" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x.end)}</textarea></div>
       <div><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"></div>
       <div><input data-i="${i}" data-k="leit" type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"></div>
       <button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button>
@@ -1263,7 +1268,8 @@ function desenharConf(){
       let ult="";try{ult=localStorage.getItem(KEY+"_ultimo_agente")||""}catch(e){}
       const nome=prompt("🙅 Recusada — feita por outro agente de faturamento.\n\nNome do agente (pode deixar em branco):",ult);
       if(nome===null)return;
-      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();confAbertas.delete(+bt.dataset.outro);
+      if(!nome.trim()&&!confirm("Marcar como recusada mesmo sem o nome do agente?"))return;
+      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();proxPend(+bt.dataset.outro);
       try{if(x.agente)localStorage.setItem(KEY+"_ultimo_agente",x.agente)}catch(e){}
     }localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // 🗑️ tira a confirmação (ex.: foi cancelada)
@@ -1272,9 +1278,13 @@ function desenharConf(){
     if(c.length===1){if(confirm("Esta é a única confirmação do livro "+r.livro+".\nApagar a releitura inteira?")){registros=registros.filter(x=>x!==r);localStorage.setItem(KEY,JSON.stringify(registros));$("rcFundo").hidden=true;render()}return}
     if(!confirm("Tirar a confirmação "+(i+1)+(c[i].med?" (medidor "+c[i].med+")":"")+"?\nO livro passa a ter "+(c.length-1)+" releitura(s)."))return;
     c.splice(i,1);r.qtd=c.length;confAbertas.clear();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
-  b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas.add(+bt.dataset.abre);desenharConf()});
+  b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([+bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
+  // ↩ volta pra pendente (confirmada ou recusada)
+  b.querySelectorAll("[data-volta]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.volta];x.ok=false;x.outro=false;delete x.agente;delete x.quando;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  // depois de resolver uma, já abre a próxima que falta
+  const proxPend=j=>{confAbertas=new Set();const k=c.findIndex((y,n)=>n!==j&&!y.ok);if(k>=0)confAbertas.add(k)};
   b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(+bt.dataset.fecha);desenharConf()});
-  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();confAbertas.delete(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
 // Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
@@ -1414,18 +1424,20 @@ function desenharCal(){
   $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
   $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);$("calGrid").classList.toggle("editando",calEditando);
   const lista=cal[calVer]||Array(18).fill(""),h=hoje(),sem=["dom","seg","ter","qua","qui","sex","sáb"];
+  // ❓ só na próxima etapa que vai ler (hoje ou o próximo dia de leitura), pra não encher a tela
+  const iProx=lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
   const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar mês";b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
   const campo=(d,i)=>{
     if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
     if(!d)return `<span class="cal-dia">—</span>`;
     const [a,mo,di]=d.split("-").map(Number);
-    const cc=cicloPlanejado(calVer,i),am=atrasoMesPassado(calVer,i+1);
+    const cc=cicloPlanejado(calVer,i),am=i===iProx&&atrasoMesPassado(calVer,i+1);
     // Mês que já foi lido: se você leu num dia diferente do calendário, mostra o dia real e o ciclo de verdade
     const real=ultimaLeituraReal(calVer,i+1),cr=real?cicloReal(real,i+1):null;
     const linha2=real&&real!==d
       ?`<i class="${foraDoLimite(cr)?"fora":"real"}">lida ${real.slice(8)}/${real.slice(5,7)}${cr!=null?" "+cr+"d":""}</i>`
-      :cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc} dias</i>`:"";
+      :cc!=null?`<i class="${foraDoLimite(cc)?"fora":""}">${cc}d</i>`:"";
     // ❓ = no mês passado esta etapa foi lida atrasada (toque para ver)
     const marca=am?`<button type="button" class="interroga" onclick="verAtraso(${i+1})" aria-label="Ver atraso do mês passado">❓</button>`:"";
     if(emFerias(d)&&!real)return `<span class="cal-dia fer-dia${(emFerias(d).tipo||"Férias")==="Férias"?" fer-azul":""}">${d.slice(8)}/${d.slice(5,7)}<em>${sem[new Date(a,mo-1,di).getDay()]}</em><i class="fer-txt">🏖️ ${(emFerias(d).tipo||"férias").toLowerCase()}</i></span>`;
@@ -1763,7 +1775,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="8.6";
+const VERSAO_APP="8.8";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
