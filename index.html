@@ -242,6 +242,31 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .leg-cal{margin:0 0 8px}.leg-cal summary{font-size:12.5px;font-weight:700;color:#4b5563;cursor:pointer;padding:4px 0;list-style:none}.leg-cal summary::-webkit-details-marker{display:none}
 #calGrid .cal-dia{min-height:30px;padding:2px 6px;font-size:13px}#calGrid .cal-dia i{display:inline;flex-basis:auto;margin-left:5px;font-size:10.5px}
 #calGrid .interroga{width:20px;height:20px;font-size:11px;top:-8px;right:-6px}
+#calFundo .cal-nav4{grid-template-columns:34px 88px 34px 40px 40px 1fr;gap:5px;margin-bottom:8px}#calFundo .cal-nav4 div{background:#f3f4f6;color:#1f2937;border:1px solid #d1d5db;text-transform:none;font-size:14px;white-space:nowrap}#calFundo .cal-nav4 .btn-editar{height:36px;font-size:13px;margin:0;padding:0 4px}#calFundo .cal-nav4 .cal-info-btn{height:36px;padding:0;font-size:16px}#calFundo .cal-nav4 button,#calFundo .cal-nav4 div{height:36px;font-size:15px}
+.cal-lupa{position:relative;display:flex;align-items:center;justify-content:center;height:36px;border-radius:10px;background:#e5e7eb;font-size:17px;overflow:hidden;cursor:pointer}
+.cal-lupa input{position:absolute;inset:0;opacity:0;width:100%;height:100%;min-width:0;-webkit-appearance:none;appearance:none;border:0;cursor:pointer}
+.cal-linha2{display:grid;grid-template-columns:auto 1fr;gap:6px;margin-bottom:8px}#calFundo .cal-linha2 .btn-editar{height:34px;font-size:13.5px;margin:0}
+.cal-info-btn{height:34px;border:1px solid #d1d5db;background:#fff;border-radius:10px;padding:0 10px;font-size:13px;font-weight:800;color:#374151;cursor:pointer}.cal-info-btn.ativo{background:#e0e7ff;border-color:#a5b4fc}
+#calInfo{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-bottom:8px}.leg-bts{font-size:11.5px;color:#4b5563;line-height:1.5;margin-top:6px}
+.cal-icones{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:10px}
+.cal-icones button{height:40px;border:0;border-radius:10px;background:#e5e7eb;font-size:19px;padding:0;cursor:pointer}
+.cal-icones button.azul{background:#2563eb}.cal-icones button.verm{background:#fef2f2}.cal-icones button:disabled{opacity:.6}
+.cal-status{font-size:12.5px;font-weight:700;color:#1d4ed8;margin-top:8px;text-align:center}
+#calMes{cursor:pointer}
+.mes-todo{margin-bottom:8px}.md-bol{position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1px #fff}
+.md-bol.verde{background:#22c55e}.md-bol.vermelho{background:#ef4444}.md-bol.laranja{background:#ea580c}.md-bol.azul{background:#3b82f6}.md-bol.roxo{background:#a855f7}.md-bol.cinza{background:#d1d5db}.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.md-grid b{font-size:11px;text-align:center;color:#6b7280}.md-grid b.dom,.md-grid b.sab{color:#b91c1c}
+.md{position:relative;height:52px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;padding:0;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.md i{font-style:normal;font-size:12px;color:#6b7280}.md.dom i,.md.sab i{color:#b91c1c}
+.md em{font-style:normal;font-size:13px;font-weight:800;color:#1e3a8a}.md u{text-decoration:none;font-size:10px;font-weight:800;color:#15803d;margin-top:1px}.md u.fora{color:#dc2626}
+.md-at{position:absolute;top:3px;left:3px;width:9px;height:9px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px #fecaca;z-index:1}
+.md-at::after{content:"";position:absolute;inset:-10px}.md-at-leg{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px #fecaca;vertical-align:middle}
+.md-q{position:absolute;top:-7px;left:-5px;width:18px;height:18px;border-radius:50%;background:#fff;border:1.5px solid #fecaca;font-size:10px;line-height:15px;text-align:center;z-index:1}
+.md.et{background:#dbeafe;border-color:#93c5fd}.md.et i{color:#1f2937;font-weight:700}
+.md.et.lida{background:#dcfce7;border-color:#86efac}.md.et.lida em{color:#166534}
+.md.et.sab{background:#fee2e2;border-color:#f87171}.md.et.fer{background:#ffedd5;border-color:#fb923c}
+.md.fe:not(.et){background:#ede9fe}.md.hj{border:2px solid #2563eb}
+.md-leg{font-size:11px;color:#6b7280;margin-top:5px}.md-leg .et{display:inline-block;background:#dbeafe;border:1px solid #93c5fd;border-radius:5px;padding:0 4px;font-weight:800;color:#1e3a8a}.md-leg .et.lida{background:#dcfce7;border-color:#86efac;color:#166534}
 .conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
@@ -440,7 +465,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 8.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 9.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -506,22 +531,22 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
-<div class="consulta"><span>🔎 Consultar dia:</span><input id="calBusca" type="date" aria-label="Consultar um dia"></div>
+<div class="cal-nav cal-nav4"><button id="calAnt" type="button">‹</button><div id="calMes" role="button" tabindex="0" title="Ver o mês todo"></div><button id="calProx" type="button">›</button><label class="cal-lupa" title="Consultar um dia">🔎<input id="calBusca" type="date" aria-label="Consultar um dia"></label><button id="calInfoBtn" type="button" class="cal-info-btn" title="Legenda" aria-label="Legenda">ℹ️</button><button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button></div>
 <div id="calBuscaRes" class="consulta-res" hidden></div>
-<div class="cal-nav"><button id="calAnt" type="button">‹</button><div id="calMes"></div><button id="calProx" type="button">›</button></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<details class="leg-cal"><summary>ℹ️ O que significa cada cor</summary><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Próxima etapa: mês passado foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div></details>
-<button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button>
+<div id="calInfo" class="leg-cal" hidden><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
+<div class="leg-bts"><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
+<div id="calMesTodo" class="mes-todo" hidden></div>
 <div id="calGrid" class="cal-grid"></div>
-<div class="hint" style="margin-top:8px">Chegou o calendário oficial? Toque em <b>📷 Ler foto do calendário</b>: o app lê as datas e troca o provisório (precisa de internet). Ou corrija as datas aqui mesmo.</div>
-<div class="cal-btns">
-<button id="calFotoBtn" class="action full" type="button" style="background:#2563eb">📷 Ler foto do calendário</button>
-<button id="calCompMes" class="action" type="button">📤 Enviar este mês</button>
-<button id="calCompTabela" class="action sec" type="button">📤 Enviar o ano</button>
-<button id="calCompFoto" class="action sec full" type="button">🖼️ Enviar foto original</button>
-<button id="feriasBtn" class="action sec full" type="button">🏖️ Minhas férias / folgas</button>
-<button id="calApagar" class="action sec full" type="button" style="background:#fef2f2;color:#b91c1c">🗑️ Apagar calendário do ano</button>
-<button id="calFechar" class="action sec full" type="button">Fechar</button>
+<div id="calStatus" class="cal-status" hidden></div>
+<div class="cal-icones">
+<button id="calFotoBtn" type="button" class="azul" title="Ler foto do calendário" aria-label="Ler foto do calendário">📷</button>
+<button id="calCompMes" type="button" title="Enviar este mês" aria-label="Enviar este mês">📤</button>
+<button id="calCompTabela" type="button" title="Enviar o ano" aria-label="Enviar o ano">🗓️</button>
+<button id="calCompFoto" type="button" title="Enviar foto original" aria-label="Enviar foto original">🖼️</button>
+<button id="feriasBtn" type="button" title="Minhas férias / folgas" aria-label="Minhas férias e folgas">🏖️</button>
+<button id="calApagar" type="button" class="verm" title="Apagar calendário do ano" aria-label="Apagar calendário do ano">🗑️</button>
+<button id="calFechar" type="button" title="Fechar" aria-label="Fechar">✖️</button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
 <div id="fotoDica" class="foto-dica" hidden>👆 Toque na foto para ampliar</div>
@@ -1417,16 +1442,44 @@ function atualizarBannerCal(){
   b.innerHTML=`📅 Lançar calendário de ${a}<small>toque e escolha a foto do calendário que a empresa mandou</small>`;
   b.onclick=()=>{abrirCal();calVer=a+"-01";desenharCal();setTimeout(()=>$("calFotoArq").click(),50)};
 }
+// ---------- Mês todo (calendário de parede) com as etapas nos dias ----------
+// mês todo aberto por padrão; a lista das 18 etapas só aparece no ✏️ Editar
+let calMesAberto=true;try{calMesAberto=localStorage.getItem(KEY+"_mes_todo2")!=="0"}catch(e){}
+function desenharMesTodo(){
+  const box=$("calMesTodo");if(!box)return;box.hidden=!calMesAberto;$("calGrid").hidden=!calEditando;if(!calMesAberto)return;
+  const [a,mo]=calVer.split("-").map(Number),lista=cal[calVer]||[],h=hoje(),ini=new Date(a,mo-1,1).getDay(),nd=new Date(a,mo,0).getDate();
+  let html=["D","S","T","Q","Q","S","S"].map((x,i)=>`<b class="${i===0?"dom":i===6?"sab":""}">${x}</b>`).join("");
+  for(let i=0;i<ini;i++)html+="<span></span>";
+  const dSel=$("data").value||h,iProxMT=lista.indexOf(dSel)>-1?lista.indexOf(dSel):lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
+  for(let d=1;d<=nd;d++){
+    const iso=calVer+"-"+p2(d),i=lista.indexOf(iso),dw=(ini+d-1)%7,fe=nomeFeriado(iso),fer=emFerias(iso);
+    const lida=i>-1&&ultimaLeituraReal(calVer,i+1);
+    // Bolinha igual à da tela da frente: 🟢 no dia · 🔴 lançada atrasada neste mês · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · ⚪ já passou e não lançou
+    let bol="";
+    if(i>-1){
+      if(lida)bol=lida>iso?"vermelho":(corDoDia(lida)?"laranja":"verde");
+      else if(fer)bol=(fer.tipo||"Férias")==="Férias"?"azul":"roxo";
+      else if(iso<h)bol="cinza";
+    }
+    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:""}<i>${d}</i>${i>-1?`<em>${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
+  }
+  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · ⚪ passou e não lançou · toque num dia pra ver</div>`;
+  box.querySelectorAll("[data-q]").forEach(q=>q.onclick=e=>{e.stopPropagation();verAtraso(+q.dataset.q)});
+  box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
+}
+function alternarMesTodo(){calMesAberto=!calMesAberto;try{localStorage.setItem(KEY+"_mes_todo2",calMesAberto?"1":"0")}catch(e){}desenharCal()}
 function abrirCal(){calEditando=false;calBuscaDia="";$("calBusca").value="";$("calBuscaRes").hidden=true;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
 function desenharCal(){
-  if($("calApagar"))$("calApagar").textContent="🗑️ Apagar calendário de "+calVer.slice(0,4);
+  if($("calApagar")){$("calApagar").title="Apagar calendário de "+calVer.slice(0,4);$("calApagar").setAttribute("aria-label",$("calApagar").title)}
   const pv=ehProv(calVer);
-  $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer);
+  $("calMes").textContent=(pv?"🟡 ":"")+nomeMes(calVer).charAt(0).toUpperCase()+nomeMes(calVer).slice(1,3)+"/"+calVer.slice(2,4);$("calMes").title=nomeMes(calVer);$("calMes").textContent+=calMesAberto?" ▴":" ▾";desenharMesTodo();
   $("provAviso").hidden=!pv;$("calGrid").classList.toggle("prov",pv);$("calGrid").classList.toggle("editando",calEditando);
   const lista=cal[calVer]||Array(18).fill(""),h=hoje(),sem=["dom","seg","ter","qua","qui","sex","sáb"];
   // ❓ só na próxima etapa que vai ler (hoje ou o próximo dia de leitura), pra não encher a tela
-  const iProx=lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
-  const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar mês";b.classList.toggle("pronto",calEditando);
+  // ❓ vai no dia escolhido lá na tela principal (ex.: 14/10); se ele não for dia de etapa deste mês, vai na próxima que falta ler
+  const dSel=$("data").value||h,iSel=lista.indexOf(dSel);
+  const iProx=iSel>-1?iSel:lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
+  const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar";b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
   const campo=(d,i)=>{
     if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
@@ -1477,7 +1530,9 @@ $("calBusca").onchange=()=>{
   const [a,mo,di]=d.split("-").map(Number),dia=["domingo","segunda","terça","quarta","quinta","sexta","sábado"][new Date(a,mo-1,di).getDay()];
   const e=etapaDoDia(d),t=textoDoDia(d),pv=ehProv(d.slice(0,7)),txt=d.slice(8)+"/"+d.slice(5,7)+"/"+a+" ("+dia+")";
   r.className="consulta-res"+(e?"":" nao");r.hidden=false;
-  r.textContent=e?"✅ "+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":""):(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês");
+  const mD=d.slice(0,7),realD=e&&ultimaLeituraReal(mD,e),amD=e&&atrasoMesPassado(mD,e),ccD=e&&cicloPlanejado(mD,e-1);
+  const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
+  r.textContent=e?"✅ "+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês");
   calEditando=false;calVer=d.slice(0,7);desenharCal();
 };
 // Editar mês: liga/desliga as datas para corrigir
@@ -1493,6 +1548,8 @@ $("calChip").onclick=abrirCal;
 $("calAnt").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,-1);desenharCal()};
 $("calProx").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,1);desenharCal()};
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
+$("calMes").onclick=alternarMesTodo;
+$("calInfoBtn").onclick=()=>{const i=$("calInfo");i.hidden=!i.hidden;$("calInfoBtn").classList.toggle("ativo",!i.hidden)};
 $("calFundo").onclick=e=>{if(e.target===$("calFundo"))$("calFundo").hidden=true};
 
 function dataURLparaBlob(u){const [cab,b64]=u.split(","),tipo=cab.match(/:(.*?);/)[1],bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:tipo})}
@@ -1610,7 +1667,7 @@ function datasPorMes(texto){
 }
 async function lerFotoCalendario(img){
   const b=$("calFotoBtn"),txt=b.textContent;b.disabled=true;
-  const msg=t=>b.textContent=t;
+  const st=$("calStatus"),msg=t=>{st.hidden=false;st.textContent=t};b.textContent="⏳";
   try{
     msg("⏳ Preparando leitor...");await carregarOCR();
     const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")msg("⏳ Lendo a foto... "+Math.round(l.progress*100)+"%")}});
@@ -1641,7 +1698,7 @@ async function lerFotoCalendario(img){
     alert(ks.length+" mês(es) colocado(s) no calendário."+(conferir.length?"\nConfira e complete à mão: "+conferir.map(nomeMes).join(", ")+".":"\nDá uma conferida rápida nas datas."));
   }catch(err){
     alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.");
-  }finally{b.disabled=false;b.textContent=txt}
+  }finally{b.disabled=false;b.textContent=txt;$("calStatus").hidden=true}
 }
 $("calCompFoto").onclick=()=>{
   const f=fotoAtual();
@@ -1775,7 +1832,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="8.8";
+const VERSAO_APP="9.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
