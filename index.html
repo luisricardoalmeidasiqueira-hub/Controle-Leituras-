@@ -268,7 +268,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .md.et.lida{background:#dcfce7;border-color:#86efac}.md.et.lida em{color:#166534}
 .md.et.sab{background:#fee2e2;border-color:#f87171}.md.et.fer{background:#ffedd5;border-color:#fb923c}
 .md.fe:not(.et){background:#ede9fe}.md.hj{border:2px solid #2563eb}
-.md-leg{font-size:11px;color:#6b7280;margin-top:5px}.md-leg .et{display:inline-block;background:#dbeafe;border:1px solid #93c5fd;border-radius:5px;padding:0 4px;font-weight:800;color:#1e3a8a}.md-leg .et.lida{background:#dcfce7;border-color:#86efac;color:#166534}
+.leg-mes{font-size:12px;color:#374151;line-height:1.6;margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed #d1d5db}.md-leg{font-size:11px;color:#6b7280;margin-top:5px}.md-leg .et{display:inline-block;background:#dbeafe;border:1px solid #93c5fd;border-radius:5px;padding:0 4px;font-weight:800;color:#1e3a8a}.md-leg .et.lida{background:#dcfce7;border-color:#86efac;color:#166534}
 .conf.grupo{display:block}.conf.grupo>.full{margin-bottom:5px}
 .reg-lin{border-top:1px dashed #d1d5db;padding-top:5px;margin-top:5px}.reg-lin.feito .conf-info{color:#15803d}.reg-lin.outro-fez{opacity:.75}
 .reg-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}.reg-top .conf-info{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -474,7 +474,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.4</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.5</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -543,7 +543,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="cal-nav cal-nav4"><button id="calAnt" type="button">‹</button><div id="calMes" role="button" tabindex="0" title="Ver o mês todo"></div><button id="calProx" type="button">›</button><label class="cal-lupa" title="Consultar um dia">🔎<input id="calBusca" type="date" aria-label="Consultar um dia"></label><button id="calInfoBtn" type="button" class="cal-info-btn" title="Legenda" aria-label="Legenda">ℹ️</button><button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button></div>
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
-<div id="calInfo" class="leg-cal" hidden><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
+<div id="calInfo" class="leg-cal" hidden><div class="leg-mes">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
 <div class="leg-bts"><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
 <div id="calMesTodo" class="mes-todo" hidden></div>
 <div id="calGrid" class="cal-grid"></div>
@@ -1488,7 +1488,7 @@ function desenharMesTodo(){
     }
     html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${naoFiz[iso]?" naofiz":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol==="rosa"?`<span class="md-bol rosa"></span>`:bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:i>-1&&naoFiz[diaDaEtapa(somaMes(calVer,-1),i+1)]?`<span class="md-at rosa" title="Mês passado você não fez esta etapa (leu em outro lugar)"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
   }
-  box.innerHTML=`<div class="md-grid">${html}</div><div class="md-leg">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div>`;
+  box.innerHTML=`<div class="md-grid">${html}</div>`;
   box.querySelectorAll("[data-q]").forEach(q=>q.onclick=e=>{e.stopPropagation();verAtraso(+q.dataset.q)});
   box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
 }
@@ -1862,7 +1862,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.4";
+const VERSAO_APP="10.5";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
