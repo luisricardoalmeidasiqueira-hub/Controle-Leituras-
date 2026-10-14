@@ -481,7 +481,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 11.3</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 11.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1033,7 +1033,7 @@ function desenharCidades(m){
   if(!mostraCid&&!rels.length){box.hidden=true;return}
   box.hidden=false;
   box.innerHTML=(mostraCid||filtroRel?`<button type="button" class="cid${!filtroCidade&&!filtroRel?" ativa":""}" data-k="">${mostraCid?"Todas":"📋 Etapa"}</button>`:"")+
-    (rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?"🟠 a confirmar":"✔"}</small></button>`:"")+
+    (false&&rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?"🟠 a confirmar":"✔"}</small></button>`:"")+
     (mostraCid?ks.map(k=>`<button type="button" class="cid${filtroCidade===k&&!filtroRel?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join(""):"");
   box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{if(b.dataset.rel){filtroRel=!filtroRel;filtroCidade=""}else{filtroRel=false;filtroCidade=b.dataset.k}$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
 }
@@ -1899,7 +1899,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="11.3";
+const VERSAO_APP="11.4";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
