@@ -293,6 +293,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .resseq-aviso{display:block;width:100%;text-align:left;margin-top:7px;border:1px solid #fdba74;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer}.resseq-aviso small{display:block;font-weight:600;color:#9a3412;font-size:11px}
 #rcCorpo .rua{grid-template-columns:minmax(0,1fr) 30px 30px 30px;gap:4px;margin-bottom:4px}#rcCorpo .rua button,#rcCorpo .rua a{height:32px;font-size:13px;border-radius:8px}
 #rcCorpo .rua textarea.end-txt{min-height:32px;padding:6px 9px;font-size:13.5px}#rcCorpo .rua-cx .num-casa{font-size:10px;top:-7px}
+.rota-links{display:flex;gap:5px;min-width:0}.rota-links .rc-maps{flex:1;min-width:0;padding:0 4px;white-space:nowrap;overflow:hidden}
 .rota-topo{display:grid;grid-template-columns:1fr 40px 40px;gap:6px;margin-bottom:8px}.rota-topo .rc-maps{margin:0;height:38px;line-height:38px;font-size:14px}
 .rota-topo button{height:38px;border:1px solid #d1d5db;background:#fff;border-radius:10px;font-size:16px;cursor:pointer}.rota-topo button:disabled{opacity:.4}
 .rota-baixo{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.rota-baixo .rc-add{margin:0;height:36px;font-size:13px}
@@ -497,7 +498,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.5</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1372,6 +1373,7 @@ function ligarAutocompletar(box,cid){
     t.addEventListener("blur",()=>setTimeout(fechar,250));
   });
 }
+function partesMaps(ends){if(ends.length<=10)return ends.length?[linkMaps(ends)]:[];const out=[];for(let i=0;i<ends.length-1;i+=9)out.push(linkMaps(ends.slice(i,i+10)));return out}
 function desenharRota(){
   const livro=rcChave,r=rotaDoLivro(livro),cid=cidadeDoLivro(livro);
   if(!r.arrumada){const a=arrumarRuas(r.ruas);r.ruas=a.length?a:[""];r.arrumada=1;salvarRotas()}
@@ -1379,7 +1381,7 @@ function desenharRota(){
   const ends=r.ruas.map(x=>comCidade(ruaParaMapa(x),cid)).filter(Boolean),lk=linkMaps(ends);
   const temRua=r.ruas.some(x=>x.trim());
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa||0)} · ${esc(cid||"")} · ruas na ordem que você faz. Fica salvo pros próximos meses.</div>`+
-    `<div class="rota-topo"><a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Abrir no Google Maps${ends.length>10?" (10 primeiras)":""}</a><button type="button" id="rotaComp" title="Compartilhar a rota" aria-label="Compartilhar a rota"${temRua?"":" disabled"}>📤</button><button type="button" id="rotaLimpa" title="Apagar todas as ruas" aria-label="Apagar todas as ruas"${temRua?"":" disabled"}>🗑️</button></div>`+
+    `<div class="rota-topo"><span class="rota-links">${(pm=>pm.length>1?pm.map((u,k)=>`<a class="rc-maps" href="${u}" target="_blank" rel="noopener">🗺️ ${k+1}ª parte</a>`).join(""):`<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Abrir no Google Maps</a>`)(partesMaps(ends))}</span><button type="button" id="rotaComp" title="Compartilhar a rota" aria-label="Compartilhar a rota"${temRua?"":" disabled"}>📤</button><button type="button" id="rotaLimpa" title="Apagar todas as ruas" aria-label="Apagar todas as ruas"${temRua?"":" disabled"}>🗑️</button></div>`+
     r.ruas.map((x,i)=>`<div class="rua sem-num"><div class="rua-cx"><textarea data-i="${i}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x)}</textarea></div><button type="button" data-up="${i}" aria-label="Subir">↑</button>${x.trim()?`<a href="${linkMaps([comCidade(ruaParaMapa(x),cid)])}" target="_blank" rel="noopener" aria-label="Abrir no mapa">📍</a>`:`<span></span>`}<button type="button" data-del="${i}" aria-label="Tirar">✕</button></div>`).join("")+
     `<div class="rota-baixo"><button type="button" class="rc-add">＋ Rua</button><button type="button" id="rotaFotoBtn">📷 Ler ruas da foto</button></div>`+
     `<button type="button" id="rotaColarBtn" class="rota-colar">📋 Colar lista de ruas</button><div id="rotaColarBox" hidden><textarea id="rotaColarTxt" rows="6" placeholder="Cole aqui as ruas, uma por linha"></textarea><button type="button" id="rotaColarOk">✔ Colocar na rota</button></div>`;
@@ -1406,7 +1408,7 @@ function desenharRota(){
   // 📤 manda a rota pronta pra outra pessoa (WhatsApp etc.)
   $("rotaComp").onclick=async()=>{
     const ruas=r.ruas.filter(x=>x.trim()).map(ruaParaMapa);
-    const txt="🗺️ Rota do livro "+livro+" · Etapa "+p2(r.etapa||0)+(cid?" · "+cid:"")+"\n\n"+ruas.map(x=>"• "+x).join("\n")+(lk?"\n\n📍 Abrir no Google Maps:\n"+lk:"");
+    const txt="🗺️ Rota do livro "+livro+" · Etapa "+p2(r.etapa||0)+(cid?" · "+cid:"")+"\n\n"+ruas.map(x=>"• "+x).join("\n")+((pm=>pm.length>1?"\n\n📍 Abrir no Google Maps (o Maps aceita 10 ruas por vez):\n"+pm.map((u,k)=>(k+1)+"ª parte: "+u).join("\n\n"):pm.length?"\n\n📍 Abrir no Google Maps:\n"+pm[0]:"")(partesMaps(r.ruas.filter(x=>x.trim()).map(x=>comCidade(ruaParaMapa(x),cid)))));
     try{if(navigator.share){await navigator.share({title:"Rota do livro "+livro,text:txt});return}}catch(e){if(e&&e.name==="AbortError")return}
     try{await navigator.clipboard.writeText(txt);alert("📋 Rota copiada! Agora é só colar no WhatsApp.")}catch(e){prompt("Copie a rota:",txt)}
   };
@@ -2060,7 +2062,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.5";
+const VERSAO_APP="13.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
