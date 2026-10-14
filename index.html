@@ -201,7 +201,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .ajuda-tag{display:inline-block;background:#ffedd5;color:#9a3412;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
 .pill-bob{border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:800;color:#374151;margin-top:3px;cursor:pointer;white-space:nowrap}.bob-dig{font-size:11px;font-weight:800;color:#374151;white-space:nowrap;align-self:center}
 .predio-tag{color:#1e3a8a;font-weight:700;font-size:11.5px}.item-btns .predio-on{background:#dbeafe!important;border-color:#60a5fa!important}
-.c-livro{position:relative}.r-pred{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:30px;height:28px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;font-size:14px;padding:0;opacity:.35;cursor:pointer}
+.c-livro{position:relative}.r-pred[hidden]{display:none}.r-pred{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:30px;height:28px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;font-size:14px;padding:0;opacity:.35;cursor:pointer}
 .r-pred.on{opacity:1;background:#dbeafe;border-color:#60a5fa}.c-livro .r-livro{padding-right:40px}
 .sug-box{display:flex;flex-direction:column;gap:3px;margin:-1px 0 6px;background:#fff;border:1px solid #93c5fd;border-radius:9px;padding:4px;box-shadow:0 4px 10px #0001}
 .sug-box button{text-align:left;border:0;background:#eff6ff;border-radius:7px;padding:7px 9px;font-size:13px;font-weight:700;color:#1e3a8a;cursor:pointer}
@@ -209,6 +209,10 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 #rotaColarBox{margin-top:6px}#rotaColarBox textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:9px;padding:8px;font:inherit;font-size:13.5px}
 #rotaColarBox button{width:100%;margin-top:5px;height:36px;border:0;border-radius:9px;background:#16a34a;color:#fff;font-weight:800;cursor:pointer}
 .ed-prox{display:block;font-size:10.5px;font-weight:700;color:#1d4ed8;margin-top:1px}
+.comp-rank{width:100%;height:38px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;border-radius:10px;font-weight:800;font-size:14px;margin:6px 0 2px;cursor:pointer}
+.rank-l{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid #f3f4f6}.rank-l.atual{background:#eff6ff;border-radius:8px}
+.rk-m{width:24px;text-align:center;font-size:18px;flex:none}.rk-tx{flex:1;min-width:0}.rk-tx b{font-size:13.5px}.rk-tx small{display:block;font-size:11px;color:#6b7280}
+.rk-tx i{display:block;height:5px;border-radius:3px;background:#60a5fa;margin-top:3px}.rk-n{flex:none;font-size:14px}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -499,7 +503,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.9</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -838,7 +842,7 @@ function criarLinha(foco=true,dados={}){
   const n=++contLinha,ant=$("livroRows").lastElementChild;
   const part=dados.part!==undefined?dados.part:(ant?ant.classList.contains("part"):false);
   const r=document.createElement("div");r.className="livro-row"+(part?" part":"");
-  r.innerHTML=`<div class="c-livro"><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"><button type="button" class="r-pred" title="Prédio: não entra na conta das bobinas" aria-label="Prédio">🏢</button></div>`+
+  r.innerHTML=`<div class="c-livro"><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"><button type="button" class="r-pred" title="Prédio: não entra na conta das bobinas" aria-label="Prédio" hidden>🏢</button></div>`+
   `<div class="c-de so-part"><div class="mini">DE</div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="De"></div>`+
   `<div class="c-ate so-part"><div class="mini">ATÉ</div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
   `<div class="c-qtd"><div class="mini">QTD</div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
@@ -998,9 +1002,24 @@ function abrirComparacao(m){
     return `<div class="comp-linha${modoComp===k?" sel":""}" data-k="${k}"><div><b>${x.rot}</b><small>${nomeMes(m)}: ${x.a.toLocaleString("pt-BR")} · ${nomeMes(c.ant)}: ${x.b.toLocaleString("pt-BR")}</small></div>`+
       (p==null?`<span class="pct igual">sem dados</span>`:`<span class="pct ${p>0?"sobe":p<0?"desce":"igual"}">${p>0?"▲ ":p<0?"▼ ":"= "}${Math.abs(p)}%<small>${dif>0?"+":""}${dif.toLocaleString("pt-BR")}</small></span>`)+`</div>`};
   box.innerHTML=`<b class="comp-tit">📊 Comparação com ${nomeMes(c.ant)}</b>${linha("dia")}${linha("etapa")}${linha("mes")}
-    ${c.mes.b?"":`<div class="comp-dica" style="color:#92400e;font-weight:700">Ainda não tem leituras lançadas em ${nomeMes(c.ant)} pra comparar. A % aparece sozinha no mês que vem.</div>`}<div class="comp-dica">Toque numa linha pra ela aparecer no selinho do total.</div><button type="button" class="comp-ok">Ok</button>`;
+    ${c.mes.b?"":`<div class="comp-dica" style="color:#92400e;font-weight:700">Ainda não tem leituras lançadas em ${nomeMes(c.ant)} pra comparar. A % aparece sozinha no mês que vem.</div>`}<div class="comp-dica">Toque numa linha pra ela aparecer no selinho do total.</div><button type="button" class="comp-rank">🏆 Ranking dos meses</button><button type="button" class="comp-ok">Ok</button>`;
   box.querySelectorAll(".comp-linha").forEach(l=>l.onclick=()=>{modoComp=l.dataset.k;try{localStorage.setItem(COMPKEY,modoComp)}catch(e){}render();abrirComparacao(m)});
   box.querySelector(".comp-ok").onclick=()=>box.hidden=true;
+  box.querySelector(".comp-rank").onclick=()=>abrirRanking(m);
+  box.hidden=false;
+}
+// ---------- 🏆 Ranking: mês que mais leu e que menos leu ----------
+function abrirRanking(mAtual){
+  const box=$("cartaoComp"),tot={},liv={},dias={};
+  registros.forEach(r=>{if(r.releitura)return;const m=r.data.slice(0,7);tot[m]=(tot[m]||0)+r.qtd;liv[m]=(liv[m]||0)+1;(dias[m]=dias[m]||new Set()).add(r.data)});
+  const ms=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),max=ms.length?tot[ms[0]]:1,med=["🥇","🥈","🥉"];
+  const media=ms.length?Math.round(ms.reduce((t,m)=>t+tot[m],0)/ms.length):0;
+  box.innerHTML=`<b class="comp-tit">🏆 Ranking dos meses</b>`+(ms.length?ms.map((m,k)=>{
+      const fim=k===ms.length-1&&ms.length>3;
+      return `<div class="rank-l${m===mAtual?" atual":""}"><span class="rk-m">${med[k]||(fim?"🔻":"")}</span><div class="rk-tx"><b>${nomeMes(m).replace(/^./,c=>c.toUpperCase())}${m===mAtual?" · este mês":""}</b><small>${liv[m]} livros · ${dias[m].size} dias</small><i style="width:${Math.max(4,Math.round(tot[m]/max*100))}%"></i></div><b class="rk-n">${tot[m].toLocaleString("pt-BR")}</b></div>`}).join("")+
+    `<div class="comp-dica">Média: <b>${media.toLocaleString("pt-BR")}</b> leituras por mês · releituras não entram</div>`:`<div class="comp-dica">Ainda não tem leituras lançadas.</div>`)+
+    `<button type="button" class="comp-ok">‹ Voltar</button>`;
+  box.querySelector(".comp-ok").onclick=()=>abrirComparacao(mAtual);
   box.hidden=false;
 }
 // ---------- ⛔ Impedimentos (opcional, guardado à parte: não mexe no total de leituras) ----------
@@ -2065,7 +2084,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.8";
+const VERSAO_APP="13.9";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
