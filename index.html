@@ -276,7 +276,9 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .reg-campos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:5px}.reg-campos input{height:34px;font-size:14px}
 .reg-campos input[readonly]{background:#f0fdf4;color:#166534;border-color:#bbf7d0}.reg-campos input.editando{border-color:#2563eb;box-shadow:0 0 0 2px #dbeafe}
 .reg-lin.feito .ok{background:#22c55e!important;color:#fff}
-.conf-resumo{font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
+.bt-mapa{display:inline-flex;align-items:center;justify-content:center;border:1px solid #93c5fd;background:#eff6ff;border-radius:7px;height:28px;min-width:32px;padding:0 5px;font-size:14px;text-decoration:none}
+.conf-resumo .bt-mapa.todos{height:30px;min-width:40px;font-size:16px;margin-left:auto}
+.conf-resumo{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
 .conf-linha.outro{border-color:#d1d5db;background:#f3f4f6}
@@ -474,7 +476,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1287,7 +1289,7 @@ function desenharConf(){
   $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
-    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo">${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado`}</div>`})()+
+    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo"><span>${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado`}</span>${lk&&falta.length>1?`<a class="bt-mapa todos" href="${lk}" target="_blank" rel="noopener" title="Caminho por todos os endereços que faltam" aria-label="Caminho por todos os endereços que faltam">🗺️</a>`:""}</div>`})()+
     // Mesmo endereço = um cartão só, com os medidores/registros dele dentro (sem numeração)
     (()=>{const gs=[],por={};c.forEach((x,i)=>{const k=chaveEnd(x,i);if(!por[k]){por[k]={k,itens:[]};gs.push(por[k])}por[k].itens.push(i)});
       gs.forEach(g=>g.pend=g.itens.some(i=>!c[i].ok));gs.sort((a,b)=>(b.pend-a.pend)||a.itens[0]-b.itens[0]);
@@ -1299,8 +1301,8 @@ function desenharConf(){
         const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
-        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns"><button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
-    `<a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Caminho pelos endereços que faltam</a>`;
+        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
+    "";
   const b=$("rcCorpo");
   ajustarAltura(b);
   // endereço do cartão vale pra todos os registros dele
@@ -1862,7 +1864,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.6";
+const VERSAO_APP="10.7";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
