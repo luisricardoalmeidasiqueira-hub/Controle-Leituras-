@@ -499,7 +499,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1793,16 +1793,16 @@ function compartilharImagem(url,nome,titulo){
 $("calCompMes").onclick=()=>{
   const m=calVer,lista=cal[m];
   if(!lista||!lista.some(Boolean))return alert("Não há calendário para "+nomeMes(m)+".");
-  const pv=ehProv(m),W=460,rh=34,top=pv?92:74,H=top+rh*19+20;
+  const pv=ehProv(m),mp=somaMes(m,1),temProx=!!(cal[mp]&&cal[mp].some(Boolean)),W=temProx?560:460,rh=34,top=pv?92:74,H=top+rh*19+20;
   const cv=document.createElement("canvas");cv.width=W*2;cv.height=H*2;const g=cv.getContext("2d");g.scale(2,2);
   g.fillStyle="#fff";g.fillRect(0,0,W,H);
   const titulo=nomeMes(m).replace(/^./,c=>c.toUpperCase());
   g.fillStyle="#1f2937";g.font="bold 20px Arial";g.fillText("Calendário de Leitura",12,30);
   g.font="bold 16px Arial";g.fillStyle="#4b5563";g.fillText(titulo,12,54);
   if(pv){g.font="bold 12px Arial";g.fillStyle="#a16207";g.fillText("PROVISÓRIO — pode mudar quando sair o oficial",12,76)}
-  const cols=[12,80,160,240,300];g.fillStyle="#4b5563";g.fillRect(10,top,W-20,rh);
+  const cols=temProx?[12,72,152,232,288,392]:[12,80,160,240,300];g.fillStyle="#4b5563";g.fillRect(10,top,W-20,rh);
   g.fillStyle="#fff";g.font="bold 13px Arial";g.textBaseline="middle";
-  ["Etapa","Data","Dia","Ciclo","Obs."].forEach((t,i)=>g.fillText(t,cols[i]+6,top+rh/2));
+  (temProx?["Etapa","Data","Dia","Ciclo","Mês que vem","Obs."]:["Etapa","Data","Dia","Ciclo","Obs."]).forEach((t,i)=>g.fillText(t,cols[i]+6,top+rh/2));
   const sem=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
   lista.forEach((d,i)=>{
     const y=top+rh*(i+1),c=corDoDia(d);
@@ -1812,10 +1812,12 @@ $("calCompMes").onclick=()=>{
     if(d){const [a,mo,di]=d.split("-").map(Number);g.fillText(d.slice(8)+"/"+d.slice(5,7)+"/"+d.slice(2,4),cols[1]+6,y+rh/2);
       g.font="13px Arial";g.fillText(sem[new Date(a,mo-1,di).getDay()],cols[2]+6,y+rh/2);
       const cc=cicloPlanejado(m,i),cor0=g.fillStyle;if(cc!=null){g.font="bold 13px Arial";if(foraDoLimite(cc))g.fillStyle="#dc2626";g.fillText(cc+" d",cols[3]+6,y+rh/2);g.fillStyle=cor0}
-      g.font="12px Arial";g.fillText(nomeFeriado(d),cols[4]+4,y+rh/2)}
+      if(temProx){const pr=cal[mp][i];g.font="bold 13px Arial";g.fillStyle=ehProv(mp)?"#a16207":"#1d4ed8";if(pr)g.fillText(pr.slice(8)+"/"+pr.slice(5,7)+"/"+pr.slice(2,4)+(ehProv(mp)?" *":""),cols[4]+6,y+rh/2);g.fillStyle=cor0}
+      g.font="12px Arial";g.fillText(nomeFeriado(d),cols[temProx?5:4]+4,y+rh/2)}
     else g.fillText("—",cols[1]+6,y+rh/2);
   });
   g.strokeStyle="#d1d5db";g.strokeRect(10,top,W-20,rh*19);
+  if(temProx&&ehProv(mp)){g.font="11px Arial";g.fillStyle="#a16207";g.textBaseline="alphabetic";g.fillText("* mês que vem ainda provisório",12,H-4)}
   compartilharImagem(cv.toDataURL("image/png"),"calendario-leitura-"+m+".png","Calendário de Leitura "+titulo);
 };
 // Monta uma imagem com a tabela do ano inteiro (18 etapas x 12 meses)
@@ -2063,7 +2065,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.7";
+const VERSAO_APP="13.8";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
