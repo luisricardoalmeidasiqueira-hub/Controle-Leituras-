@@ -420,6 +420,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 .desf-linha{display:flex;gap:6px;margin:8px 0 0}.desf-linha[hidden]{display:none}.desf-linha .desfazer{margin:0;flex:1;width:auto}
 .desf-x{flex:none;width:40px;height:40px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:16px;font-weight:800;cursor:pointer}
 .voltar-hoje{width:auto;padding:0 10px;font-size:13px;font-weight:800;color:#1d4ed8;background:#eff6ff;border:1.5px solid #93c5fd}.voltar-hoje[hidden]{display:none}
+.topo-prox{position:absolute;top:-10px;left:-6px;z-index:4;height:20px;border-radius:10px;border:1.5px solid #93c5fd;background:#eff6ff;color:#1d4ed8;font-size:10.5px;font-weight:800;line-height:17px;padding:0 6px;white-space:nowrap;cursor:pointer;box-shadow:0 1px 3px #0002}.topo-prox.prov{border-color:#facc15;background:#fef9c3;color:#713f12}.topo-prox[hidden]{display:none}
 .topo-q{position:absolute;top:-9px;right:-8px;z-index:4;width:22px;height:22px;border-radius:50%;border:2px solid #fecaca;background:#fff;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px #0002}.topo-q[hidden]{display:none}
 .dt-edit{position:relative;display:inline-block;border-bottom:1px dashed #9ca3af;cursor:pointer;padding:0 1px}
 .dt-edit input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;margin:0;font-size:16px;-webkit-appearance:none;appearance:none}
@@ -438,7 +439,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <main>
 <section class="card">
 <div class="topo">
-<div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><span id="topoInterroga" class="topo-q" role="button" aria-label="Atraso do mês passado" hidden>❓</span><input id="data" type="date" aria-label="Data da leitura"></div>
+<div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><span id="topoInterroga" class="topo-q" role="button" aria-label="Atraso do mês passado" hidden>❓</span><span id="topoProx" class="topo-prox" role="button" aria-label="Data desta etapa no mês que vem" hidden></span><input id="data" type="date" aria-label="Data da leitura"></div>
 <button id="etapaMenos" class="et-seta" type="button" aria-label="Etapa anterior">‹</button>
 <button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
 <button id="etapaMais" class="et-seta" type="button" aria-label="Próxima etapa">›</button>
@@ -496,7 +497,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.4</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.5</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2059,7 +2060,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.4";
+const VERSAO_APP="13.5";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2252,8 +2253,13 @@ function atualizarTopoInterroga(){
   q.hidden=!(!ajuda&&atrasoMesPassado(h.slice(0,7),etapa));
 }
 $("topoInterroga").onclick=()=>verAtraso(etapa,($("data").value||hoje()).slice(0,7));
+// 📅 data desta etapa no mês que vem (pra responder rápido na rua)
+function proxDaEtapa(){const h=$("data").value||hoje(),m=somaMes(h.slice(0,7),1),d=diaDaEtapa(m,etapa);return d?{m,d,c:cicloPlanejado(m,etapa-1),pv:ehProv(m)}:null}
+function atualizarTopoProx(){const b=$("topoProx"),p=ajuda?null:proxDaEtapa();b.hidden=!p;if(p){b.textContent="📅 "+p.d.slice(8)+"/"+p.d.slice(5,7);b.classList.toggle("prov",p.pv)}}
+$("topoProx").onclick=e=>{e.stopPropagation();const p=proxDaEtapa();if(!p)return;const[a,mo,di]=p.d.split("-").map(Number),sem=["domingo","segunda","terça","quarta","quinta","sexta","sábado"][new Date(a,mo-1,di).getDay()];
+  alert("📅 Etapa "+p2(etapa)+" no mês que vem:\n\n"+p.d.slice(8)+"/"+p.d.slice(5,7)+"/"+a+" ("+sem+")"+(p.c!=null?"\nCiclo de "+p.c+" dias":"")+(p.pv?"\n\n🟡 Calendário provisório (pode mudar quando chegar o oficial)":""))};
 const _atualizarChip3=atualizarChip;
-atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga()};
+atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTopoProx()};
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
 iniciarLinhas();
