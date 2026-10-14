@@ -201,6 +201,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .ajuda-tag{display:inline-block;background:#ffedd5;color:#9a3412;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
 .pill-bob{border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:800;color:#374151;margin-top:3px;cursor:pointer;white-space:nowrap}.bob-dig{font-size:11px;font-weight:800;color:#374151;white-space:nowrap;align-self:center}
 .predio-tag{color:#1e3a8a;font-weight:700;font-size:11.5px}.item-btns .predio-on{background:#dbeafe!important;border-color:#60a5fa!important}
+.c-livro{position:relative}.r-pred{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:30px;height:28px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;font-size:14px;padding:0;opacity:.35;cursor:pointer}
+.r-pred.on{opacity:1;background:#dbeafe;border-color:#60a5fa}.c-livro .r-livro{padding-right:40px}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -489,7 +491,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 12.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 12.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -829,7 +831,7 @@ function criarLinha(foco=true,dados={}){
   const n=++contLinha,ant=$("livroRows").lastElementChild;
   const part=dados.part!==undefined?dados.part:(ant?ant.classList.contains("part"):false);
   const r=document.createElement("div");r.className="livro-row"+(part?" part":"");
-  r.innerHTML=`<div class="c-livro"><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"></div>`+
+  r.innerHTML=`<div class="c-livro"><input class="r-livro" name="livro_${n}" ${SEM_AUTO} type="text" placeholder="Digite o livro"><button type="button" class="r-pred" title="Prédio: não entra na conta das bobinas" aria-label="Prédio">🏢</button></div>`+
   `<div class="c-de so-part"><div class="mini">DE</div><input class="r-de" name="de_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="De"></div>`+
   `<div class="c-ate so-part"><div class="mini">ATÉ</div><input class="r-ate" name="ate_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Até"></div>`+
   `<div class="c-qtd"><div class="mini">QTD</div><input class="r-qtd" name="qtd_${n}" ${SEM_AUTO} type="number" min="0" inputmode="numeric" placeholder="Qtd"></div>`+
@@ -1379,7 +1381,7 @@ function confRepetida(r,x){
 }
 // % de não lidos sobre as leituras (ex.: 4 de 430 = 0,9%)
 function pctNL(nl,q){return q>0&&nl>0?(nl/q*100).toLocaleString("pt-BR",{maximumFractionDigits:1,minimumFractionDigits:1})+"%":""}
-function atualizarPctNL(){const e=$("impPct");if(!e)return;{const qq=[...document.querySelectorAll(".r-qtd")].reduce((t,i)=>t+(+i.value||0),0),bb=$("bobDig");if(bb){bb.textContent=qq?txtBob(qq):"";bb.hidden=!qq}}const nl=+($("impQtd").value||0),q=[...document.querySelectorAll(".r-qtd")].reduce((t,i)=>t+(+i.value||0),0),p=pctNL(nl,q);e.textContent=p?" "+p:""}
+function atualizarPctNL(){const e=$("impPct");if(!e)return;{const qq=[...$("livroRows").children].filter(r=>!predios[(r.querySelector(".r-livro")||{}).value]).reduce((t,r)=>t+(+(r.querySelector(".r-qtd")||{}).value||0),0),bb=$("bobDig");if(bb){bb.textContent=qq?txtBob(qq):"";bb.hidden=!qq}}const nl=+($("impQtd").value||0),q=[...document.querySelectorAll(".r-qtd")].reduce((t,i)=>t+(+i.value||0),0),p=pctNL(nl,q);e.textContent=p?" "+p:""}
 document.addEventListener("input",ev=>{if(ev.target&&(ev.target.id==="impQtd"||ev.target.classList&&ev.target.classList.contains("r-qtd")))atualizarPctNL()});
 // 🧻 Bobinas: ~90 leituras por bobina (dá pra mudar tocando no 🧻)
 let porBobina=90;try{porBobina=+localStorage.getItem(KEY+"_porbobina")||90}catch(e){}
@@ -1390,6 +1392,13 @@ function marcarPredio(id){const r=registros.find(x=>String(x.id)===String(id));i
   if(predios[l]){if(confirm("🏢 Livro "+l+" está marcado como PRÉDIO.\n\nOK = desmarcar (volta a contar bobina)"))delete predios[l]}
   else if(confirm("🏢 Livro "+l+" é PRÉDIO / apartamentos?\n\nNão entra na conta das bobinas.\nFica marcado pros próximos meses."))predios[l]=1;
   salvarPredios();render()}
+// 🏢 no campo do livro: marca/desmarca prédio na hora de lançar (ou depois da foto do PDA)
+function atualizarPredRows(){document.querySelectorAll("#livroRows .livro-row").forEach(r=>{const l=(r.querySelector(".r-livro")||{}).value||"",b=r.querySelector(".r-pred");if(b){b.classList.toggle("on",!!predios[l.trim()]);b.hidden=!l.trim()}})}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".r-pred");if(!b)return;e.preventDefault();
+  const l=(b.closest(".livro-row").querySelector(".r-livro").value||"").trim();if(!l)return;
+  if(predios[l])delete predios[l];else predios[l]=1;salvarPredios();atualizarPredRows();atualizarPctNL();render()});
+document.addEventListener("input",e=>{if(e.target&&e.target.classList&&e.target.classList.contains("r-livro")){atualizarPredRows();atualizarPctNL()}});
+setInterval(()=>{try{atualizarPredRows();atualizarPctNL()}catch(e){}},1500);
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧻 "+b+" bobina"+(b>1?"s":""):""}
 function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
@@ -1986,7 +1995,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="12.7";
+const VERSAO_APP="12.8";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
