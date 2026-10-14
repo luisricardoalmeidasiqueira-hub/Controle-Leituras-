@@ -200,6 +200,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .ajuda-faixa span{flex:1}.ajuda-faixa button{border:0;background:transparent;color:#9a3412;font-weight:800;text-decoration:underline;font-size:12px;cursor:pointer}
 .ajuda-tag{display:inline-block;background:#ffedd5;color:#9a3412;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
 .pill-bob{border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:800;color:#374151;margin-top:3px;cursor:pointer;white-space:nowrap}.bob-dig{font-size:11px;font-weight:800;color:#374151;white-space:nowrap;align-self:center}
+.predio-tag{color:#1e3a8a;font-weight:700;font-size:11.5px}.item-btns .predio-on{background:#dbeafe!important;border-color:#60a5fa!important}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -488,7 +489,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 12.4</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 12.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1099,10 +1100,11 @@ function render(){atualizarNomes();
   const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
   $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">⛔ ${totImp} não lidos${(q=>pctNL(totImp,q)?" · "+pctNL(totImp,q):"")(rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0))}</span>`:"");
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  {const q=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0),tb=$("totBob");tb.hidden=!q||filtroRel;tb.textContent=txtBob(q);tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina). Toque pra mudar."}
+  {const q=rs.filter(r=>!r.releitura&&!predios[r.livro]).reduce((s,r)=>s+r.qtd,0),qp=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+r.qtd,0),tb=$("totBob");
+   tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?txtBob(q):"🧻 sem bobina";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · prédio não entra na conta":"")+". Toque pra mudar."}
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1381,6 +1383,13 @@ function atualizarPctNL(){const e=$("impPct");if(!e)return;{const qq=[...documen
 document.addEventListener("input",ev=>{if(ev.target&&(ev.target.id==="impQtd"||ev.target.classList&&ev.target.classList.contains("r-qtd")))atualizarPctNL()});
 // 🧻 Bobinas: ~90 leituras por bobina (dá pra mudar tocando no 🧻)
 let porBobina=90;try{porBobina=+localStorage.getItem(KEY+"_porbobina")||90}catch(e){}
+// 🏢 Livros de prédio: imprime na base, não entra na conta das bobinas (fica marcado pros próximos meses)
+let predios={};try{predios=JSON.parse(localStorage.getItem(KEY+"_predios")||"{}")||{}}catch(e){}
+function salvarPredios(){try{localStorage.setItem(KEY+"_predios",JSON.stringify(predios))}catch(e){}}
+function marcarPredio(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;const l=r.livro;
+  if(predios[l]){if(confirm("🏢 Livro "+l+" está marcado como PRÉDIO.\n\nOK = desmarcar (volta a contar bobina)"))delete predios[l]}
+  else if(confirm("🏢 Livro "+l+" é PRÉDIO / apartamentos?\n\nNão entra na conta das bobinas.\nFica marcado pros próximos meses."))predios[l]=1;
+  salvarPredios();render()}
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧻 "+b+" bobina"+(b>1?"s":""):""}
 function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
@@ -1684,7 +1693,12 @@ $("calChip").onclick=abrirCal;
 $("calAnt").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,-1);desenharCal()};
 $("calProx").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer=somaMes(calVer,1);desenharCal()};
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
-$("totBob").onclick=e=>{e.stopPropagation();const v=prompt("🧻 Quantas leituras cabem numa bobina, mais ou menos?",porBobina);if(v===null)return;const n=parseInt(v,10);if(n>0){porBobina=n;try{localStorage.setItem(KEY+"_porbobina",n)}catch(e){}render()}};
+$("totBob").onclick=e=>{e.stopPropagation();
+  // mostra o que está oculto: as bobinas do prédio (pra ver na base)
+  const m=mes(),rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura),q=rs.filter(r=>!predios[r.livro]).reduce((t,r)=>t+r.qtd,0),qp=rs.filter(r=>predios[r.livro]),qpt=qp.reduce((t,r)=>t+r.qtd,0);
+  const msg="🧻 Rua: "+q.toLocaleString("pt-BR")+" leituras → "+(bobinas(q)||0)+" bobina(s)"+(qp.length?"\n\n🏢 Prédio: "+qpt.toLocaleString("pt-BR")+" leituras → "+bobinas(qpt)+" bobina(s)\n"+qp.map(r=>"   • livro "+r.livro+" — "+r.qtd).join("\n"):"")+"\n\n("+porBobina+" leituras por bobina)\n\nOK = mudar as leituras por bobina · Cancelar = fechar";
+  if(!confirm(msg))return;
+  const v=prompt("🧻 Quantas leituras cabem numa bobina, mais ou menos?",porBobina);if(v===null)return;const n=parseInt(v,10);if(n>0){porBobina=n;try{localStorage.setItem(KEY+"_porbobina",n)}catch(e){}render()}};
 $("calMes").onclick=alternarMesTodo;
 $("calInfoBtn").onclick=()=>{const i=$("calInfo");i.hidden=!i.hidden;$("calInfoBtn").classList.toggle("ativo",!i.hidden)};
 $("calFundo").onclick=e=>{if(e.target===$("calFundo"))$("calFundo").hidden=true};
@@ -1865,7 +1879,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -1878,6 +1892,7 @@ function importarBackupCompleto(d){
   Object.entries(d.rotas||{}).forEach(([k,v])=>{if(!rotas[k])rotas[k]=v});salvarRotas();
   Object.entries(d.naoFiz||{}).forEach(([k,v])=>{if(!naoFiz[k])naoFiz[k]=v});salvarNaoFiz();
   Object.entries(d.resseq||{}).forEach(([k,v])=>{if(!resseq[k])resseq[k]=v});salvarResseq();
+  Object.entries(d.predios||{}).forEach(([k,v])=>{predios[k]=v});salvarPredios();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -1971,7 +1986,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="12.4";
+const VERSAO_APP="12.7";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2112,7 +2127,7 @@ $("pdaArq").onchange=e=>{
       const itens=lerListaPDA(r.data.text);
       if(!itens.length){alert("Não consegui ler os livros desta foto.\nTente uma foto reta, com boa luz, mostrando só a Caixa de Entrada do PDA.");return}
       const ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
-      if(!confirm("📷 Li "+itens.length+" livro(s)"+(et?" da Etapa "+p2(et):"")+":\n\n"+itens.map(x=>"• "+x.livro+" — "+x.qtd+" (Etapa "+p2(x.etapa)+")").join("\n")+((q=>q?"\n\nTotal: "+q.toLocaleString("pt-BR")+" leituras · "+txtBob(q)+" (cabem "+bobinas(q)*porBobina+")":"")(itens.reduce((t,x)=>t+(+x.qtd||0),0)))+"\n\nPreencher o lançamento?"))return;
+      if(!confirm("📷 Li "+itens.length+" livro(s)"+(et?" da Etapa "+p2(et):"")+":\n\n"+itens.map(x=>"• "+x.livro+" — "+x.qtd+" (Etapa "+p2(x.etapa)+")").join("\n")+((q,qp)=>q||qp?"\n\nTotal: "+(q+qp).toLocaleString("pt-BR")+" leituras · "+(q?txtBob(q)+" (cabem "+bobinas(q)*porBobina+")":"🧻 sem bobina"):"")(itens.filter(x=>!predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0),itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0))+"\n\nPreencher o lançamento?"))return;
       preencherDoPDA(itens,et);
     }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
     finally{b.disabled=false;b.textContent=txt;URL.revokeObjectURL(img.src);e.target.value=""}
