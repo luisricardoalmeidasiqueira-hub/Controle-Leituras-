@@ -280,6 +280,8 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .conf-resumo .bt-mapa.todos{height:30px;min-width:40px;font-size:16px;margin-left:auto}
 .rep-tag{display:block;font-size:10.5px;font-weight:800;color:#b91c1c}.conf-linha.repete{border-left:4px solid #ef4444}
 .rep-aviso{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:8px;padding:5px 8px;font-size:12px;font-weight:700}
+.resseq-tag{color:#7c2d12;font-weight:700;font-size:11.5px}.item-btns .resseq-on{background:#ffedd5!important;border-color:#fb923c!important}
+.resseq-aviso{display:block;width:100%;text-align:left;margin-top:7px;border:1px solid #fdba74;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer}.resseq-aviso small{display:block;font-weight:600;color:#9a3412;font-size:11px}
 .conf-resumo{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
@@ -467,6 +469,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="pills-col"><span id="totEtapa" class="pill">0 leituras</span><span id="totRel" class="pill pill-rel" hidden></span></div><span id="listaSeta" class="seta">▼</span>
 </div>
 <div id="cidades" class="cidades" hidden></div>
+<div id="resseqAviso" hidden></div>
 <div id="lista" hidden></div>
 <div id="desfLinha" class="desf-linha" hidden><button id="desfazer" class="desfazer" type="button"></button><button id="desfazerX" class="desf-x" type="button" aria-label="Dispensar">✕</button></div>
 <div class="tools">
@@ -478,7 +481,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 11.1</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 11.3</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -607,6 +610,20 @@ function salvarCal(){
 // ---------- Férias / folga: períodos em que você não lança ----------
 const FERIASKEY=KEY+"_ferias";
 // 🚫 Etapa que você não fez (trabalhou, mas em outro serviço): {"2026-09-25":"outro serviço"} pelo dia do calendário
+// 🔀 Livros marcados pra ressequenciar: {"003069":{etapa:4,quando:"2026-10-14",nota:"..."}}
+const RESSEQKEY=KEY+"_resseq";let resseq={};try{resseq=JSON.parse(localStorage.getItem(RESSEQKEY)||"{}")||{}}catch(e){}
+function salvarResseq(){try{localStorage.setItem(RESSEQKEY,JSON.stringify(resseq))}catch(e){}}
+function marcarResseq(id){
+  const r=registros.find(x=>String(x.id)===String(id));if(!r)return;const l=r.livro,a=resseq[l];
+  if(a){
+    if(confirm("🔀 Livro "+l+" está marcado pra sequenciar (desde "+fmt(a.quando)+")."+(a.nota?"\n📝 "+a.nota:"")+"\n\nOK = já sequenciei (tirar o aviso)\nCancelar = continua marcado")){delete resseq[l];salvarResseq();render()}
+    return;
+  }
+  const nota=prompt("🔀 Sequenciar o livro "+l+"?\nNo mês que vem, na Etapa "+p2(r.etapa)+", o app avisa pra ressequenciar.\n\nO que está fora de ordem? (pode deixar em branco)","");
+  if(nota===null)return;
+  resseq[l]={etapa:r.etapa,quando:hoje(),nota:nota.trim()};salvarResseq();render();
+}
+function resseqDoMes(m,n){return Object.entries(resseq).filter(([l,v])=>v.quando.slice(0,7)<m&&(!n||v.etapa===n))}
 const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
 function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
@@ -1077,13 +1094,16 @@ function render(){atualizarNomes();
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${resseq[r.livro]?`<br><span class="resseq-tag">🔀 ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🔀</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
     $("lista").innerHTML=cidadesDaLista.map(k=>{const g=rs.filter(r=>normLoc(r.localidade)===k);return `<div class="grupo-cid">📍 ${esc(nomeCidade(k,m))} <span>${g.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras · ${g.length} livro(s)</span></div>`+g.map(itemHtml).join("")}).join("");
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
+  {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);av.hidden=!lst.length;
+   av.innerHTML=lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🔀 Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque quando terminar</small></button>`).join("");
+   av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🔀 Já sequenciou o livro "+l+"?\n\nOK = sim, tirar o aviso")){delete resseq[l];salvarResseq();render()}})}
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
@@ -1773,7 +1793,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -1785,6 +1805,7 @@ function importarBackupCompleto(d){
   Object.entries(d.prontuarios||{}).forEach(([k,v])=>{if(!prontPorCidade[k])prontPorCidade[k]=v});
   Object.entries(d.rotas||{}).forEach(([k,v])=>{if(!rotas[k])rotas[k]=v});salvarRotas();
   Object.entries(d.naoFiz||{}).forEach(([k,v])=>{if(!naoFiz[k])naoFiz[k]=v});salvarNaoFiz();
+  Object.entries(d.resseq||{}).forEach(([k,v])=>{if(!resseq[k])resseq[k]=v});salvarResseq();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -1878,7 +1899,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="11.1";
+const VERSAO_APP="11.3";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
