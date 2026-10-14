@@ -205,6 +205,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .r-pred.on{opacity:1;background:#dbeafe;border-color:#60a5fa}.c-livro .r-livro{padding-right:40px}
 .sug-box{display:flex;flex-direction:column;gap:3px;margin:-1px 0 6px;background:#fff;border:1px solid #93c5fd;border-radius:9px;padding:4px;box-shadow:0 4px 10px #0001}
 .sug-box button{text-align:left;border:0;background:#eff6ff;border-radius:7px;padding:7px 9px;font-size:13px;font-weight:700;color:#1e3a8a;cursor:pointer}
+.rota-colar{width:100%;margin-top:6px;height:34px;border:1px dashed #94a3b8;background:#f8fafc;border-radius:9px;font-size:13px;font-weight:800;color:#334155;cursor:pointer}
+#rotaColarBox{margin-top:6px}#rotaColarBox textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:9px;padding:8px;font:inherit;font-size:13.5px}
+#rotaColarBox button{width:100%;margin-top:5px;height:36px;border:0;border-radius:9px;background:#16a34a;color:#fff;font-weight:800;cursor:pointer}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -493,7 +496,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.4</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -631,9 +634,8 @@ function marcarResseq(id){
     if(confirm("🗂️ Livro "+l+" está marcado pra sequenciar (desde "+fmt(a.quando)+")."+(a.nota?"\n📝 "+a.nota:"")+"\n\nOK = já sequenciei (tirar o aviso)\nCancelar = continua marcado")){delete resseq[l];salvarResseq();render()}
     return;
   }
-  const nota=prompt("🗂️ Sequenciar o livro "+l+"?\nNo mês que vem, na Etapa "+p2(r.etapa)+", o app avisa pra ressequenciar.\n\nO que está fora de ordem? (pode deixar em branco)","");
-  if(nota===null)return;
-  resseq[l]={etapa:r.etapa,quando:hoje(),nota:nota.trim()};salvarResseq();render();
+  if(!confirm("🗂️ Sequenciar o livro "+l+" no mês que vem?\n\nNa Etapa "+p2(r.etapa)+" o app avisa."))return;
+  resseq[l]={etapa:r.etapa,quando:hoje(),nota:""};salvarResseq();render();
 }
 function resseqDoMes(m,n){return Object.entries(resseq).filter(([l,v])=>v.quando.slice(0,7)<m&&(!n||v.etapa===n))}
 const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
@@ -1116,8 +1118,8 @@ function render(){atualizarNomes();
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
   {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);av.hidden=!lst.length;
-   av.innerHTML=lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque quando terminar</small></button>`).join("");
-   av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🗂️ Já sequenciou o livro "+l+"?\n\nOK = sim, tirar o aviso")){delete resseq[l];salvarResseq();render()}})}
+   av.innerHTML=lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
+   av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🗂️ O livro "+l+" foi sequenciado?\n\nOK = Sim (tira o aviso)\nCancelar = Não (o aviso continua nos próximos meses)")){delete resseq[l];salvarResseq();render()}})}
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
@@ -1309,7 +1311,7 @@ const reTipoIni=new RegExp("^("+TIPOS_RUA+")\\.?\\s");
 function ruaValida(p){const t=p.replace(reTipoIni,"").trim();return reTipoIni.test(p)&&(/[A-ZÀ-Ú]{3,}/.test(t)||/^\d{1,4}[A-Z]?\b/.test(t))}
 // mesma rua? (ignora a sujeira do fim, acento, "RUA" x "R")
 function chaveRua(x){return normLoc(ruaParaMapa(x).replace(/,.*$/,"")).replace(/^rua\s/,"r ").replace(/^avenida\s/,"av ").replace(/\./g,"").replace(/\s+/g," ").trim()}
-function ruaRepetida(x,lista,menos){const k=chaveRua(x);if(!k)return false;return lista.some((y,j)=>j!==menos&&String(y||"").trim()&&(chaveRua(y)===k||parecido(chaveRua(y),k)>=0.85))}
+function ruaRepetida(x,lista,menos){const k=chaveRua(x);if(!k)return false;return lista.some((y,j)=>j!==menos&&String(y||"").trim()&&(chaveRua(y)===k||parecido(chaveRua(y),k)>=0.92))}
 function arrumarRuas(lista){
   const partes=[];
   (lista||[]).forEach(x=>{x=String(x||"").replace(/\s+/g," ").trim();if(!x)return;
@@ -1327,7 +1329,7 @@ function arrumarRuas(lista){
     // rua repetida não entra (em qualquer lugar da lista)
     // repetida: se a que ficou não tem o número de início e esta tem, aproveita o número
     const k=chaveRua(p),ant=out[out.length-1],t1=ant&&ant.split(" ").slice(0,3).join(" "),t2=p.split(" ").slice(0,3).join(" ");
-    let j=ant&&t1===t2&&/[A-Z]{3}/.test(t1.split(" ")[1]||"")?out.length-1:out.findIndex(y=>chaveRua(y)===k||parecido(chaveRua(y),k)>=0.85);
+    let j=out.findIndex(y=>chaveRua(y)===k||parecido(chaveRua(y),k)>=0.92);
     if(j>-1){const n=p.match(/,\s*\d+$/);if(n&&!/,\s*\d/.test(out[j]))out[j]+=n[0];return}
     out.push(p);
   });
@@ -1378,7 +1380,8 @@ function desenharRota(){
   $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa||0)} · ${esc(cid||"")} · ruas na ordem que você faz. Fica salvo pros próximos meses.</div>`+
     `<div class="rota-topo"><a class="rc-maps${lk?"":" off"}" href="${lk||"#"}" target="_blank" rel="noopener">🗺️ Abrir no Google Maps${ends.length>10?" (10 primeiras)":""}</a><button type="button" id="rotaComp" title="Compartilhar a rota" aria-label="Compartilhar a rota"${temRua?"":" disabled"}>📤</button><button type="button" id="rotaLimpa" title="Apagar todas as ruas" aria-label="Apagar todas as ruas"${temRua?"":" disabled"}>🗑️</button></div>`+
     r.ruas.map((x,i)=>`<div class="rua sem-num"><div class="rua-cx"><textarea data-i="${i}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x)}</textarea></div><button type="button" data-up="${i}" aria-label="Subir">↑</button>${x.trim()?`<a href="${linkMaps([comCidade(ruaParaMapa(x),cid)])}" target="_blank" rel="noopener" aria-label="Abrir no mapa">📍</a>`:`<span></span>`}<button type="button" data-del="${i}" aria-label="Tirar">✕</button></div>`).join("")+
-    `<div class="rota-baixo"><button type="button" class="rc-add">＋ Rua</button><button type="button" id="rotaFotoBtn">📷 Ler ruas da foto</button></div>`;
+    `<div class="rota-baixo"><button type="button" class="rc-add">＋ Rua</button><button type="button" id="rotaFotoBtn">📷 Ler ruas da foto</button></div>`+
+    `<button type="button" id="rotaColarBtn" class="rota-colar">📋 Colar lista de ruas</button><div id="rotaColarBox" hidden><textarea id="rotaColarTxt" rows="6" placeholder="Cole aqui as ruas, uma por linha"></textarea><button type="button" id="rotaColarOk">✔ Colocar na rota</button></div>`;
   const c=$("rcCorpo");
   ajustarAltura(c);
   ligarAutocompletar(c,cid);
@@ -1388,6 +1391,15 @@ function desenharRota(){
   c.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{r.ruas.splice(+b.dataset.del,1);if(!r.ruas.length)r.ruas.push("");salvarRotas();desenharRota();render()});
   c.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>{const i=+b.dataset.up;if(i>0){[r.ruas[i-1],r.ruas[i]]=[r.ruas[i],r.ruas[i-1]];salvarRotas();desenharRota()}});
   $("rotaFotoBtn").onclick=()=>$("rotaArq").click();
+  // 📋 colar várias ruas de uma vez (uma por linha) — limpa, tira repetidas e põe no fim
+  $("rotaColarBtn").onclick=()=>{const bx=$("rotaColarBox");bx.hidden=!bx.hidden;if(!bx.hidden)$("rotaColarTxt").focus()};
+  $("rotaColarOk").onclick=()=>{
+    const linhas=$("rotaColarTxt").value.split(/\n+/).map(x=>formatarRua(x.replace(/^[\s•\-–*·\d.)(]+(?=[A-Za-zÀ-ú])/,""))).filter(Boolean);
+    const novas=arrumarRuas(linhas),base=r.ruas.filter(x=>x.trim()),ok=[];
+    novas.forEach(x=>{if(!ruaRepetida(x,base)){base.push(x);ok.push(x)}});
+    if(!ok.length)return alert("Nenhuma rua nova (vazia ou já estão na rota).");
+    r.ruas=base;salvarRotas();desenharRota();render();alert("✔ "+ok.length+" rua(s) colocada(s) na rota.");
+  };
   // 🗑️ apaga todas as ruas do livro
   $("rotaLimpa").onclick=()=>{if(!confirm("Apagar todas as ruas da rota do livro "+livro+"?"))return;r.ruas=[""];salvarRotas();desenharRota();render()};
   // 📤 manda a rota pronta pra outra pessoa (WhatsApp etc.)
@@ -2047,7 +2059,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.0";
+const VERSAO_APP="13.4";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
