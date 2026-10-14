@@ -115,7 +115,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .comp-dica{font-size:11px;color:#6b7280;margin-top:2px}
 .cartao-atraso>b{display:block;color:#b91c1c;margin-bottom:4px}.cartao-atraso button{display:block;width:100%;margin-top:8px;height:38px;border:0;border-radius:9px;background:#4b5563;color:#fff;font-weight:800;font-size:15px}
 .consulta-res.nao{background:#f3f4f6;color:#4b5563}
-#calGrid.cal-grid{grid-template-columns:repeat(3,1fr);gap:6px 6px}#calGrid.cal-grid.editando{grid-template-columns:1fr 1fr}
+#calGrid.cal-grid{grid-template-columns:repeat(3,1fr);gap:6px 6px}#calGrid.cal-grid.editando{grid-template-columns:1fr 1fr}#calGrid.editando input{height:34px;font-size:13px;padding:0 6px;min-width:0;width:100%;-webkit-appearance:none;appearance:none}#calGrid.editando .cal-item b{font-size:12px}
 #calGrid .cal-item{grid-template-columns:20px 1fr;gap:4px}.cal-item b{font-size:11px}
 .cal-dia{height:32px;font-size:13px;padding:0 6px;border-radius:8px}.cal-dia em{font-size:11px;margin-left:4px}
 #calGrid .cal-item small{font-size:9px;line-height:1.1}
@@ -474,7 +474,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.5</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -544,7 +544,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
 <div id="calInfo" class="leg-cal" hidden><div class="leg-mes">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
-<div class="leg-bts"><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
+<div class="leg-bts"><b>✏️ lá em cima:</b> corrigir as datas das etapas do mês (quando a empresa muda uma data, ou pra acertar o calendário provisório de 2027). Toque no ✅ quando terminar.<br><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
 <div id="calMesTodo" class="mes-todo" hidden></div>
 <div id="calGrid" class="cal-grid"></div>
 <div id="calStatus" class="cal-status" hidden></div>
@@ -1468,7 +1468,7 @@ function atualizarBannerCal(){
 }
 // ---------- Mês todo (calendário de parede) com as etapas nos dias ----------
 // mês todo aberto por padrão; a lista das 18 etapas só aparece no ✏️ Editar
-let calMesAberto=true;try{calMesAberto=localStorage.getItem(KEY+"_mes_todo2")!=="0"}catch(e){}
+let calMesAberto=false;
 function desenharMesTodo(){
   const box=$("calMesTodo");if(!box)return;box.hidden=!calMesAberto;$("calGrid").hidden=!calEditando;if(!calMesAberto)return;
   const [a,mo]=calVer.split("-").map(Number),lista=cal[calVer]||[],h=hoje(),ini=new Date(a,mo-1,1).getDay(),nd=new Date(a,mo,0).getDate();
@@ -1493,7 +1493,7 @@ function desenharMesTodo(){
   box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
 }
 function alternarMesTodo(){calMesAberto=!calMesAberto;try{localStorage.setItem(KEY+"_mes_todo2",calMesAberto?"1":"0")}catch(e){}desenharCal()}
-function abrirCal(){calEditando=false;calBuscaDia="";$("calBusca").value="";$("calBuscaRes").hidden=true;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
+function abrirCal(){calMesAberto=false;calEditando=false;calBuscaDia="";$("calBusca").value="";$("calBuscaRes").hidden=true;calVer=($("data").value||hoje()).slice(0,7);desenharCal();mostrarFoto();$("calFundo").hidden=false}
 function desenharCal(){
   if($("calApagar")){$("calApagar").title="Apagar calendário de "+calVer.slice(0,4);$("calApagar").setAttribute("aria-label",$("calApagar").title)}
   const pv=ehProv(calVer);
@@ -1504,7 +1504,7 @@ function desenharCal(){
   // ❓ vai no dia escolhido lá na tela principal (ex.: 14/10); se ele não for dia de etapa deste mês, vai na próxima que falta ler
   const dSel=$("data").value||h,iSel=lista.indexOf(dSel);
   const iProx=iSel>-1?iSel:lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
-  const b=$("calEditar");b.textContent=calEditando?"✅ Pronto":"✏️ Editar";b.classList.toggle("pronto",calEditando);
+  const b=$("calEditar");b.textContent=calEditando?"✅":"✏️";b.title=calEditando?"Pronto":"Corrigir as datas das etapas deste mês";b.setAttribute("aria-label",b.title);b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
   const campo=(d,i)=>{
     if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
@@ -1862,7 +1862,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.5";
+const VERSAO_APP="10.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
