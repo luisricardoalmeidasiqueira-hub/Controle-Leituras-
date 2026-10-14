@@ -278,6 +278,8 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .reg-lin.feito .ok{background:#22c55e!important;color:#fff}
 .bt-mapa{display:inline-flex;align-items:center;justify-content:center;border:1px solid #93c5fd;background:#eff6ff;border-radius:7px;height:28px;min-width:32px;padding:0 5px;font-size:14px;text-decoration:none}
 .conf-resumo .bt-mapa.todos{height:30px;min-width:40px;font-size:16px;margin-left:auto}
+.rep-tag{display:block;font-size:10.5px;font-weight:800;color:#b91c1c}.conf-linha.repete{border-left:4px solid #ef4444}
+.rep-aviso{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:8px;padding:5px 8px;font-size:12px;font-weight:700}
 .conf-resumo{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
@@ -297,7 +299,7 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .rota-tag{color:#1d4ed8;font-weight:700;font-size:11.5px}
 .ajuda-btn.ic-only{min-width:44px;height:32px;font-size:17px;padding:0 10px}
 .rel-btn{position:relative;border-color:#fcd34d!important;background:#fffbeb!important}.rel-btn.ativa{background:#d97706!important;border-color:#d97706!important}
-.rel-badge{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #fff;padding:0}
+.rel-badge.ok{background:#22c55e}.rel-badge{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #fff;padding:0}
 .rel-mini{font-size:12px;align-items:center}.rel-mini .conf-chip{margin:0 0 0 4px}
 .cid.rel{border-color:#fcd34d;background:#fffbeb;color:#92400e}.cid.rel.ativa{background:#d97706;border-color:#d97706;color:#fff}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
@@ -476,7 +478,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 11.1</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -982,7 +984,7 @@ let filtroRel=false;
 let rcVeioDaLista=false;
 function abrirAbaRel(){
   const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim);
-  if(!rels.length)return alert("📝 Nenhuma releitura nos últimos dias.\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
+  if(!rels.length)return alert("🟢 Nenhuma releitura pendente.\n\n📝 Nenhuma releitura nos últimos dias.\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
   const pend=rels.filter(r=>confDe(r).some(x=>!x.ok));
   if(pend.length===1){rcVeioDaLista=false;return abrirConf(String(pend[0].id))}
   abrirListaRel();
@@ -993,7 +995,7 @@ function abrirListaRel(){
   rcModo="lista";$("rcTit").textContent="📝 Releituras";
   $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div>`+rels.map(r=>{
     const c=confDe(r),f=c.filter(x=>x.ok).length,ok=f===c.length,end=(c.find(x=>x.end)||{}).end||(r.pda&&r.pda.end)||"";
-    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small></span><span class="st">${f}/${c.length}${ok?" ✔":""}</span></button>`}).join("");
+    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small></span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?"🟢 ✔":"🟠"}</span></button>`}).join("");
   $("rcCorpo").querySelectorAll(".rel-item").forEach(b=>b.onclick=()=>{rcVeioDaLista=true;abrirConf(b.dataset.id)});
   $("rcFundo").hidden=false;
 }
@@ -1008,7 +1010,7 @@ function desenharCidades(m){
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
   const rels=registros.filter(r=>r.releitura&&r.data.startsWith(m)),pend=rels.filter(r=>confDe(r).some(x=>!x.ok)).length;
   if(!rels.length)filtroRel=false;
-  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=!pend;bd.textContent="";rb.title=pend?"Tem releitura pra confirmar":"Releituras"}}
+  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=false;bd.textContent="";bd.classList.toggle("ok",!pend);rb.title=pend?"Tem releitura pra confirmar":"Releituras: tudo confirmado (toque pra consultar)"}}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
   const mostraCid=ks.length>=2;
   if(!mostraCid&&!rels.length){box.hidden=true;return}
@@ -1083,7 +1085,7 @@ function render(){atualizarNomes();
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>⛔ ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
-  {const cp=confPendentes();$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
+  {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
 function atualizarChip(){
   // Fala da data escolhida lá em cima (se for hoje, escreve "Hoje")
@@ -1282,6 +1284,14 @@ function confDe(r){
 }
 function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
 let confAbertas=new Set();
+// 🔴 Mesmo medidor (ou mesmo endereço) que já teve confirmação no mês passado: devolve os meses seguidos
+function confRepetida(r,x){
+  const med=String(x.med||"").toUpperCase().replace(/\s/g,""),end=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();if(!med&&!end)return 0;
+  const bate=y=>{const m2=String(y.med||"").toUpperCase().replace(/\s/g,"");if(med&&m2)return m2===med;const e2=String(y.end||"").toUpperCase().replace(/\s+/g," ").trim();return !!end&&e2===end};
+  let n=0,m=r.data.slice(0,7);
+  for(let k=0;k<12;k++){m=somaMes(m,-1);if(registros.some(o=>o!==r&&o.releitura&&o.data.startsWith(m)&&Array.isArray(o.conf)&&o.conf.some(bate)))n++;else break}
+  return n;
+}
 function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
 function abrirConf(id){rcModo="conf";if(rcChave!==String(id))confAbertas=new Set();rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
 function desenharConf(){
@@ -1298,11 +1308,12 @@ function desenharConf(){
         const x0=c[g.itens[0]],nc=numeroCasa(x0.end),falt=g.itens.filter(i=>!c[i].ok).length,todosOutro=g.itens.every(i=>c[i].outro);
         const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
-        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
+        const rep=Math.max(...g.itens.map(i=>confRepetida(r,c[i]))),repTxt=rep?`<span class="rep-tag">🔴 ${rep>1?"vários meses seguidos":"mês passado também"}</span>`:"";
+        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}${rep?" repete":""}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${repTxt}${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
         const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
-        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
+        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
     "";
   const b=$("rcCorpo");
   ajustarAltura(b);
@@ -1867,7 +1878,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.8";
+const VERSAO_APP="11.1";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
