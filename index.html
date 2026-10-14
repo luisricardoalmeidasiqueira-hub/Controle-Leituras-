@@ -476,7 +476,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 10.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -536,6 +536,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="modal-top"><button id="rcVoltar" class="voltar" type="button">‹ Voltar</button><h3 id="rcTit"></h3></div>
 <div id="rcCorpo"></div>
 <input id="confArq" type="file" accept="image/*" multiple hidden>
+<input id="leitArq" type="file" accept="image/*" capture="environment" hidden>
 <input id="rotaArq" type="file" accept="image/*" multiple hidden>
 </div></div>
 
@@ -546,7 +547,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
 <div id="calInfo" class="leg-cal" hidden><div class="leg-mes">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
-<div class="leg-bts"><b>✏️ lá em cima:</b> corrigir as datas das etapas do mês (quando a empresa muda uma data, ou pra acertar o calendário provisório de 2027). Toque no ✅ quando terminar.<br><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
+<div class="leg-bts"><b>Nas confirmações:</b> 📷 tira foto do visor do medidor e preenche a leitura (você confere) · ✏️ corrige · 🙅 recusada · 🗑️ tira · 🗺️ abre o mapa.<br><b>✏️ lá em cima:</b> corrigir as datas das etapas do mês (quando a empresa muda uma data, ou pra acertar o calendário provisório de 2027). Toque no ✅ quando terminar.<br><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
 <div id="calMesTodo" class="mes-todo" hidden></div>
 <div id="calGrid" class="cal-grid"></div>
 <div id="calStatus" class="cal-status" hidden></div>
@@ -1298,7 +1299,7 @@ function desenharConf(){
         const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
         if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
-        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
         return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div><div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
@@ -1333,6 +1334,8 @@ function desenharConf(){
   const proxPend=j=>{const kj=chaveEnd(c[j],j);if(c.some((y,n)=>n!==j&&!y.ok&&chaveEnd(y,n)===kj)){confAbertas=new Set([kj]);return}
     confAbertas=new Set();const k=c.findIndex((y,n)=>n!==j&&!y.ok);if(k>=0)confAbertas.add(chaveEnd(c[k],k))};
   // ✏️ destrava os campos da leitura confirmada pra corrigir (continua confirmada)
+  // 📷 foto do visor do medidor: lê o número e põe na leitura (você confere antes)
+  b.querySelectorAll("[data-foto]").forEach(bt=>bt.onclick=()=>{fotoLeitAlvo=+bt.dataset.foto;$("leitArq").click()});
   b.querySelectorAll("[data-edita]").forEach(bt=>bt.onclick=()=>{const l=bt.closest(".reg-lin");l.querySelectorAll("input").forEach(x=>{x.readOnly=false;x.classList.add("editando")});const f=l.querySelector("input[data-k='leit']");f.focus();f.select&&f.select()});
   b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(bt.dataset.fecha);desenharConf()});
   b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
@@ -1864,7 +1867,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="10.7";
+const VERSAO_APP="10.8";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -1895,6 +1898,31 @@ function pdaPin(r,e){
   r.appendChild(w);
 }
 // Preparo da foto do PDA: pega o menor valor de cor de cada ponto, assim as letras laranja (Limite) e azul (km) ficam escuras como as pretas
+// ---------- 📷 Leitura pela foto do visor do medidor ----------
+let fotoLeitAlvo=-1;
+$("leitArq").onchange=async e=>{
+  const f=(e.target.files||[])[0];e.target.value="";if(!f||fotoLeitAlvo<0)return;
+  const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;const c=confDe(r),x=c[fotoLeitAlvo];if(!x)return;
+  const bt=document.querySelector(`[data-foto="${fotoLeitAlvo}"]`);if(bt){bt.disabled=true;bt.textContent="⏳"}
+  let achou="";
+  try{
+    await carregarOCR();
+    const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
+    const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
+    const w=await Tesseract.createWorker("eng",1);
+    await w.setParameters({tessedit_char_whitelist:"0123456789",tessedit_pageseg_mode:"11"});
+    const res=await w.recognize(prepararPDA(img,Math.min(1600,maxL)));URL.revokeObjectURL(img.src);await w.terminate();
+    // número do visor: o de letra MAIOR na foto, com 3 a 8 dígitos (ignora o número do medidor)
+    const medNum=String(x.med||"").replace(/\D/g,"");
+    const cand=(res.data.words||[]).map(wd=>({t:(wd.text||"").replace(/\D/g,""),h:wd.bbox?wd.bbox.y1-wd.bbox.y0:0})).filter(c=>c.t.length>=3&&c.t.length<=8&&!(medNum&&medNum.includes(c.t)));
+    cand.sort((a,b)=>b.h-a.h||b.t.length-a.t.length);achou=cand.length?cand[0].t:"";
+  }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.");achou=null}
+  finally{if(bt){bt.disabled=false;bt.textContent="📷"}}
+  if(achou===null)return;
+  const v=prompt(achou?"📷 Li no visor: "+achou+"\n\nConfira com o medidor e corrija se precisar:":"📷 Não consegui ler o número nesta foto.\nDigite a leitura:",achou||x.leit||"");
+  if(v===null)return;
+  x.leit=v.replace(/\s+/g,"").trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();
+};
 function prepararPDA(img,largura){
   const s=largura/img.width,c=document.createElement("canvas");
   c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
