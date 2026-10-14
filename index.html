@@ -208,6 +208,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .rota-colar{width:100%;margin-top:6px;height:34px;border:1px dashed #94a3b8;background:#f8fafc;border-radius:9px;font-size:13px;font-weight:800;color:#334155;cursor:pointer}
 #rotaColarBox{margin-top:6px}#rotaColarBox textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:9px;padding:8px;font:inherit;font-size:13.5px}
 #rotaColarBox button{width:100%;margin-top:5px;height:36px;border:0;border-radius:9px;background:#16a34a;color:#fff;font-weight:800;cursor:pointer}
+.ed-prox{display:block;font-size:10.5px;font-weight:700;color:#1d4ed8;margin-top:1px}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -498,7 +499,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.6</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 13.7</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1699,7 +1700,7 @@ function desenharCal(){
   const b=$("calEditar");b.textContent=calEditando?"✅":"✏️";b.title=calEditando?"Pronto":"Corrigir as datas das etapas deste mês";b.setAttribute("aria-label",b.title);b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
   const campo=(d,i)=>{
-    if(calEditando)return `<input type="date" data-i="${i}" value="${d||""}">`;
+    if(calEditando){const pr=diaDaEtapa(somaMes(calVer,1),i+1);return `<input type="date" data-i="${i}" value="${d||""}">${pr?`<small class="ed-prox">📅 mês que vem ${pr.slice(8)}/${pr.slice(5,7)}</small>`:""}`}
     if(!d)return `<span class="cal-dia">—</span>`;
     const [a,mo,di]=d.split("-").map(Number);
     const cc=cicloPlanejado(calVer,i),am=i===iProx&&atrasoMesPassado(calVer,i+1);
@@ -1748,7 +1749,7 @@ $("calBusca").onchange=()=>{
   const e=etapaDoDia(d),t=textoDoDia(d),pv=ehProv(d.slice(0,7)),txt=d.slice(8)+"/"+d.slice(5,7)+"/"+a+" ("+dia+")";
   r.className="consulta-res"+(e?"":" nao");r.hidden=false;
   const mD=d.slice(0,7),realD=e&&ultimaLeituraReal(mD,e),amD=e&&atrasoMesPassado(mD,e),ccD=e&&cicloPlanejado(mD,e-1);
-  const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
+  const prD=e&&diaDaEtapa(somaMes(mD,1),e);const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(prD?" · 📅 mês que vem "+prD.slice(8)+"/"+prD.slice(5,7):"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
   r.textContent=(e?(naoFiz[d]?"":"✅ ")+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês"));
   if(e&&d<=hoje()&&!realD){r.insertAdjacentHTML("beforeend",naoFiz[d]?`<div class="nf-linha"><b class="bol-rosa"></b> Você não fez esta etapa (${esc(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d])}) <button type="button" id="nfDesfaz">↩ Desfazer</button></div>`:`<div class="nf-linha"><button type="button" id="nfMarca"><b class="bol-rosa"></b> Não fiz esta etapa (li em outro lugar)</button></div>`);
     const mk=$("nfMarca"),dz=$("nfDesfaz");
@@ -2062,7 +2063,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="13.6";
+const VERSAO_APP="13.7";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
