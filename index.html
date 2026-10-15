@@ -218,8 +218,16 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .nl-foto{flex:none;width:34px;height:34px;border:1px solid #fecaca;background:#fff;border-radius:9px;font-size:16px;padding:0;cursor:pointer;align-self:center}
 .nl-livro{border:1px solid #fecaca;background:#fff;border-radius:7px;height:24px;min-width:28px;padding:0 3px;margin-left:5px;font-size:13px;vertical-align:middle;cursor:pointer}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
+.nf-rap.aberto{display:block;cursor:default;position:relative;border-style:solid}.nf-rap.aberto b{font-size:12.5px}
+.nf-ops{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.nf-ops button{border:0;border-radius:9px;padding:7px 6px;font-size:13px;font-weight:800;background:#16a34a;color:#fff;cursor:pointer;line-height:1.15}
+.nf-ops button.pret{background:#374151}.nf-ops button,.nf-ops button small{color:#fff!important;opacity:1!important}.nf-ops small{display:block;font-size:10px;font-weight:600}
+.nf-x{position:absolute;top:4px;right:6px;border:0;background:none;font-size:14px;cursor:pointer;color:#6b7280}
 .nf-rap.feito{border-style:solid;border-color:#9ca3af;background:#f3f4f6;cursor:default}.nf-rap.feito span{flex:1;min-width:0}.nf-rap small{display:block;font-weight:600;color:#4b5563;font-size:11.5px}
 .nf-rap.feito button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:30px;min-width:34px;cursor:pointer}
+.eq-grupo{border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;margin-bottom:8px}.eq-grupo>b{display:block;font-size:14px;margin-bottom:4px}
+.eq-l{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px dashed #f1f5f9;font-size:13px;align-items:center}.eq-l span{color:#6b7280;flex:none}.eq-l b{text-align:right;word-break:break-all;user-select:all}
+.eq-l input{flex:1;min-width:0;height:32px;font-size:14px;text-align:right}
+.eq-bts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.eq-bts button{height:40px;border:0;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;background:#e5e7eb}.eq-bts #eqComp{background:#2563eb;color:#fff}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -448,7 +456,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <body>
 <div class="app">
 <header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div>
-<div class="head-btns"><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
+<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Meus equipamentos (PDA e impressora)" aria-label="Meus equipamentos">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
 <main>
 <section class="card">
 <div class="topo">
@@ -511,7 +519,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.0</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.2</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -567,6 +575,11 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="cartaoComp" class="cartao-atraso cartao-comp" hidden></div>
 
 <!-- Rota do livro / Confirmações -->
+<div id="eqFundo" class="modal-fundo" hidden><div class="modal">
+<div class="modal-top"><button id="eqVoltar" class="voltar" type="button">‹ Voltar</button><h3>📟 Meus equipamentos</h3></div>
+<div id="eqCorpo"></div>
+<div class="eq-bts"><button type="button" id="eqComp">📤 Compartilhar</button><button type="button" id="eqEditar">✏️ Editar</button></div>
+</div></div>
 <div id="rcFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="rcVoltar" class="voltar" type="button">‹ Voltar</button><h3 id="rcTit"></h3><button id="rcFechar" class="rc-x" type="button" aria-label="Fechar">✕</button></div>
 <div id="rcCorpo"></div>
@@ -654,6 +667,7 @@ function marcarResseq(id){
 }
 function resseqDoMes(m,n){return Object.entries(resseq).filter(([l,v])=>v.quando.slice(0,7)<m&&(!n||v.etapa===n))}
 const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
+let nfAberto="";
 function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
 function salvarFerias(){try{localStorage.setItem(FERIASKEY,JSON.stringify(ferias))}catch(e){}}
@@ -1152,12 +1166,19 @@ function render(){atualizarNomes();
    av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🗂️ O livro "+l+" foi sequenciado?\n\nOK = Sim (tira o aviso)\nCancelar = Não (o aviso continua nos próximos meses)")){delete resseq[l];salvarResseq();render()}})}
   // ⚫ atalho: etapa do dia (ou que já passou) sem nenhum livro → marcar "não fiz" sem ir no calendário
   {const nb=$("nfRapido"),dE=diaDaEtapa(m,etapa),h0=hoje(),sem=!registros.some(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura);
+   // lançou livro nessa etapa? então foi feita: tira o "não fiz" sozinho
+   if(dE&&!sem&&naoFiz[dE]){delete naoFiz[dE];salvarNaoFiz()}
    const mostra=!ajuda&&!filtroRel&&!filtroCidade&&dE&&dE<=h0&&sem;
    nb.hidden=!mostra;
    if(mostra){const o=naoFiz[dE];
      nb.innerHTML=o?`<div class="nf-rap feito"><span>⚫ Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}): não fiz<small>📝 ${esc(o==="outro serviço"?"li em outro lugar":o)}</small></span><button type="button" data-nf="obs">✏️</button><button type="button" data-nf="des">↩</button></div>`
-       :`<button type="button" class="nf-rap" data-nf="marca">⚫ Não fiz a Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)})</button>`;
+       :(nfAberto===dE+etapa?`<div class="nf-rap aberto"><b>Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}) sem lançamento:</b><div class="nf-ops"><button type="button" data-nf="esq">🗓️ Esqueci de lançar<small>lançar agora com a data ${dE.slice(8)}/${dE.slice(5,7)}</small></button><button type="button" data-nf="marca" class="pret">⚫ Não fiz<small>outro agente fez / observação</small></button></div><button type="button" data-nf="fecha" class="nf-x">✕</button></div>`
+        :`<button type="button" class="nf-rap" data-nf="abre">⚪ Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}) sem lançamento <span style="margin-left:auto">▾</span></button>`);
      nb.querySelectorAll("[data-nf]").forEach(b=>b.onclick=()=>{const a=b.dataset.nf;
+       if(a==="abre"){nfAberto=dE+etapa;render();return}
+       if(a==="fecha"){nfAberto="";render();return}
+       if(a==="esq"){nfAberto="";const h=$("data").value||hoje();if(dE!==h){esqueci={etapa,dia:dE,voltar:h};dataManual=true;$("data").value=dE;mesVer=dE.slice(0,7);sel(etapa,false)}else render();irParaLivro();const l=document.querySelector("#livroRows .r-livro");if(l)l.focus();return}
+       nfAberto="";
        if(a==="des"){if(!confirm("Desfazer o \"não fiz\" da Etapa "+p2(etapa)+"?"))return;delete naoFiz[dE]}
        else{const x=pedirObsNaoFiz(naoFiz[dE]||"");if(x===null)return;naoFiz[dE]=x}
        salvarNaoFiz();render()});
@@ -1492,6 +1513,25 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
   if(predios[l])delete predios[l];else predios[l]=1;salvarPredios();atualizarPredRows();atualizarPctNL();render()});
 document.addEventListener("input",e=>{if(e.target&&e.target.classList&&e.target.classList.contains("r-livro")){atualizarPredRows();atualizarPctNL()}});
 setInterval(()=>{try{atualizarPredRows();atualizarPctNL()}catch(e){}},1500);
+// ---------- 📟 Meus equipamentos (PDA e impressora) ----------
+const EQ_CAMPOS={pda:[["Equipamento","PDA Zebra TC27"],["Patrimônio","NEKT10010"],["Modelo","WCMTB"],["P/N","WCMTB-T27B6ABE2-BR"],["Nº de série (SN)","25315524700149"],["IMEI 1","354053753735738"],["IMEI 2","354605336915515"],["Fabricação","11/2025"]],
+  imp:[["Equipamento","Impressora Zebra ZQ521"],["Patrimônio","NEKT00213"],["Nº de série (SN)","XXRBN252801819"],["PCC","ZQ52-BUE002L-L3"],["Anatel","13423-20-05041"]]};
+let equip=null;try{equip=JSON.parse(localStorage.getItem(KEY+"_equip")||"null")}catch(e){}
+if(!equip){equip={};for(const g in EQ_CAMPOS)equip[g]=EQ_CAMPOS[g].map(([k,v])=>({k,v}))}
+function salvarEquip(){try{localStorage.setItem(KEY+"_equip",JSON.stringify(equip))}catch(e){}}
+let eqEdit=false;
+function desenharEquip(){
+  const tit={pda:"📱 PDA",imp:"🖨️ Impressora"};
+  $("eqCorpo").innerHTML=Object.keys(equip).map(g=>`<div class="eq-grupo"><b>${tit[g]||g}</b>`+equip[g].map((x,i)=>eqEdit?`<label class="eq-l"><span>${esc(x.k)}</span><input data-g="${g}" data-i="${i}" value="${esc(x.v)}" autocomplete="off"></label>`:`<div class="eq-l"><span>${esc(x.k)}</span><b>${esc(x.v)||"—"}</b></div>`).join("")+`</div>`).join("");
+  $("eqEditar").textContent=eqEdit?"✅ Pronto":"✏️ Editar";
+  $("eqCorpo").querySelectorAll("input").forEach(inp=>inp.onchange=()=>{equip[inp.dataset.g][+inp.dataset.i].v=inp.value.trim();salvarEquip()});
+}
+function textoEquip(){const tit={pda:"📱 PDA",imp:"🖨️ IMPRESSORA"};return "📟 Equipamentos — Luís Ricardo de Almeida Siqueira"+" · Pront. "+(($("prontuario")&&$("prontuario").value)||"306418")+"\n\n"+Object.keys(equip).map(g=>tit[g]+"\n"+equip[g].map(x=>x.k+": "+(x.v||"—")).join("\n")).join("\n\n")}
+$("equipBtn").onclick=()=>{eqEdit=false;desenharEquip();$("eqFundo").hidden=false};
+$("eqVoltar").onclick=()=>$("eqFundo").hidden=true;
+$("eqEditar").onclick=()=>{eqEdit=!eqEdit;desenharEquip()};
+$("eqComp").onclick=async()=>{const t=textoEquip();try{if(navigator.share){await navigator.share({title:"Meus equipamentos",text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(t);alert("📋 Copiado! Agora é só colar no WhatsApp ou e-mail.")}catch(e){prompt("Copie:",t)}};
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
 // ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
@@ -2062,7 +2102,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios,equip};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -2076,6 +2116,7 @@ function importarBackupCompleto(d){
   Object.entries(d.naoFiz||{}).forEach(([k,v])=>{if(!naoFiz[k])naoFiz[k]=v});salvarNaoFiz();
   Object.entries(d.resseq||{}).forEach(([k,v])=>{if(!resseq[k])resseq[k]=v});salvarResseq();
   Object.entries(d.predios||{}).forEach(([k,v])=>{predios[k]=v});salvarPredios();
+  if(d.equip){equip=d.equip;salvarEquip()}
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -2169,7 +2210,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.0";
+const VERSAO_APP="15.2";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
