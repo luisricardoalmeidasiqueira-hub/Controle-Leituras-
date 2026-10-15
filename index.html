@@ -224,10 +224,15 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .nf-x{position:absolute;top:4px;right:6px;border:0;background:none;font-size:14px;cursor:pointer;color:#6b7280}
 .nf-rap.feito{border-style:solid;border-color:#9ca3af;background:#f3f4f6;cursor:default}.nf-rap.feito span{flex:1;min-width:0}.nf-rap small{display:block;font-weight:600;color:#4b5563;font-size:11.5px}
 .nf-rap.feito button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:30px;min-width:34px;cursor:pointer}
+.eq-dono{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px 10px;margin-bottom:8px;font-size:14px}.eq-dono small{display:block;color:#475569;font-size:12px;margin-top:2px}
 .eq-grupo{border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;margin-bottom:8px}.eq-grupo>b{display:block;font-size:14px;margin-bottom:4px}
 .eq-l{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px dashed #f1f5f9;font-size:13px;align-items:center}.eq-l span{color:#6b7280;flex:none}.eq-l b{text-align:right;word-break:break-all;user-select:all}
 .eq-l input{flex:1;min-width:0;height:32px;font-size:14px;text-align:right}
+.eq-escolha{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px;margin-bottom:8px;font-size:13px}.eq-escolha div{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:6px}.eq-escolha button{height:36px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}
 .eq-bts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.eq-bts button{height:40px;border:0;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;background:#e5e7eb}.eq-bts #eqComp{background:#2563eb;color:#fff}
+.obs-fundo{z-index:60}.obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
+.obs-bts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.obs-bts button{height:42px;border:0;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;background:#e5e7eb}.obs-bts .o{background:#16a34a;color:#fff}
+.nf-rap small{white-space:pre-wrap}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -456,7 +461,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <body>
 <div class="app">
 <header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div>
-<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Meus equipamentos (PDA e impressora)" aria-label="Meus equipamentos">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
+<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
 <main>
 <section class="card">
 <div class="topo">
@@ -519,7 +524,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.2</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.8</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -576,8 +581,9 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 
 <!-- Rota do livro / Confirmações -->
 <div id="eqFundo" class="modal-fundo" hidden><div class="modal">
-<div class="modal-top"><button id="eqVoltar" class="voltar" type="button">‹ Voltar</button><h3>📟 Meus equipamentos</h3></div>
+<div class="modal-top"><button id="eqVoltar" class="voltar" type="button">‹ Voltar</button><h3>📟 Equipamentos de Luís Ricardo</h3></div>
 <div id="eqCorpo"></div>
+<div id="eqEscolha" class="eq-escolha" hidden><b>Mandar qual prontuário?</b><div><button type="button" data-p="n">306418</button><button type="button" data-p="u">Pront. U</button><button type="button" data-p="2">Os dois</button></div></div>
 <div class="eq-bts"><button type="button" id="eqComp">📤 Compartilhar</button><button type="button" id="eqEditar">✏️ Editar</button></div>
 </div></div>
 <div id="rcFundo" class="modal-fundo" hidden><div class="modal">
@@ -1174,13 +1180,13 @@ function render(){atualizarNomes();
      nb.innerHTML=o?`<div class="nf-rap feito"><span>⚫ Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}): não fiz<small>📝 ${esc(o==="outro serviço"?"li em outro lugar":o)}</small></span><button type="button" data-nf="obs">✏️</button><button type="button" data-nf="des">↩</button></div>`
        :(nfAberto===dE+etapa?`<div class="nf-rap aberto"><b>Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}) sem lançamento:</b><div class="nf-ops"><button type="button" data-nf="esq">🗓️ Esqueci de lançar<small>lançar agora com a data ${dE.slice(8)}/${dE.slice(5,7)}</small></button><button type="button" data-nf="marca" class="pret">⚫ Não fiz<small>outro agente fez / observação</small></button></div><button type="button" data-nf="fecha" class="nf-x">✕</button></div>`
         :`<button type="button" class="nf-rap" data-nf="abre">⚪ Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}) sem lançamento <span style="margin-left:auto">▾</span></button>`);
-     nb.querySelectorAll("[data-nf]").forEach(b=>b.onclick=()=>{const a=b.dataset.nf;
+     nb.querySelectorAll("[data-nf]").forEach(b=>b.onclick=async()=>{const a=b.dataset.nf;
        if(a==="abre"){nfAberto=dE+etapa;render();return}
        if(a==="fecha"){nfAberto="";render();return}
        if(a==="esq"){nfAberto="";const h=$("data").value||hoje();if(dE!==h){esqueci={etapa,dia:dE,voltar:h};dataManual=true;$("data").value=dE;mesVer=dE.slice(0,7);sel(etapa,false)}else render();irParaLivro();const l=document.querySelector("#livroRows .r-livro");if(l)l.focus();return}
        nfAberto="";
        if(a==="des"){if(!confirm("Desfazer o \"não fiz\" da Etapa "+p2(etapa)+"?"))return;delete naoFiz[dE]}
-       else{const x=pedirObsNaoFiz(naoFiz[dE]||"");if(x===null)return;naoFiz[dE]=x}
+       else{const x=await pedirObsNaoFiz(naoFiz[dE]||"");if(x===null)return;naoFiz[dE]=x}
        salvarNaoFiz();render()});
    }}
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
@@ -1285,7 +1291,7 @@ function atualizarPendentes(){
     +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button><button type="button" class="op-naofiz"><b class="bol-rosa"></b> Não fiz<small>li em outro lugar</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
   if(esc){
-    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha preta no calendário."))return;{const o=pedirObsNaoFiz("");if(o===null)return;naoFiz[esc.dia]=o};salvarNaoFiz();pendEscolha=0;render()};
+    box.querySelector(".op-naofiz").onclick=async()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha preta no calendário."))return;{const o=await pedirObsNaoFiz("");if(o===null)return;naoFiz[esc.dia]=o};salvarNaoFiz();pendEscolha=0;render()};
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;escolherEtapa(esc.etapa);irParaLivro()};
     box.querySelector(".op-esqueci").onclick=()=>{
       pendEscolha=0;esqueci={etapa:esc.etapa,dia:esc.dia,voltar:h};dataManual=true;
@@ -1518,19 +1524,22 @@ const EQ_CAMPOS={pda:[["Equipamento","PDA Zebra TC27"],["Patrimônio","NEKT10010
   imp:[["Equipamento","Impressora Zebra ZQ521"],["Patrimônio","NEKT00213"],["Nº de série (SN)","XXRBN252801819"],["PCC","ZQ52-BUE002L-L3"],["Anatel","13423-20-05041"]]};
 let equip=null;try{equip=JSON.parse(localStorage.getItem(KEY+"_equip")||"null")}catch(e){}
 if(!equip){equip={};for(const g in EQ_CAMPOS)equip[g]=EQ_CAMPOS[g].map(([k,v])=>({k,v}))}
+if(!equip.dono){equip={dono:[{k:"Nome",v:"Luís Ricardo de Almeida Siqueira"},{k:"Função",v:"Agente de faturamento"},{k:"Prontuário",v:"306418"},{k:"Prontuário U",v:"U459310"}],...equip}}
 function salvarEquip(){try{localStorage.setItem(KEY+"_equip",JSON.stringify(equip))}catch(e){}}
 let eqEdit=false;
 function desenharEquip(){
-  const tit={pda:"📱 PDA",imp:"🖨️ Impressora"};
-  $("eqCorpo").innerHTML=Object.keys(equip).map(g=>`<div class="eq-grupo"><b>${tit[g]||g}</b>`+equip[g].map((x,i)=>eqEdit?`<label class="eq-l"><span>${esc(x.k)}</span><input data-g="${g}" data-i="${i}" value="${esc(x.v)}" autocomplete="off"></label>`:`<div class="eq-l"><span>${esc(x.k)}</span><b>${esc(x.v)||"—"}</b></div>`).join("")+`</div>`).join("");
+  const tit={dono:"👤 Agente",pda:"📱 PDA",imp:"🖨️ Impressora"};
+  $("eqCorpo").innerHTML=Object.keys(equip).map(g=>`<div class="eq-grupo${g==="dono"?" eq-dono":""}"><b>${tit[g]||g}</b>`+equip[g].map((x,i)=>!eqEdit&&!x.v?"":eqEdit?`<label class="eq-l"><span>${esc(x.k)}</span><input data-g="${g}" data-i="${i}" value="${esc(x.v)}" autocomplete="off"></label>`:`<div class="eq-l"><span>${esc(x.k)}</span><b>${esc(x.v)||"—"}</b></div>`).join("")+`</div>`).join("");
   $("eqEditar").textContent=eqEdit?"✅ Pronto":"✏️ Editar";
   $("eqCorpo").querySelectorAll("input").forEach(inp=>inp.onchange=()=>{equip[inp.dataset.g][+inp.dataset.i].v=inp.value.trim();salvarEquip()});
 }
-function textoEquip(){const tit={pda:"📱 PDA",imp:"🖨️ IMPRESSORA"};return "📟 Equipamentos — Luís Ricardo de Almeida Siqueira"+" · Pront. "+(($("prontuario")&&$("prontuario").value)||"306418")+"\n\n"+Object.keys(equip).map(g=>tit[g]+"\n"+equip[g].map(x=>x.k+": "+(x.v||"—")).join("\n")).join("\n\n")}
-$("equipBtn").onclick=()=>{eqEdit=false;desenharEquip();$("eqFundo").hidden=false};
+function textoEquip(qual){const tit={dono:"👤 AGENTE",pda:"📱 PDA",imp:"🖨️ IMPRESSORA"};const nome=((equip.dono||[]).find(x=>x.k==="Nome")||{}).v||"";return "📟 Equipamentos"+(nome?" de "+nome:"")+"\n\n"+Object.keys(equip).map(g=>tit[g]+"\n"+equip[g].filter(x=>x.v&&!(g==="dono"&&((qual==="n"&&x.k==="Prontuário U")||(qual==="u"&&x.k==="Prontuário")))).map(x=>x.k+": "+x.v).join("\n")).join("\n\n")}
+$("equipBtn").onclick=()=>{eqEdit=false;$("eqEscolha").hidden=true;desenharEquip();$("eqFundo").hidden=false};
 $("eqVoltar").onclick=()=>$("eqFundo").hidden=true;
 $("eqEditar").onclick=()=>{eqEdit=!eqEdit;desenharEquip()};
-$("eqComp").onclick=async()=>{const t=textoEquip();try{if(navigator.share){await navigator.share({title:"Meus equipamentos",text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
+$("eqComp").onclick=()=>{const d=equip.dono||[],tem=k=>(d.find(x=>x.k===k)||{}).v;if(tem("Prontuário")&&tem("Prontuário U")){$("eqEscolha").hidden=!$("eqEscolha").hidden;return}compartilharEquip("2")};
+document.querySelectorAll("#eqEscolha [data-p]").forEach(b=>b.onclick=()=>{$("eqEscolha").hidden=true;compartilharEquip(b.dataset.p)});
+async function compartilharEquip(qual){const t=textoEquip(qual);try{if(navigator.share){await navigator.share({title:"Meus equipamentos",text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
   try{await navigator.clipboard.writeText(t);alert("📋 Copiado! Agora é só colar no WhatsApp ou e-mail.")}catch(e){prompt("Copie:",t)}};
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
@@ -1672,7 +1681,15 @@ function separarTipo(x){
   return x;
 }
 // Observação do "não fiz" (opcional): ex. "fiz a Etapa 09 atrasada"
-function pedirObsNaoFiz(atual){const v=prompt("📝 Observação (por que não fez? pode deixar em branco):\nex.: fiz a Etapa 09 atrasada",atual&&atual!=="li em outro lugar"&&atual!=="outro serviço"?atual:"");return v===null?null:(v.trim()||"li em outro lugar")}
+function pedirObsNaoFiz(atual){return new Promise(ok=>{
+  const v0=atual&&atual!=="li em outro lugar"&&atual!=="outro serviço"?atual:"";
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal"><h3>📝 Observação</h3><div class="hint">Por que não fez? Pode deixar em branco. Ex.: fiz a Etapa 09 atrasada.</div><textarea rows="5" placeholder="Escreva aqui...">${esc(v0)}</textarea><div class="obs-bts"><button type="button" class="c">Cancelar</button><button type="button" class="o">✔ Salvar</button></div></div>`;
+  document.body.appendChild(f);const t=f.querySelector("textarea");setTimeout(()=>{t.focus();t.setSelectionRange(t.value.length,t.value.length)},50);
+  const fim=v=>{f.remove();ok(v)};
+  f.querySelector(".c").onclick=()=>fim(null);
+  f.querySelector(".o").onclick=()=>fim(t.value.replace(/\s+$/,"").trim()||"li em outro lugar");
+})}
 // 📊 Resumo por Mensagem do PDA: "002 - IMPEDIMENTO DE LEITURA / Quantidade: 1"
 function lerResumoPDA(t){
   const L=t.split(/\n+/).map(x=>x.toUpperCase()),out=[];
@@ -1896,8 +1913,8 @@ $("calBusca").onchange=()=>{
   const prD=e&&diaDaEtapa(somaMes(mD,1),e),nfAnt=e&&diaDaEtapa(somaMes(mD,-1),e),nfObs=nfAnt&&naoFiz[nfAnt];const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(prD?" · 📅 mês que vem "+prD.slice(8)+"/"+prD.slice(5,7):"")+(nfObs?" · ⚫ mês passado não fez: "+(nfObs==="outro serviço"?"li em outro lugar":nfObs):"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
   r.textContent=(e?(naoFiz[d]?"":"✅ ")+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês"));
   if(e&&d<=hoje()&&!realD){r.insertAdjacentHTML("beforeend",naoFiz[d]?`<div class="nf-linha"><b class="bol-rosa"></b> Você não fez esta etapa<br>📝 ${esc(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d])} <button type="button" id="nfObs">✏️ Observação</button> <button type="button" id="nfDesfaz">↩ Desfazer</button></div>`:`<div class="nf-linha"><button type="button" id="nfMarca"><b class="bol-rosa"></b> Não fiz esta etapa (li em outro lugar)</button></div>`);
-    const mk=$("nfMarca"),dz=$("nfDesfaz"),ob=$("nfObs");if(ob)ob.onclick=()=>{const o=pedirObsNaoFiz(naoFiz[d]);if(o===null)return;naoFiz[d]=o;salvarNaoFiz();$("calBusca").dispatchEvent(new Event("change"))};
-    if(mk)mk.onclick=()=>{{const o=pedirObsNaoFiz("");if(o===null)return;naoFiz[d]=o};salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};
+    const mk=$("nfMarca"),dz=$("nfDesfaz"),ob=$("nfObs");if(ob)ob.onclick=async()=>{const o=await pedirObsNaoFiz(naoFiz[d]);if(o===null)return;naoFiz[d]=o;salvarNaoFiz();$("calBusca").dispatchEvent(new Event("change"))};
+    if(mk)mk.onclick=async()=>{{const o=await pedirObsNaoFiz("");if(o===null)return;naoFiz[d]=o};salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};
     if(dz)dz.onclick=()=>{delete naoFiz[d];salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};}
   calEditando=false;calVer=d.slice(0,7);desenharCal();
 };
@@ -2210,7 +2227,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.2";
+const VERSAO_APP="15.8";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
