@@ -217,6 +217,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .atr-tag{display:inline-block;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:999px;padding:0 7px;font-size:11px;font-weight:800;white-space:nowrap}.atr-tag.ant{background:#fff7ed;border-color:#fdba74;color:#9a3412}
 .nl-foto{flex:none;width:34px;height:34px;border:1px solid #fecaca;background:#fff;border-radius:9px;font-size:16px;padding:0;cursor:pointer;align-self:center}
 .nl-livro{border:1px solid #fecaca;background:#fff;border-radius:7px;height:24px;min-width:28px;padding:0 3px;margin-left:5px;font-size:13px;vertical-align:middle;cursor:pointer}
+.nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
+.nf-rap.feito{border-style:solid;border-color:#9ca3af;background:#f3f4f6;cursor:default}.nf-rap.feito span{flex:1;min-width:0}.nf-rap small{display:block;font-weight:600;color:#4b5563;font-size:11.5px}
+.nf-rap.feito button{border:1px solid #d1d5db;background:#fff;border-radius:7px;height:30px;min-width:34px;cursor:pointer}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -496,6 +499,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </div>
 <div id="cidades" class="cidades" hidden></div>
 <div id="resseqAviso" hidden></div>
+<div id="nfRapido" hidden></div>
 <div id="lista" hidden></div>
 <div id="desfLinha" class="desf-linha" hidden><button id="desfazer" class="desfazer" type="button"></button><button id="desfazerX" class="desf-x" type="button" aria-label="Dispensar">✕</button></div>
 <div class="tools">
@@ -507,7 +511,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 14.9</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.0</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1146,6 +1150,18 @@ function render(){atualizarNomes();
   {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);av.hidden=!lst.length;
    av.innerHTML=lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
    av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🗂️ O livro "+l+" foi sequenciado?\n\nOK = Sim (tira o aviso)\nCancelar = Não (o aviso continua nos próximos meses)")){delete resseq[l];salvarResseq();render()}})}
+  // ⚫ atalho: etapa do dia (ou que já passou) sem nenhum livro → marcar "não fiz" sem ir no calendário
+  {const nb=$("nfRapido"),dE=diaDaEtapa(m,etapa),h0=hoje(),sem=!registros.some(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura);
+   const mostra=!ajuda&&!filtroRel&&!filtroCidade&&dE&&dE<=h0&&sem;
+   nb.hidden=!mostra;
+   if(mostra){const o=naoFiz[dE];
+     nb.innerHTML=o?`<div class="nf-rap feito"><span>⚫ Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)}): não fiz<small>📝 ${esc(o==="outro serviço"?"li em outro lugar":o)}</small></span><button type="button" data-nf="obs">✏️</button><button type="button" data-nf="des">↩</button></div>`
+       :`<button type="button" class="nf-rap" data-nf="marca">⚫ Não fiz a Etapa ${p2(etapa)} (${dE.slice(8)}/${dE.slice(5,7)})</button>`;
+     nb.querySelectorAll("[data-nf]").forEach(b=>b.onclick=()=>{const a=b.dataset.nf;
+       if(a==="des"){if(!confirm("Desfazer o \"não fiz\" da Etapa "+p2(etapa)+"?"))return;delete naoFiz[dE]}
+       else{const x=pedirObsNaoFiz(naoFiz[dE]||"");if(x===null)return;naoFiz[dE]=x}
+       salvarNaoFiz();render()});
+   }}
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
@@ -2153,7 +2169,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="14.9";
+const VERSAO_APP="15.0";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
