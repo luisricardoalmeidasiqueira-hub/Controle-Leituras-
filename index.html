@@ -216,6 +216,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 #rcFundo .modal-top{position:relative}#rcTit{padding-right:40px}.rc-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:#e5e7eb;font-size:16px;font-weight:800;color:#374151;cursor:pointer}
 .atr-tag{display:inline-block;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:999px;padding:0 7px;font-size:11px;font-weight:800;white-space:nowrap}.atr-tag.ant{background:#fff7ed;border-color:#fdba74;color:#9a3412}
 .nl-foto{flex:none;width:34px;height:34px;border:1px solid #fecaca;background:#fff;border-radius:9px;font-size:16px;padding:0;cursor:pointer;align-self:center}
+.nl-livro{border:1px solid #fecaca;background:#fff;border-radius:7px;height:24px;min-width:28px;padding:0 3px;margin-left:5px;font-size:13px;vertical-align:middle;cursor:pointer}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -506,7 +507,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 14.7</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 14.9</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -523,7 +524,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
-<div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca"></div>
+<div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem">📊</button></div></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
@@ -1135,7 +1136,7 @@ function render(){atualizarNomes();
    tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · prédio não entra na conta":"")+". Toque pra mudar."}
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b>${r.releitura?"":`<button type="button" class="nl-livro" onclick="nlDoLivro('${r.id}')" title="Não lidos deste livro pela foto do Resumo por Mensagem">📊</button>`} · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1627,9 +1628,12 @@ function lerResumoPDA(t){
   });
   return out;
 }
-$("nlFotoBtn").onclick=()=>$("nlArq").click();
+let nlAlvo="impQtd",nlBtn="nlFotoBtn";
+$("nlFotoBtn").onclick=()=>{nlAlvo="impQtd";nlBtn="nlFotoBtn";$("nlArq").click()};
+function nlDoLivro(id){nlAlvo="rec:"+id;nlBtn="nlFotoBtn";$("nlArq").click()}
+$("edNlFoto").onclick=()=>{nlAlvo="edNl";nlBtn="edNlFoto";$("nlArq").click()};
 $("nlArq").onchange=async e=>{
-  const f=(e.target.files||[])[0];e.target.value="";if(!f)return;const b=$("nlFotoBtn");b.disabled=true;b.textContent="⏳";
+  const f=(e.target.files||[])[0];e.target.value="";if(!f)return;const b=$(nlBtn);b.disabled=true;b.textContent="⏳";
   try{
     await carregarOCR();const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
     const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height)),w=await Tesseract.createWorker("eng",1);await w.setParameters({tessedit_pageseg_mode:"6"});
@@ -1638,8 +1642,8 @@ $("nlArq").onchange=async e=>{
     await w.terminate();URL.revokeObjectURL(img.src);
     if(!itens.length)return alert("Não consegui ler o Resumo por Mensagem nesta foto.\nTente sem reflexo (faça sombra na tela).");
     const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)).reduce((t,x)=>t+x.q,0);
-    const v=prompt("📊 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
-    if(v===null)return;$("impQtd").value=Math.max(0,parseInt(v,10)||0);$("impQtd").dispatchEvent(new Event("input",{bubbles:true}));
+    const v=prompt((nlAlvo.startsWith("rec:")?"📊 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"📊 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
+    if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{$(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.textContent="📊"}
 };
@@ -2149,7 +2153,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="14.7";
+const VERSAO_APP="14.9";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
