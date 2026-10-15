@@ -406,6 +406,7 @@ input{height:38px;border-radius:9px}
 .lista-head strong{font-size:13px}.lista-head small{font-size:11px}.pill{font-size:11px!important;padding:4px 9px!important}
 .tools{margin-top:7px}.ic{height:32px;font-size:15px;border-radius:8px}
 .item{font-size:12px;padding:7px 0}
+.item>div:first-child{min-width:0;flex:1}.atr-q{border:1px solid #fdba74;background:#fff7ed;border-radius:999px;font-size:12px;padding:0 6px;height:22px;line-height:20px;cursor:pointer;vertical-align:middle}
 footer{font-size:10px;padding:10px}
 .ajuda-linha{gap:6px}.pda-btn{background:#eff6ff!important;border-color:#93c5fd!important;color:#1e3a8a!important}
 .pda-end{grid-column:1/-1;min-width:0}
@@ -540,7 +541,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.12</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.13</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1614,7 +1615,8 @@ function livroAtrasoTag(r){
   if(r.releitura)return "";const a=diasAtrasoLivro(r);let t="";
   if(a)t+=` <span class="atr-tag" title="Lido depois do dia do calendário">⏰ atrasado ${a} dia${a>1?"s":""}</span>`;
   const ant=somaMes(r.data.slice(0,7),-1),pa=registros.find(x=>x.livro===r.livro&&x.data.startsWith(ant)&&diasAtrasoLivro(x));
-  if(pa)t+=` <span class="atr-tag ant" title="Mês passado este livro foi lido atrasado">❓ mês passado atrasado (${pa.data.slice(8)}/${pa.data.slice(5,7)})</span>`;
+  if(pa){const dc=diaDaEtapa(pa.data.slice(0,7),pa.etapa),msg="❓ Mês passado o livro "+r.livro+" foi lido atrasado.\n\nEtapa "+p2(pa.etapa)+(dc?" · dia do calendário: "+dc.slice(8)+"/"+dc.slice(5,7):"")+"\nLido em: "+pa.data.slice(8)+"/"+pa.data.slice(5,7)+" ("+diasAtrasoLivro(pa)+" dia(s) de atraso)";
+    t+=` <button type="button" class="atr-q" title="Mês passado este livro foi lido atrasado" onclick='alert(${JSON.stringify(msg).replace(/'/g,"&#39;")})'>❓</button>`}
   return t;
 }
 function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
@@ -2293,7 +2295,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.12";
+const VERSAO_APP="15.13";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
