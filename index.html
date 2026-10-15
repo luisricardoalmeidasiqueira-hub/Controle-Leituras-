@@ -214,6 +214,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .rk-m{width:24px;text-align:center;font-size:18px;flex:none}.rk-tx{flex:1;min-width:0}.rk-tx b{font-size:13.5px}.rk-tx small{display:block;font-size:11px;color:#6b7280}
 .rk-tx i{display:block;height:5px;border-radius:3px;background:#60a5fa;margin-top:3px}.rk-n{flex:none;font-size:14px}
 #rcFundo .modal-top{position:relative}#rcTit{padding-right:40px}.rc-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:#e5e7eb;font-size:16px;font-weight:800;color:#374151;cursor:pointer}
+.atr-tag{display:inline-block;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:999px;padding:0 7px;font-size:11px;font-weight:800;white-space:nowrap}.atr-tag.ant{background:#fff7ed;border-color:#fdba74;color:#9a3412}
+.nl-foto{flex:none;width:34px;height:34px;border:1px solid #fecaca;background:#fff;border-radius:9px;font-size:16px;padding:0;cursor:pointer;align-self:center}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
 .imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
@@ -481,7 +483,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <datalist id="nomesDivididos"></datalist>
 <div class="save-row">
 <div class="hint">Azul = quantidade da última vez (dá pra corrigir).</div>
-<span id="bobDig" class="bob-dig" hidden></span><label class="imp-box" title="Não lidos (opcional)"><span>⛔ Não lidos<em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<span id="bobDig" class="bob-dig" hidden></span><button type="button" id="nlFotoBtn" class="nl-foto" title="Ler não lidos da foto do Resumo por Mensagem do PDA" aria-label="Ler não lidos da foto">📊</button><input id="nlArq" type="file" accept="image/*" hidden><label class="imp-box" title="Não lidos (opcional)"><span>⛔ Não lidos<em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
 <button id="saveAll" class="save-all" type="button" title="Salvar leitura" aria-label="Salvar leitura"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
 </div>
 </section>
@@ -504,7 +506,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 14.1</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 14.6</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1133,7 +1135,7 @@ function render(){atualizarNomes();
    tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · prédio não entra na conta":"")+". Toque pra mudar."}
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b> · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">⛔ ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1245,7 +1247,7 @@ function atualizarPendentes(){
     +(esc?`<div class="pend-opcoes"><button type="button" class="op-agora">📖 Lendo agora<small>data de hoje</small></button><button type="button" class="op-esqueci">🗓️ Esqueci de lançar<small>data ${esc.dia.slice(8)}/${esc.dia.slice(5,7)}</small></button><button type="button" class="op-naofiz"><b class="bol-rosa"></b> Não fiz<small>li em outro lugar</small></button></div>`:"");
   box.querySelectorAll(".pend").forEach(b=>b.onclick=()=>{pendEscolha=pendEscolha===+b.dataset.e?0:+b.dataset.e;atualizarPendentes()});
   if(esc){
-    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha preta no calendário."))return;naoFiz[esc.dia]="li em outro lugar";salvarNaoFiz();pendEscolha=0;render()};
+    box.querySelector(".op-naofiz").onclick=()=>{if(!confirm("Etapa "+p2(esc.etapa)+" ("+esc.dia.slice(8)+"/"+esc.dia.slice(5,7)+"): você não fez porque leu em outro lugar?\n\nEla sai das pendentes e fica marcada com a bolinha preta no calendário."))return;{const o=pedirObsNaoFiz("");if(o===null)return;naoFiz[esc.dia]=o};salvarNaoFiz();pendEscolha=0;render()};
     box.querySelector(".op-agora").onclick=()=>{pendEscolha=0;escolherEtapa(esc.etapa);irParaLivro()};
     box.querySelector(".op-esqueci").onclick=()=>{
       pendEscolha=0;esqueci={etapa:esc.etapa,dia:esc.dia,voltar:h};dataManual=true;
@@ -1334,14 +1336,14 @@ const reTipoIni=new RegExp("^("+TIPOS_RUA+")\\.?\\s");
 function ruaValida(p){const t=p.replace(reTipoIni,"").trim();return reTipoIni.test(p)&&(/[A-ZÀ-Ú]{3,}/.test(t)||/^\d{1,4}[A-Z]?\b/.test(t))}
 // mesma rua? (ignora a sujeira do fim, acento, "RUA" x "R")
 function chaveRua(x){return normLoc(ruaParaMapa(x).replace(/,.*$/,"")).replace(/^rua\s/,"r ").replace(/^avenida\s/,"av ").replace(/\./g,"").replace(/\s+/g," ").trim()}
-function ruaRepetida(x,lista,menos){const k=chaveRua(x);if(!k)return false;return lista.some((y,j)=>j!==menos&&String(y||"").trim()&&(chaveRua(y)===k||parecido(chaveRua(y),k)>=0.92))}
+function ruaRepetida(x,lista,menos){const k=chaveRua(x);if(!k)return false;return lista.some((y,j)=>j!==menos&&String(y||"").trim()&&(chaveRua(y)===k||parecido(chaveRua(y),k)>=0.9))}
 function arrumarRuas(lista){
   const partes=[];
   (lista||[]).forEach(x=>{x=String(x||"").replace(/\s+/g," ").trim();if(!x)return;
     x.replace(/\s(\d+[A-Z]?)\sR(?=[A-Z]{3})/g," $1 |R ").replace(new RegExp("\\s(?=(?:"+TIPOS_RUA+")\\.?\\s[A-Z]{3})","g"),"|").split("|").forEach(p=>partes.push(p.trim()))});
   const out=[];
   partes.forEach(p=>{
-    p=p.replace(/^R(?!UA\b|ODOVIA\b)(?=[A-Z]{3})/,"R ").replace(/\s+/g," ").trim();
+    p=separarTipo(p).replace(/\s+/g," ").trim();
     if(!/,\s*\d/.test(p)){
       // guarda o número em que a rua começa no livro (ex.: "... TE 4" → começa no 4) no formato "RUA, 4"
       const limpo=ruaParaMapa(p),resto=p.slice(limpo.length).trim().split(" ");
@@ -1352,8 +1354,8 @@ function arrumarRuas(lista){
     // rua repetida não entra (em qualquer lugar da lista)
     // repetida: se a que ficou não tem o número de início e esta tem, aproveita o número
     const k=chaveRua(p),ant=out[out.length-1],t1=ant&&ant.split(" ").slice(0,3).join(" "),t2=p.split(" ").slice(0,3).join(" ");
-    let j=out.findIndex(y=>chaveRua(y)===k||parecido(chaveRua(y),k)>=0.92);
-    if(j>-1){const n=p.match(/,\s*\d+$/);if(n&&!/,\s*\d/.test(out[j]))out[j]+=n[0];return}
+    let j=out.findIndex(y=>chaveRua(y)===k||parecido(chaveRua(y),k)>=0.9);
+    if(j>-1){if(p.split(" ").length>out[j].split(" ").length&&p.replace(/\s/g,"").length>=out[j].replace(/\s/g,"").length)out[j]=p;const n=p.match(/,\s*\d+$/);if(n&&!/,\s*\d/.test(out[j]))out[j]+=n[0];return}
     out.push(p);
   });
   return out;
@@ -1475,6 +1477,15 @@ document.addEventListener("input",e=>{if(e.target&&e.target.classList&&e.target.
 setInterval(()=>{try{atualizarPredRows();atualizarPctNL()}catch(e){}},1500);
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
+// ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
+function diasAtrasoLivro(r){if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d&&r.data>d?diasEntre(r.data,d):0}
+function livroAtrasoTag(r){
+  if(r.releitura)return "";const a=diasAtrasoLivro(r);let t="";
+  if(a)t+=` <span class="atr-tag" title="Lido depois do dia do calendário">⏰ atrasado ${a} dia${a>1?"s":""}</span>`;
+  const ant=somaMes(r.data.slice(0,7),-1),pa=registros.find(x=>x.livro===r.livro&&x.data.startsWith(ant)&&diasAtrasoLivro(x));
+  if(pa)t+=` <span class="atr-tag ant" title="Mês passado este livro foi lido atrasado">❓ mês passado atrasado (${pa.data.slice(8)}/${pa.data.slice(5,7)})</span>`;
+  return t;
+}
 function chaveEnd(x,i){const e=String(x.end||"").toUpperCase().replace(/\s+/g," ").trim();return e||"#"+i}
 function abrirConf(id){rcModo="conf";if(rcChave!==String(id))confAbertas=new Set();rcChave=String(id);desenharConf();$("rcFundo").hidden=false}
 function desenharConf(){
@@ -1594,7 +1605,58 @@ function lerRuasTolerante(t){
   });
   return out;
 }
-function lerRuasDaFoto(t){
+// Roteiro do PDA: linhas "(222 --) R JOAO ABRAME". O leitor às vezes gruda o R no nome ("RAMALIA") — aqui separa.
+// Separa o tipo de rua grudado no nome: "RAMALIA"→"R AMALIA", "AVSAO JOAO"→"AV SAO JOAO", "PCADA MATRIZ"→"PCA DA MATRIZ", "TVANTONIO"→"TV ANTONIO"...
+const TIPOS_GRUDA=["RUA","AVENIDA","TRAVESSA","ALAMEDA","PRAÇA","PRACA","ESTRADA","RODOVIA","VIELA","LARGO","BECO","PÇA","PCA","PRC","TRAV","TRV","ESTR","EST","ROD","VLA","AV","TV","AL","LG","BC","R"];
+function separarTipo(x){
+  x=String(x||"").replace(/^(\S+)\.\s*/,"$1 ").trim();
+  if(new RegExp("^("+TIPOS_RUA+")\\s").test(x))return x;
+  for(const t of TIPOS_GRUDA){if(x.startsWith(t)){const r=x.slice(t.length);if(/^[A-ZÀ-Ú0-9]{1}/.test(r)&&(/^[A-ZÀ-Ú]{3,}/.test(r)||/^(DA|DE|DO|DOS|DAS)\s/.test(r)||/^\d/.test(r)))return t+" "+r}}
+  return x;
+}
+// Observação do "não fiz" (opcional): ex. "fiz a Etapa 09 atrasada"
+function pedirObsNaoFiz(atual){const v=prompt("📝 Observação (por que não fez? pode deixar em branco):\nex.: fiz a Etapa 09 atrasada",atual&&atual!=="li em outro lugar"&&atual!=="outro serviço"?atual:"");return v===null?null:(v.trim()||"li em outro lugar")}
+// 📊 Resumo por Mensagem do PDA: "002 - IMPEDIMENTO DE LEITURA / Quantidade: 1"
+function lerResumoPDA(t){
+  const L=t.split(/\n+/).map(x=>x.toUpperCase()),out=[];
+  L.forEach((l,i)=>{
+    const m=l.match(/(\d{2,3})\s*[-–]\s*([A-ZÀ-Ú][A-ZÀ-Ú ]{4,})/)||l.match(/(IMPEDIMENTO[A-ZÀ-Ú ]*|LEITURA NORMA[A-Z]*|LEITURA ACIMA[A-ZÀ-Ú ]*|LEITURA ABAIXO[A-ZÀ-Ú ]*|INATIVO[A-ZÀ-Ú ]*)/);if(!m)return;
+    const nome=(m[2]||m[1]).replace(/\s+/g," ").trim();let q=null;
+    for(const y of [l,L[i+1]||"",L[i+2]||""]){const k=y.match(/(?:QUANT|UANT|ANTID|TIDADE|DADE)\D{0,4}(\d{1,4})/);if(k){q=+k[1];break}}
+    if(q!=null&&!out.some(o=>o.nome.slice(0,10)===nome.slice(0,10)))out.push({cod:m[2]?m[1]:"",nome,q});
+  });
+  return out;
+}
+$("nlFotoBtn").onclick=()=>$("nlArq").click();
+$("nlArq").onchange=async e=>{
+  const f=(e.target.files||[])[0];e.target.value="";if(!f)return;const b=$("nlFotoBtn");b.disabled=true;b.textContent="⏳";
+  try{
+    await carregarOCR();const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
+    const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height)),w=await Tesseract.createWorker("eng",1);await w.setParameters({tessedit_pageseg_mode:"6"});
+    let itens=lerResumoPDA((await w.recognize(prepararPDA(img,Math.min(2200,maxL)))).data.text);
+    lerResumoPDA((await w.recognize(prepararClara(img,Math.min(2200,maxL)))).data.text).forEach(x=>{if(!itens.some(o=>o.nome.slice(0,10)===x.nome.slice(0,10)))itens.push(x)});
+    await w.terminate();URL.revokeObjectURL(img.src);
+    if(!itens.length)return alert("Não consegui ler o Resumo por Mensagem nesta foto.\nTente sem reflexo (faça sombra na tela).");
+    const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)).reduce((t,x)=>t+x.q,0);
+    const v=prompt("📊 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n⛔ Não lidos (impedimentos) — confira:",nl);
+    if(v===null)return;$("impQtd").value=Math.max(0,parseInt(v,10)||0);$("impQtd").dispatchEvent(new Event("input",{bubbles:true}));
+  }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
+  finally{b.disabled=false;b.textContent="📊"}
+};
+function lerRoteiroPDA(t){
+  const out=[];
+  t.split(/\n+/).forEach(l=>{
+    const m=l.match(/(?:\(|^|\s)[\dOoIl|]{1,5}\s*[-–—~_.]{1,3}\s*[-–—~_.]?\s*[)\]}|]?\s*(.+)$/)||l.match(/[-–]\s*[)\]}]\s*(.+)$/);if(!m)return;
+    let x=m[1].toUpperCase().replace(/[^A-ZÀ-Ú0-9 ()]/g," ").replace(/\(.*$/,"").replace(/\s+/g," ").trim().replace(/^[\d\s]+(?=[A-Z])/,"");
+    // tira sujeira do fim (letras soltas, símbolos)
+    let w=x.split(" ");while(w.length>2&&(w[w.length-1].length<=2&&!/^(DA|DE|DO|II|E)$/.test(w[w.length-1])))w.pop();x=w.join(" ");
+    x=separarTipo(x);
+    if(!new RegExp("^("+TIPOS_RUA+")\\s").test(x)){if((x.match(/[A-Z]{3,}/g)||[]).length>=2)x="R "+x;else return}
+    if(ruaValida(x))out.push(x);
+  });
+  return out;
+}
+function lerRuasDaFoto(t){t=String(t).split(/\n/).map(l=>l.replace(/(^|[)\]|\s])([A-ZÀ-Ú]{4,}(?:\s[A-ZÀ-Ú]+)+)/,(m,a,b)=>a+separarTipo(b))).join("\n");
   // só letras maiúsculas (como no PDA): evita pegar sujeira da foto
   const limpa=x=>x.replace(/\s*[|“"”‘’'`]+.*$/,"").replace(/\b(TATUI|SP)\b.*$/,"").replace(/[\s,.-]+$/,"").trim();
   const L=t.split(/\n+/).map(x=>x.trim()).filter(Boolean),out=[];
@@ -1626,7 +1688,7 @@ $("rotaArq").onchange=async e=>{
       const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
       const res=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
       const res2=await w.recognize(prepararClara(img,Math.min(2200,maxL)));URL.revokeObjectURL(img.src);
-      ruas=ruas.concat(lerRuasDaFoto(res.data.text));{const a=lerRuasDaFoto(res.data.text);ruas=ruas.concat(a.length>=3?lerRuasDaFoto(res2.data.text):lerRuasTolerante(res2.data.text))}
+      {const r1=lerRoteiroPDA(res.data.text);ruas=ruas.concat(r1.length?r1:lerRuasDaFoto(res.data.text));const r2=lerRoteiroPDA(res2.data.text);ruas=ruas.concat(r2.length?r2:(r1.length>=3?lerRuasDaFoto(res2.data.text):lerRuasTolerante(res2.data.text)))}
     }
     await w.terminate();ruas=arrumarRuas(ruas);
     // não repete rua que já está na rota
@@ -1700,9 +1762,10 @@ function desenharMesTodo(){
       else if(fer)bol=(fer.tipo||"Férias")==="Férias"?"azul":"roxo";
       else if(iso<h)bol="cinza";
     }
-    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${naoFiz[iso]?" naofiz":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol==="rosa"?`<span class="md-bol rosa"></span>`:bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:i>-1&&naoFiz[diaDaEtapa(somaMes(calVer,-1),i+1)]?`<span class="md-at rosa" title="Mês passado você não fez esta etapa (leu em outro lugar)"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
+    html+=`<button type="button" data-dia="${iso}" class="md${i>-1?" et":""}${naoFiz[iso]?" naofiz":""}${iso===h?" hj":""}${dw===0?" dom":""}${dw===6?" sab":""}${fe?" fer":""}${fer?" fe":""}${lida?" lida":""}" title="${fe?esc(fe):""}">${bol==="rosa"?`<span class="md-bol rosa"></span>`:bol?`<span class="md-bol ${bol}"></span>`:""}${i>-1&&atrasoMesPassado(calVer,i+1)?`<span class="md-at" data-q="${i+1}" title="Mês passado foi lida atrasada"></span>`:i>-1&&naoFiz[diaDaEtapa(somaMes(calVer,-1),i+1)]?`<span class="md-at rosa" data-nf="${diaDaEtapa(somaMes(calVer,-1),i+1)}" title="Mês passado você não fez esta etapa"></span>`:""}<i>${i>-1?p2(d)+"/"+p2(mo):d}</i>${i>-1?`<em><small>Et</small> ${p2(i+1)}</em>${(c=>c!=null?`<u class="${foraDoLimite(c)?"fora":""}">${c}d</u>`:"")(cicloPlanejado(calVer,i))}`:fer?"<em>🏖️</em>":fe?"<em>🎉</em>":""}</button>`;
   }
   box.innerHTML=`<div class="md-grid">${html}</div>`;
+  box.querySelectorAll("[data-nf]").forEach(q=>q.onclick=e=>{e.stopPropagation();const d=q.dataset.nf;alert("⚫ Mês passado ("+d.slice(8)+"/"+d.slice(5,7)+") você não fez esta etapa.\n\n📝 "+(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d]))});
   box.querySelectorAll("[data-q]").forEach(q=>q.onclick=e=>{e.stopPropagation();verAtraso(+q.dataset.q)});
   box.querySelectorAll("[data-dia]").forEach(b=>b.onclick=()=>{$("calBusca").value=b.dataset.dia;$("calBusca").dispatchEvent(new Event("change"))});
 }
@@ -1770,11 +1833,11 @@ $("calBusca").onchange=()=>{
   const e=etapaDoDia(d),t=textoDoDia(d),pv=ehProv(d.slice(0,7)),txt=d.slice(8)+"/"+d.slice(5,7)+"/"+a+" ("+dia+")";
   r.className="consulta-res"+(e?"":" nao");r.hidden=false;
   const mD=d.slice(0,7),realD=e&&ultimaLeituraReal(mD,e),amD=e&&atrasoMesPassado(mD,e),ccD=e&&cicloPlanejado(mD,e-1);
-  const prD=e&&diaDaEtapa(somaMes(mD,1),e);const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(prD?" · 📅 mês que vem "+prD.slice(8)+"/"+prD.slice(5,7):"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
+  const prD=e&&diaDaEtapa(somaMes(mD,1),e),nfAnt=e&&diaDaEtapa(somaMes(mD,-1),e),nfObs=nfAnt&&naoFiz[nfAnt];const extra=e?(ccD!=null?" · ciclo "+ccD+"d":"")+(prD?" · 📅 mês que vem "+prD.slice(8)+"/"+prD.slice(5,7):"")+(nfObs?" · ⚫ mês passado não fez: "+(nfObs==="outro serviço"?"li em outro lugar":nfObs):"")+(realD?(realD===d?" · 🟢 lida no dia":" · lida "+realD.slice(8)+"/"+realD.slice(5,7)+(realD>d?" ("+diasEntre(realD,d)+" dia(s) depois)":"")):"")+(amD?" · 🔴 mês passado lida "+amD.lido.slice(8)+"/"+amD.lido.slice(5,7)+" com "+amD.dias+" dias":""):"";
   r.textContent=(e?(naoFiz[d]?"":"✅ ")+txt+" → Etapa "+p2(e)+(t?" · "+t.slice(3):"")+(pv?" (provisório)":"")+extra:(cal[d.slice(0,7)]?"❌ "+txt+" não tem leitura":"❔ "+txt+": ainda não tem calendário desse mês"));
-  if(e&&d<=hoje()&&!realD){r.insertAdjacentHTML("beforeend",naoFiz[d]?`<div class="nf-linha"><b class="bol-rosa"></b> Você não fez esta etapa (${esc(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d])}) <button type="button" id="nfDesfaz">↩ Desfazer</button></div>`:`<div class="nf-linha"><button type="button" id="nfMarca"><b class="bol-rosa"></b> Não fiz esta etapa (li em outro lugar)</button></div>`);
-    const mk=$("nfMarca"),dz=$("nfDesfaz");
-    if(mk)mk.onclick=()=>{naoFiz[d]="li em outro lugar";salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};
+  if(e&&d<=hoje()&&!realD){r.insertAdjacentHTML("beforeend",naoFiz[d]?`<div class="nf-linha"><b class="bol-rosa"></b> Você não fez esta etapa<br>📝 ${esc(naoFiz[d]==="outro serviço"?"li em outro lugar":naoFiz[d])} <button type="button" id="nfObs">✏️ Observação</button> <button type="button" id="nfDesfaz">↩ Desfazer</button></div>`:`<div class="nf-linha"><button type="button" id="nfMarca"><b class="bol-rosa"></b> Não fiz esta etapa (li em outro lugar)</button></div>`);
+    const mk=$("nfMarca"),dz=$("nfDesfaz"),ob=$("nfObs");if(ob)ob.onclick=()=>{const o=pedirObsNaoFiz(naoFiz[d]);if(o===null)return;naoFiz[d]=o;salvarNaoFiz();$("calBusca").dispatchEvent(new Event("change"))};
+    if(mk)mk.onclick=()=>{{const o=pedirObsNaoFiz("");if(o===null)return;naoFiz[d]=o};salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};
     if(dz)dz.onclick=()=>{delete naoFiz[d];salvarNaoFiz();render();$("calBusca").dispatchEvent(new Event("change"))};}
   calEditando=false;calVer=d.slice(0,7);desenharCal();
 };
@@ -2086,7 +2149,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="14.1";
+const VERSAO_APP="14.6";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
