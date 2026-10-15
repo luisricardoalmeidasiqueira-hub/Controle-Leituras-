@@ -217,6 +217,12 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .atr-tag{display:inline-block;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:999px;padding:0 7px;font-size:11px;font-weight:800;white-space:nowrap}.atr-tag.ant{background:#fff7ed;border-color:#fdba74;color:#9a3412}
 .nl-foto{flex:none;width:34px;height:34px;border:1px solid #fecaca;background:#fff;border-radius:9px;font-size:16px;padding:0;cursor:pointer;align-self:center}
 .nl-livro{border:1px solid #fecaca;background:#fff;border-radius:7px;height:24px;min-width:28px;padding:0 3px;margin-left:5px;font-size:13px;vertical-align:middle;cursor:pointer}
+.hr-et{margin-top:7px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;padding:7px 9px;font-size:13px}
+.hr-lin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:6px;align-items:end}.hr-lin label{overflow:hidden;font-size:11px;font-weight:800;color:#6b7280;display:flex;flex-direction:column;gap:2px;min-width:0}
+.hr-lin input{height:34px;border:1px solid #d1d5db;border-radius:8px;padding:0 6px;font:inherit;font-size:15px;font-weight:700;background:#fff;width:100%;box-sizing:border-box;min-width:0;max-width:100%;display:block;-webkit-appearance:none;appearance:none;text-align:left;color:#111827}
+.hr-lin input::-webkit-date-and-time-value{text-align:left}
+.hr-lin button{height:34px;border:0;border-radius:8px;background:#1f2937;color:#fff;font-weight:800;padding:0 9px;cursor:pointer;flex:none}#hrLimpa{background:#fee2e2}
+.hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
 .nf-rap.aberto{display:block;cursor:default;position:relative;border-style:solid}.nf-rap.aberto b{font-size:12.5px}
 .nf-ops{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.nf-ops button{border:0;border-radius:9px;padding:7px 6px;font-size:13px;font-weight:800;background:#16a34a;color:#fff;cursor:pointer;line-height:1.15}
@@ -513,6 +519,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="cidades" class="cidades" hidden></div>
 <div id="resseqAviso" hidden></div>
 <div id="nfRapido" hidden></div>
+<div id="horaEtapa" hidden></div>
 <div id="lista" hidden></div>
 <div id="desfLinha" class="desf-linha" hidden><button id="desfazer" class="desfazer" type="button"></button><button id="desfazerX" class="desf-x" type="button" aria-label="Dispensar">✕</button></div>
 <div class="tools">
@@ -524,7 +531,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.8</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.10</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -674,6 +681,14 @@ function marcarResseq(id){
 function resseqDoMes(m,n){return Object.entries(resseq).filter(([l,v])=>v.quando.slice(0,7)<m&&(!n||v.etapa===n))}
 const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
 let nfAberto="";
+const HORASKEY=KEY+"_horas";let horas={};try{horas=JSON.parse(localStorage.getItem(HORASKEY)||"{}")||{}}catch(e){}
+function salvarHoras(){try{localStorage.setItem(HORASKEY,JSON.stringify(horas))}catch(e){}}
+function minDe(h){const[a,b]=h.split(":").map(Number);return a*60+b}
+function duracao(v){if(!v||!v.ini||!v.fim)return 0;let d=minDe(v.fim)-minDe(v.ini);if(d<0)d+=1440;return d}
+function fmtDur(d){return Math.floor(d/60)+"h"+String(d%60).padStart(2,"0")}
+function leitEtapa(m,n){return registros.filter(r=>r.etapa===n&&r.data.startsWith(m)&&!r.releitura).reduce((t,r)=>t+r.qtd,0)}
+function porHora(q,d){return d?Math.round(q/(d/60)):0}
+function baseHoras(){let q=0,d=0,melhor=0,n=0;for(const[k,v]of Object.entries(horas)){const du=duracao(v),[m,e]=k.split("|"),l=leitEtapa(m,+e);if(!du||!l)continue;q+=l;d+=du;n++;melhor=Math.max(melhor,porHora(l,du))}return{media:porHora(q,d),melhor,n}}
 function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
 function salvarFerias(){try{localStorage.setItem(FERIASKEY,JSON.stringify(ferias))}catch(e){}}
@@ -1188,6 +1203,20 @@ function render(){atualizarNomes();
        if(a==="des"){if(!confirm("Desfazer o \"não fiz\" da Etapa "+p2(etapa)+"?"))return;delete naoFiz[dE]}
        else{const x=await pedirObsNaoFiz(naoFiz[dE]||"");if(x===null)return;naoFiz[dE]=x}
        salvarNaoFiz();render()});
+   }}
+  // ⏱️ hora que começou / terminou a etapa + leituras por hora
+  {const hb=$("horaEtapa"),k=m+"|"+etapa,v=horas[k]||{},q=leitEtapa(m,etapa),dE=diaDaEtapa(m,etapa);
+   const mostra=!filtroRel&&!filtroCidade&&(q>0||dE===hoje()||v.ini||v.fim);hb.hidden=!mostra;
+   if(mostra){const du=duracao(v),ph=porHora(q,du),b=baseHoras();
+     let base="";if(b.media){base=`📊 Sua base: <b>${b.media}</b> leituras/hora`+(b.n>1?` · média de ${b.n} etapas`:"")+(b.melhor>b.media?` · 🏆 melhor ${b.melhor}/h`:"");
+       if(ph&&b.n>1)base+=ph>b.media?` · <span style="color:#15803d">▲ acima da base</span>`:ph<b.media?` · <span style="color:#b45309">▼ abaixo da base</span>`:" · = na base"}
+     hb.innerHTML=`<div class="hr-et"><div class="hr-lin"><label>▶ Começou<input type="time" id="hrIni" value="${v.ini||""}"></label><label>⏹ Terminou<input type="time" id="hrFim" value="${v.fim||""}"></label>${!v.ini||!v.fim?`<button type="button" id="hrAgora">⏱️ Agora</button>`:`<button type="button" id="hrLimpa" aria-label="Limpar horas">🗑️</button>`}</div>`
+       +(du?`<div class="hr-res">⏳ ${fmtDur(du)} de etapa${ph?` · ⚡ <b>${ph}</b> leituras/hora`:" · lance os livros pra ver as leituras/hora"}</div>`:v.ini?`<div class="hr-res">⏳ Começou às ${v.ini} · toque em ⏱️ Agora quando terminar</div>`:"")
+       +(base?`<div class="hr-base">${base}</div>`:"")+`</div>`;
+     const grava=()=>{const ni=$("hrIni").value,nf=$("hrFim").value;if(ni||nf)horas[k]={ini:ni,fim:nf};else delete horas[k];salvarHoras();render()};
+     $("hrIni").onchange=grava;$("hrFim").onchange=grava;
+     const ag=$("hrAgora");if(ag)ag.onclick=()=>{const d=new Date(),h=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");if(!$("hrIni").value)$("hrIni").value=h;else $("hrFim").value=h;grava()};
+     const lp=$("hrLimpa");if(lp)lp.onclick=()=>{if(confirm("Apagar a hora de começo e fim da Etapa "+p2(etapa)+"?")){delete horas[k];salvarHoras();render()}};
    }}
   pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
@@ -2119,7 +2148,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios,equip};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios,equip,horas};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -2134,6 +2163,7 @@ function importarBackupCompleto(d){
   Object.entries(d.resseq||{}).forEach(([k,v])=>{if(!resseq[k])resseq[k]=v});salvarResseq();
   Object.entries(d.predios||{}).forEach(([k,v])=>{predios[k]=v});salvarPredios();
   if(d.equip){equip=d.equip;salvarEquip()}
+  Object.entries(d.horas||{}).forEach(([k,v])=>{if(!horas[k])horas[k]=v});salvarHoras();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -2227,7 +2257,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.8";
+const VERSAO_APP="15.10";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
