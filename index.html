@@ -226,6 +226,12 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .crono.on{border:1px solid #86efac;background:#f0fdf4;cursor:default}.crono.on span{flex:1;min-width:0}.crono small{display:block;font-size:11px;color:#6b7280;font-weight:600}.crono.on button{border:0;background:#fff;border-radius:8px;height:32px;width:34px;cursor:pointer;flex:none}
 .hr-tag{display:inline-block;margin-top:2px;font-size:12px;color:#374151;background:#eef2ff;border-radius:6px;padding:1px 6px;cursor:pointer}
 .item-btns .hr-on{background:#e0e7ff}
+.hl-modal{padding:10px 12px}.hl-tit{display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;margin-bottom:6px}.hl-tit small{color:#6b7280;font-weight:600;font-size:12.5px;flex:1}
+.hl-x{border:0;background:#f3f4f6;border-radius:999px;width:30px;height:30px;cursor:pointer;font-size:14px}
+.hl-p{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:6px;align-items:center;margin-top:6px}.hl-p span{font-size:15px;text-align:center}
+.hl-p input{height:36px;border:1px solid #d1d5db;border-radius:999px;padding:0 12px;font:inherit;font-size:16px;font-weight:700;width:100%;min-width:0;max-width:100%;box-sizing:border-box;display:block;-webkit-appearance:none;appearance:none;text-align:left;background:#fff;color:#111827}
+.hl-p .ag{height:36px;border:0;border-radius:999px;background:#1f2937;color:#fff;font-weight:800;font-size:13px;padding:0 12px;cursor:pointer}
+.hl-bts{display:flex;gap:6px;margin-top:9px}.hl-bts button{height:38px;border:0;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer}.hl-bts .o{flex:1;background:#16a34a;color:#fff}.hl-bts .d{width:46px;background:#fee2e2}
 .hl-lin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:10px}.hl-lin label{font-size:12px;font-weight:800;color:#6b7280;display:flex;flex-direction:column;gap:3px;min-width:0;overflow:hidden}
 .hl-lin input{height:42px;border:1px solid #d1d5db;border-radius:10px;padding:0 8px;font:inherit;font-size:17px;font-weight:700;width:100%;min-width:0;max-width:100%;box-sizing:border-box;display:block;-webkit-appearance:none;appearance:none;text-align:left;background:#fff;color:#111827}
 .hl-lin .ag{height:42px;border:0;border-radius:10px;background:#1f2937;color:#fff;font-weight:800;padding:0 12px;cursor:pointer}
@@ -545,7 +551,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.20</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.21</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -721,10 +727,10 @@ function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   const j=$("crAjusta");if(j)j.onclick=()=>{const v=prompt("Que horas começou o livro? (ex.: 08:00)",cronoLivro);if(v&&/^\d{1,2}:\d{2}$/.test(v.trim())){cronoLivro=v.trim().padStart(5,"0");salvarCrono();desenharCrono()}}}
 function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
-  f.innerHTML=`<div class="modal obs-modal"><h3>⏱️ Livro ${esc(r.livro)}</h3><div class="hint">${r.qtd} leituras · que horas começou e terminou?</div>
-  <div class="hl-lin"><label>▶ Começou<input type="time" class="hi" value="${r.ini||""}"></label><button type="button" class="ag" data-a="hi">Agora</button></div>
-  <div class="hl-lin"><label>⏹ Terminou<input type="time" class="hf" value="${r.fim||""}"></label><button type="button" class="ag" data-a="hf">Agora</button></div>
-  <div class="obs-bts">${r.ini||r.fim?'<button type="button" class="d">🗑️ Apagar horas</button>':'<button type="button" class="c">Cancelar</button>'}<button type="button" class="o">✔ Salvar</button></div>${r.ini||r.fim?'<button type="button" class="c hl-canc">Cancelar</button>':""}</div>`;
+  f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">⏱️ Livro ${esc(r.livro)} <small>· ${r.qtd} leituras</small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
+  <div class="hl-p"><span>▶</span><input type="time" class="hi" value="${r.ini||""}"><button type="button" class="ag" data-a="hi">Agora</button></div>
+  <div class="hl-p"><span>⏹</span><input type="time" class="hf" value="${r.fim||""}"><button type="button" class="ag" data-a="hf">Agora</button></div>
+  <div class="hl-bts">${r.ini||r.fim?'<button type="button" class="d" aria-label="Apagar horas">🗑️</button>':""}<button type="button" class="o">✔ Salvar</button></div></div>`;
   document.body.appendChild(f);
   f.querySelectorAll(".ag").forEach(b=>b.onclick=()=>{f.querySelector("."+b.dataset.a).value=agoraHM()});
   const fim=()=>{f.remove();localStorage.setItem(KEY,JSON.stringify(registros));render()};
@@ -2330,7 +2336,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.20";
+const VERSAO_APP="15.21";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
