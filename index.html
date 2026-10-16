@@ -240,6 +240,10 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
 .hr-tr{color:#4b5563;font-size:11.5px}
 .hr-dia{cursor:pointer;color:#1e3a8a}.hr-dia small{color:#6b7280;font-weight:600}
+.hr-run{background:#dcfce7;color:#166534;font-weight:800}.hr-run.p{background:#f3f4f6;color:#374151}
+.hl-lb{font-size:11.5px;font-weight:800;color:#6b7280;margin:6px 0 -3px 28px}
+.hl-cr{margin:4px 0 8px}.hl-crt{font-size:14px;font-weight:700;margin-bottom:6px}.hl-crb{display:flex;gap:6px}.hl-crb button,.hl-start{flex:1;height:40px;border:0;border-radius:999px;background:#1f2937;color:#fff;font-weight:800;font-size:14px;cursor:pointer}.hl-crb .v{background:#16a34a}.hl-crb .t{background:#dc2626}.hl-start{width:100%;background:#16a34a}
+.crono.on .cr-imp .cr-fim{background:#dc2626;color:#fff;border-color:#dc2626}
 .hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
 .pda-res{max-height:42vh;overflow:auto;margin-top:8px;font-size:14px;line-height:1.55}.pda-res small{color:#6b7280}.pda-tot{margin-top:8px;font-size:13.5px;font-weight:700;color:#374151}.obs-bts .m{background:#dbeafe;color:#1e3a8a}
 .ia-ic{position:relative;background:#f5f3ff!important;border-color:#c4b5fd!important}
@@ -560,7 +564,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.28</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.29</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -737,7 +741,18 @@ function hmDe(t){const d=new Date(t);return String(d.getHours()).padStart(2,"0")
 function cronoMin(c){return Math.round((c.segs.reduce((t,s)=>t+s[1]-s[0],0)+(c.run?Date.now()-c.run:0))/60000)}
 function cronoIni(c){return c.segs.length?c.segs[0][0]:c.run}
 function pausarTodos(){const t=Date.now();cronos.forEach(c=>{if(c.run){c.segs.push([c.run,t]);c.run=0}})}
-function cronoDoLivro(l){return cronos.find(c=>c.livro&&c.livro===l)||cronos.find(c=>c.run&&!c.livro)||cronos.find(c=>c.run)||(cronos.length===1?cronos[0]:null)}
+function cronoDoLivro(l){const cs=cronos.filter(c=>!c.recId);return cs.find(c=>c.livro&&c.livro===l)||cs.find(c=>c.run&&!c.livro)||cs.find(c=>c.run)||(cs.length===1?cs[0]:null)}
+function cronoDoRec(id){return cronos.find(c=>c.recId===String(id))}
+// ⏱️ cronômetro num livro que JÁ está lançado (ex.: veio da foto do PDA de manhã)
+function iniciarCronoRec(id){const r=registros.find(x=>String(x.id)===String(id));if(!r||cronoDoRec(id))return;pausarTodos();
+  cronos.push({id:Date.now(),livro:r.livro,recId:String(r.id),segs:[],run:Date.now()});salvarCrono();
+  const hk=r.data.slice(0,7)+"|"+r.etapa;if(!horas[hk]||!horas[hk].ini){horas[hk]={...(horas[hk]||{}),ini:agoraHM()};salvarHoras()}render()}
+function terminarCrono(x){const r=registros.find(y=>String(y.id)===x.recId);cronos=cronos.filter(y=>y!==x);salvarCrono();if(!r){render();return}
+  r.ini=hmDe(cronoIni(x));r.fim=x.run?agoraHM():hmDe(x.segs[x.segs.length-1][1]);delete r.min;delete r.pausa;delete r.trechos;
+  if(x.segs.length){r.min=Math.max(1,cronoMin(x));r.pausa=true;r.trechos=x.segs.concat(x.run?[[x.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}
+  if(x.imp&&x.imp.length){r.nl=(r.nl||0)+x.imp.length;r.impLista=(r.impLista||[]).concat(x.imp)}
+  const hk=r.data.slice(0,7)+"|"+r.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini&&hv.ini<r.ini?hv.ini:r.ini,fim:hv.fim&&hv.fim>r.fim?hv.fim:r.fim};salvarHoras();
+  localStorage.setItem(KEY,JSON.stringify(registros));render()}
 // 📷 foto da tela do PDA com 002: a IA lê UC, medidor e endereço e soma +1 impedimento no livro
 const IA_IMPED='Esta é uma foto da tela de leitura de um PDA de energia, de um cliente lançado com impedimento (código 002). Leia: UC (número depois de "UC:"), MD (medidor, depois de "MD:"), o endereço e o código da mensagem/ocorrência digitado (ex.: "002"). Responda só JSON: {"uc":"000307981404503","md":"B18670249","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","cod":"002"}. Use null no que não conseguir ler.';
 function impFoto(x){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
@@ -750,7 +765,9 @@ function impFoto(x){const inp=document.createElement("input");inp.type="file";in
 function livroDigitado(){const i=document.querySelector("#livroRows .r-livro");return i?i.value.trim():""}
 function agoraHM(){const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function baseLivros(){let q=0,d=0,n=0,melhor=0;registros.forEach(r=>{const du=duracao(r);if(!du||r.releitura||!r.qtd)return;q+=r.qtd;d+=du;n++;melhor=Math.max(melhor,porHora(r.qtd,du))});return{media:porHora(q,d),n,melhor}}
-function tagHoraLivro(r){if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHora(r.qtd,du),b=baseLivros();
+function tagHoraLivro(r){const cr=cronoDoRec(r.id);
+  if(cr)return `<br><span class="hr-tag hr-run${cr.run?"":" p"}" onclick="horaLivro('${r.id}')">${cr.run?"⏱️ contando":"⏸️ pausado"} · desde ${hmDe(cronoIni(cr))} · ${fmtDur(cronoMin(cr))}${(cr.imp||[]).length?" · 🚫 "+cr.imp.length:""}</span>`;
+  if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHora(r.qtd,du),b=baseLivros();
   let t=`⏱️ ${r.ini||"--:--"} → ${r.fim||"--:--"}`;if(du)t+=` · ${fmtDur(du)}${r.pausa?" ⏸":""}`;if(ph)t+=` · ⚡ <b>${ph}</b>/h`;
   if(ph&&b.n>1&&b.media)t+=ph>b.media?' <span style="color:#15803d">▲</span>':ph<b.media?' <span style="color:#b45309">▼</span>':"";
   const ant=somaMes(r.data.slice(0,7),-1),pa=ph&&registros.find(x=>x.livro===r.livro&&!x.releitura&&x.data.startsWith(ant)&&duracao(x));
@@ -759,7 +776,7 @@ function tagHoraLivro(r){if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHo
   return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
 function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   const rod=cronos.some(x=>x.run);
-  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?"contando · termina sozinho quando você lançar ✔":"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button><div class="cr-imp"><button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1 impedimento</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length} neste livro</button>`:""}</div></div>`).join("")
+  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?(x.recId?"contando · toque em ⏹ Terminei quando acabar":"contando · termina sozinho quando você lançar ✔"):"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button><div class="cr-imp">${x.recId?`<button type="button" class="cr-fim" data-cr="fim" data-id="${x.id}">⏹ Terminei</button>`:""}<button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1 impedimento</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length} neste livro</button>`:""}</div></div>`).join("")
     +`<button type="button" class="crono" id="crIni">⏱️ ${rod?"Começar outro livro (pausa o de cima)":cronos.length?"Começar outro livro":"Começar livro agora"}</button>`;
   $("crIni").onclick=()=>{
     let l=livroDigitado();
@@ -769,6 +786,7 @@ function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   c.querySelectorAll("[data-cr]").forEach(b=>b.onclick=()=>{const x=cronos.find(y=>String(y.id)===b.dataset.id);if(!x)return;const a=b.dataset.cr;
     if(a==="imp"){(x.imp=x.imp||[]).push({h:agoraHM()})}
     else if(a==="impf"){impFoto(x);return}
+    else if(a==="fim"){terminarCrono(x);return}
     else if(a==="impv"){const l=x.imp||[];if(confirm("🚫 Impedimentos neste livro:\n\n"+l.map(i=>"• "+i.h+(i.md?" · MD "+i.md:"")+(i.uc?" · UC "+i.uc:"")+(i.end?"\n   "+i.end:"")).join("\n")+"\n\nOK = tirar o último (lançou sem querer) · Cancelar = fechar")){l.pop()}else return}
     else if(a==="pausa"){pausarTodos()}
     else if(a==="volta"){pausarTodos();x.run=Date.now()}
@@ -781,9 +799,17 @@ setInterval(()=>{if(!document.hidden&&cronos.some(x=>x.run))desenharCrono()},300
 function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
   f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">⏱️ Livro ${esc(r.livro)} <small>· ${r.qtd} leituras</small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
-  ${r.pausa?`<div class="hint">⏸ Teve pausa: conta só <b>${fmtDur(r.min)}</b> trabalhados${r.trechos?" ("+r.trechos.join(" + ")+")":""}. Se mudar as horas, passa a contar pelo horário.</div>`:""}<div class="hl-p"><span>▶</span><input type="time" class="hi" value="${r.ini||""}"><button type="button" class="ag" data-a="hi">Agora</button></div>
-  <div class="hl-p"><span>⏹</span><input type="time" class="hf" value="${r.fim||""}"><button type="button" class="ag" data-a="hf">Agora</button></div>
+  ${r.pausa?`<div class="hint">⏸ Teve pausa: conta só <b>${fmtDur(r.min)}</b> trabalhados${r.trechos?" ("+r.trechos.join(" + ")+")":""}. Se mudar as horas, passa a contar pelo horário.</div>`:""}<div class="hl-lb">Começou</div><div class="hl-p"><span>▶</span><input type="time" class="hi" value="${r.ini||""}"><button type="button" class="ag" data-a="hi">Agora</button></div>
+  <div class="hl-lb">Terminou</div><div class="hl-p"><span>⏹</span><input type="time" class="hf" value="${r.fim||""}"><button type="button" class="ag" data-a="hf">Agora</button></div>
   <div class="hl-bts">${r.ini||r.fim?'<button type="button" class="d" aria-label="Apagar horas">🗑️</button>':""}<button type="button" class="o">✔ Salvar</button></div></div>`;
+  {const cr=cronoDoRec(r.id),box=document.createElement("div");box.className="hl-cr";
+   box.innerHTML=cr?`<div class="hl-crt">${cr.run?"⏱️ Contando":"⏸️ Pausado"} desde ${hmDe(cronoIni(cr))} · <b>${fmtDur(cronoMin(cr))}</b></div><div class="hl-crb">${cr.run?'<button type="button" data-k="pausa">❚❚ Pausar</button>':'<button type="button" data-k="volta" class="v">▶ Continuar</button>'}<button type="button" data-k="fim" class="t">⏹ Terminei</button></div>`
+     :`<button type="button" data-k="ini" class="hl-start">⏱️ Começar agora (com pausa se precisar)</button><div class="hint" style="margin-top:6px">ou coloque as horas na mão:</div>`;
+   const tit=f.querySelector(".hl-tit");tit.after(box);
+   if(cr)f.querySelectorAll(".hl-lb,.hl-p,.hl-bts,.hint").forEach(e=>e.hidden=true);
+   box.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;f.remove();
+     if(k==="ini")return iniciarCronoRec(r.id);const c=cronoDoRec(r.id);if(!c)return;
+     if(k==="pausa"){pausarTodos();salvarCrono();render()}else if(k==="volta"){pausarTodos();c.run=Date.now();salvarCrono();render()}else if(k==="fim")terminarCrono(c)})}
   document.body.appendChild(f);
   f.querySelectorAll(".ag").forEach(b=>b.onclick=()=>{f.querySelector("."+b.dataset.a).value=agoraHM()});
   const fim=()=>{f.remove();localStorage.setItem(KEY,JSON.stringify(registros));render()};
@@ -2404,7 +2430,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.28";
+const VERSAO_APP="15.29";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2696,6 +2722,11 @@ const _atualizarChip3=atualizarChip;
 atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTopoProx()};
 // ---------- Início: data de hoje e etapa do calendário ----------
 $("data").value=hoje();
+try{const h=hoje(),ab=registros.filter(r=>r.data===h&&r.ini&&!r.fim&&!cronoDoRec(r.id)).sort((a,b)=>a.ini.localeCompare(b.ini));
+  if(ab.length){const ts=hm=>{const[a,b]=hm.split(":").map(Number),d=new Date();d.setHours(a,b,0,0);return d.getTime()};
+    pausarTodos();
+    ab.forEach((r,i)=>{const ini=ts(r.ini),prox=ab[i+1];cronos.push(prox?{id:Date.now()+i,livro:r.livro,recId:String(r.id),segs:[[ini,ts(prox.ini)]],run:0}:{id:Date.now()+i,livro:r.livro,recId:String(r.id),segs:[],run:ini});delete r.ini});
+    salvarCrono();localStorage.setItem(KEY,JSON.stringify(registros))}}catch(e){}
 iniciarLinhas();
 completarProvisorio();
 // Ao abrir: usa o prontuário que já está escrito pra completar os livros antigos daquela cidade
