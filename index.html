@@ -223,7 +223,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hr-lin input::-webkit-date-and-time-value{text-align:left}
 .hr-lin button{height:34px;border:0;border-radius:8px;background:#1f2937;color:#fff;font-weight:800;padding:0 9px;cursor:pointer;flex:none}#hrLimpa{background:#fee2e2}
 .crono{display:flex;align-items:center;gap:6px;width:100%;margin-top:6px;border:1px dashed #9ca3af;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left;box-sizing:border-box}
-.crono.pausa{border-color:#d1d5db;background:#f3f4f6}
+.crono.on.pausa{border-color:#d1d5db;background:#f3f4f6}.crono.on .cr-pp{width:auto;padding:0 10px;font-weight:800;font-size:12.5px;border-radius:999px;background:#1f2937;color:#fff}.crono.on .cr-pp.v{background:#16a34a}
 .crono.on{border:1px solid #86efac;background:#f0fdf4;cursor:default}.crono.on span{flex:1;min-width:0}.crono small{display:block;font-size:11px;color:#6b7280;font-weight:600}.crono.on button{border:0;background:#fff;border-radius:8px;height:32px;width:34px;cursor:pointer;flex:none}
 .hr-tag{display:inline-block;margin-top:2px;font-size:12px;color:#374151;background:#eef2ff;border-radius:6px;padding:1px 6px;cursor:pointer}
 .item-btns .hr-on{background:#e0e7ff}
@@ -237,9 +237,16 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hl-lin input{height:42px;border:1px solid #d1d5db;border-radius:10px;padding:0 8px;font:inherit;font-size:17px;font-weight:700;width:100%;min-width:0;max-width:100%;box-sizing:border-box;display:block;-webkit-appearance:none;appearance:none;text-align:left;background:#fff;color:#111827}
 .hl-lin .ag{height:42px;border:0;border-radius:10px;background:#1f2937;color:#fff;font-weight:800;padding:0 12px;cursor:pointer}
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
+.hr-tr{color:#4b5563;font-size:11.5px}
+.hr-dia{cursor:pointer;color:#1e3a8a}.hr-dia small{color:#6b7280;font-weight:600}
 .hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
 .pda-res{max-height:42vh;overflow:auto;margin-top:8px;font-size:14px;line-height:1.55}.pda-res small{color:#6b7280}.pda-tot{margin-top:8px;font-size:13.5px;font-weight:700;color:#374151}.obs-bts .m{background:#dbeafe;color:#1e3a8a}
 .ia-ic{position:relative;background:#f5f3ff!important;border-color:#c4b5fd!important}
+.flag-x{position:relative;display:inline-block}.flag-x::after{content:"";position:absolute;left:-2px;right:-2px;top:50%;height:2px;background:#b91c1c;transform:rotate(-40deg);border-radius:2px}
+.imp-cam{border:1px solid #93c5fd;background:#fff;border-radius:999px;font-size:13px;padding:1px 7px;cursor:pointer;margin-left:3px}
+.imp-aviso{margin-top:7px;border:1px solid #93c5fd;background:#eff6ff;color:#1e3a8a;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:700}.imp-aviso small{display:block;font-weight:600;color:#475569;font-size:11.5px}
+.seq-ops{display:flex;flex-direction:column;gap:7px;margin-top:4px}.seq-ops button{border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:14px;padding:10px;cursor:pointer;text-align:left}.seq-ops button:nth-child(2){background:#2563eb}.seq-ops .n{background:#e5e7eb;color:#374151}.seq-ops small{display:block;font-weight:600;font-size:11.5px;opacity:.85}
+.imp-pred{border:1px solid #93c5fd;background:#eff6ff;color:#1e3a8a;border-radius:999px;font-size:12px;font-weight:800;padding:2px 9px;cursor:pointer;margin-left:2px}.imp-pred.vazio{border-style:dashed;background:#fff;color:#6b7280}
 .ia-btn{display:block;margin:8px auto 0;border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:#374151;cursor:pointer}
 .hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
@@ -527,7 +534,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <datalist id="nomesDivididos"></datalist>
 <div class="save-row">
 <div class="hint">Azul = quantidade da última vez (dá pra corrigir).</div>
-<span id="bobDig" class="bob-dig" hidden></span><button type="button" id="nlFotoBtn" class="nl-foto" title="Ler não lidos da foto do Resumo por Mensagem do PDA" aria-label="Ler não lidos da foto">📊</button><input id="nlArq" type="file" accept="image/*" hidden><label class="imp-box" title="Não lidos (opcional)"><span>🚫 Não lidos<em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<span id="bobDig" class="bob-dig" hidden></span><button type="button" id="nlFotoBtn" class="nl-foto" title="Ler não lidos da foto do Resumo por Mensagem do PDA" aria-label="Ler não lidos da foto"><span class="flag-x">🚩</span></button><input id="nlArq" type="file" accept="image/*" hidden><label class="imp-box" title="Não lidos (opcional)"><span>🚫 Não lidos<em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
 <button id="saveAll" class="save-all" type="button" title="Salvar leitura" aria-label="Salvar leitura"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
 </div>
 </section>
@@ -552,7 +559,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.22</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.27</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -569,7 +576,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
-<div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem">📊</button></div></div>
+<div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
@@ -699,6 +706,17 @@ function marcarResseq(id){
   if(!confirm("🗂️ Sequenciar o livro "+l+" no mês que vem?\n\nNa Etapa "+p2(r.etapa)+" o app avisa."))return;
   resseq[l]={etapa:r.etapa,quando:hoje(),nota:""};salvarResseq();render();
 }
+// 🗂️ foi sequenciado? fui eu / outra pessoa / ainda não
+let resseqHist={};try{resseqHist=JSON.parse(localStorage.getItem(KEY+"_resseq_hist")||"{}")||{}}catch(e){}
+function salvarResseqHist(){try{localStorage.setItem(KEY+"_resseq_hist",JSON.stringify(resseqHist))}catch(e){}}
+function perguntaSeq(l){
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">🗂️ Livro ${esc(l)}<small>· foi sequenciado?</small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
+  <div class="seq-ops"><button type="button" data-q="eu">✔ Sim, fui eu que fiz</button><button type="button" data-q="outro">👥 Sim, mas não fui eu<small>outra pessoa fez (ex.: quem fez o prédio)</small></button><button type="button" data-q="nao" class="n">↩ Ainda não<small>o aviso continua nos próximos meses</small></button></div></div>`;
+  document.body.appendChild(f);f.querySelector(".c").onclick=()=>f.remove();
+  f.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const q=b.dataset.q;if(q==="nao"){f.remove();return}
+    let quem="eu";if(q==="outro"){const n=prompt("Quem fez? (opcional)","");if(n===null)return;quem=n.trim()||"outra pessoa"}
+    resseqHist[l]={quem,quando:hoje(),pedido:(resseq[l]||{}).quando||""};salvarResseqHist();delete resseq[l];salvarResseq();f.remove();render()})}
 function resseqDoMes(m,n){return Object.entries(resseq).filter(([l,v])=>v.quando.slice(0,7)<m&&(!n||v.etapa===n))}
 const NAOFIZKEY=KEY+"_naofiz";let naoFiz={};try{naoFiz=JSON.parse(localStorage.getItem(NAOFIZKEY)||"{}")||{}}catch(e){}
 let nfAberto="";
@@ -727,10 +745,11 @@ function tagHoraLivro(r){if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHo
   if(ph&&b.n>1&&b.media)t+=ph>b.media?' <span style="color:#15803d">▲</span>':ph<b.media?' <span style="color:#b45309">▼</span>':"";
   const ant=somaMes(r.data.slice(0,7),-1),pa=ph&&registros.find(x=>x.livro===r.livro&&!x.releitura&&x.data.startsWith(ant)&&duracao(x));
   let cmp="";if(pa){const pp=porHora(pa.qtd,duracao(pa));cmp=`<br><span class="hr-cmp">📅 ${nomeMes(ant).slice(0,1).toUpperCase()+nomeMes(ant).slice(1,3)}: ${pp}/h em ${fmtDur(duracao(pa))} · ${ph>pp?'<b style="color:#15803d">▲ mais rápido</b>':ph<pp?'<b style="color:#b45309">▼ mais devagar</b>':"= igual"}</span>`}
+  if(r.pausa&&r.trechos&&r.trechos.length)t+=`<br><small class="hr-tr">⏸ ${r.trechos.join(" · ")}</small>`;
   return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
 function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   const rod=cronos.some(x=>x.run);
-  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?"contando · termina sozinho quando você lançar ✔":"pausado · toque ▶ pra voltar"}</small></span>${x.run?`<button type="button" data-cr="pausa" data-id="${x.id}" aria-label="Pausar">⏸</button>`:`<button type="button" data-cr="volta" data-id="${x.id}" aria-label="Voltar">▶</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button></div>`).join("")
+  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?"contando · termina sozinho quando você lançar ✔":"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button></div>`).join("")
     +`<button type="button" class="crono" id="crIni">⏱️ ${rod?"Começar outro livro (pausa o de cima)":cronos.length?"Começar outro livro":"Começar livro agora"}</button>`;
   $("crIni").onclick=()=>{
     let l=livroDigitado();
@@ -749,15 +768,21 @@ setInterval(()=>{if(!document.hidden&&cronos.some(x=>x.run))desenharCrono()},300
 function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
   f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">⏱️ Livro ${esc(r.livro)} <small>· ${r.qtd} leituras</small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
-  ${r.pausa?`<div class="hint">⏸ Teve pausa: conta só <b>${fmtDur(r.min)}</b> trabalhados. Se mudar as horas, passa a contar pelo horário.</div>`:""}<div class="hl-p"><span>▶</span><input type="time" class="hi" value="${r.ini||""}"><button type="button" class="ag" data-a="hi">Agora</button></div>
+  ${r.pausa?`<div class="hint">⏸ Teve pausa: conta só <b>${fmtDur(r.min)}</b> trabalhados${r.trechos?" ("+r.trechos.join(" + ")+")":""}. Se mudar as horas, passa a contar pelo horário.</div>`:""}<div class="hl-p"><span>▶</span><input type="time" class="hi" value="${r.ini||""}"><button type="button" class="ag" data-a="hi">Agora</button></div>
   <div class="hl-p"><span>⏹</span><input type="time" class="hf" value="${r.fim||""}"><button type="button" class="ag" data-a="hf">Agora</button></div>
   <div class="hl-bts">${r.ini||r.fim?'<button type="button" class="d" aria-label="Apagar horas">🗑️</button>':""}<button type="button" class="o">✔ Salvar</button></div></div>`;
   document.body.appendChild(f);
   f.querySelectorAll(".ag").forEach(b=>b.onclick=()=>{f.querySelector("."+b.dataset.a).value=agoraHM()});
   const fim=()=>{f.remove();localStorage.setItem(KEY,JSON.stringify(registros));render()};
   f.querySelector(".c").onclick=()=>f.remove();
-  const d=f.querySelector(".d");if(d)d.onclick=()=>{delete r.ini;delete r.fim;delete r.min;delete r.pausa;fim()};
-  f.querySelector(".o").onclick=()=>{const a=f.querySelector(".hi").value,b=f.querySelector(".hf").value;if(a!==(r.ini||"")||b!==(r.fim||"")){delete r.min;delete r.pausa}if(a)r.ini=a;else delete r.ini;if(b)r.fim=b;else delete r.fim;fim()}}
+  const d=f.querySelector(".d");if(d)d.onclick=()=>{delete r.ini;delete r.fim;delete r.min;delete r.pausa;delete r.trechos;fim()};
+  f.querySelector(".o").onclick=()=>{const a=f.querySelector(".hi").value,b=f.querySelector(".hf").value;if(a!==(r.ini||"")||b!==(r.fim||"")){delete r.min;delete r.pausa;delete r.trechos}if(a)r.ini=a;else delete r.ini;if(b)r.fim=b;else delete r.fim;fim()}}
+// 📅 quanto trabalhou no dia: soma o tempo dos livros com ⏱️ (pausa não conta)
+function diaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura),t=rs.filter(r=>duracao(r));if(!t.length)return "";
+  const min=t.reduce((a,r)=>a+duracao(r),0),q=t.reduce((a,r)=>a+r.qtd,0),sem=rs.some(r=>!duracao(r));
+  return `<div class="hr-res hr-dia" onclick="verDiaTrab()">📅 ${d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7)}: <b>${fmtDur(min)}</b> trabalhadas · ⚡ ${porHora(q,min)}/h${sem?' <small>· tem livro sem horário</small>':""}</div>`}
+function verDiaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura).sort((a,b)=>(a.ini||"99").localeCompare(b.ini||"99"));const t=rs.filter(r=>duracao(r)),min=t.reduce((a,r)=>a+duracao(r),0);
+  alert("📅 "+(d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7))+" · "+fmtDur(min)+" trabalhadas\n\n"+rs.map(r=>"• "+r.livro+" — "+r.qtd+" leituras · "+(duracao(r)?(r.trechos&&r.pausa?r.trechos.join(" + "):r.ini+"–"+r.fim)+" ("+fmtDur(duracao(r))+")":"sem horário")).join("\n")+"\n\nSó entra o tempo dos livros com ⏱️ (pausa não conta). Livro sem horário: toque no ⏱️ dele pra colocar.")}
 function baseHoras(){let q=0,d=0,melhor=0,n=0;for(const[k,v]of Object.entries(horas)){const du=duracao(v),[m,e]=k.split("|"),l=leitEtapa(m,+e);if(!du||!l)continue;q+=l;d+=du;n++;melhor=Math.max(melhor,porHora(l,du))}return{media:porHora(q,d),melhor,n}}
 function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
@@ -1053,7 +1078,7 @@ $("saveAll").onclick=()=>{
     // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
     const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===dataDoLivro(x,et,data)&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
     if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
-    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=agoraHM();if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
+    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
   });
   localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
@@ -1252,20 +1277,23 @@ function render(){atualizarNomes();
   const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
   $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">🚫 ${totImp} não lidos${(q=>pctNL(totImp,q)?" · "+pctNL(totImp,q):"")(rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0))}</span>`:"");
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
-  {const q=rs.filter(r=>!r.releitura&&!predios[r.livro]).reduce((s,r)=>s+r.qtd,0),qp=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+r.qtd,0),tb=$("totBob");
-   tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · prédio não entra na conta":"")+". Toque pra mudar."}
+  {const q0=rs.filter(r=>!r.releitura&&!predios[r.livro]).reduce((s,r)=>s+r.qtd,0),qp=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+r.qtd,0),qi=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+qImp(r.livro,r.qtd),0),q=q0+qi,tb=$("totBob");
+   tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · do prédio só entram as que imprimem":"")+". Toque pra mudar."}
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b>${r.releitura?"":`<button type="button" class="nl-livro" onclick="nlDoLivro('${r.id}')" title="Não lidos deste livro pela foto do Resumo por Mensagem">📊</button>`} · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}${r.releitura?"":tagHoraLivro(r)}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="horaLivro('${r.id}')" aria-label="Hora do livro" title="Que horas começou e terminou este livro"${r.ini||r.fim?' class="hr-on"':""}>⏱️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b>${esc(r.livro)}</b>${r.releitura?"":`<button type="button" class="nl-livro" onclick="nlDoLivro('${r.id}')" title="Não lidos deste livro pela foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button>`} · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span> <button type="button" class="imp-pred${imprimir[r.livro]?"":" vazio"}" onclick="impPredio('${r.id}')">🖨️ ${imprimir[r.livro]?qImp(r.livro,r.qtd)+" pra imprimir · "+txtBob(qImp(r.livro,r.qtd)):"quantas imprimem?"}</button><button type="button" class="imp-cam" onclick="impFotoDireto('${r.id}')" aria-label="Foto da Fila de Impressão" title="Foto da Fila de Impressão">📷</button>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${resseqHist[r.livro]&&resseqHist[r.livro].quando.slice(0,7)===r.data.slice(0,7)?`<br><span class="resseq-tag">🗂️ sequenciado ${resseqHist[r.livro].quem==="eu"?"por mim":"por "+esc(resseqHist[r.livro].quem)}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}${r.releitura?"":tagHoraLivro(r)}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="horaLivro('${r.id}')" aria-label="Hora do livro" title="Que horas começou e terminou este livro"${r.ini||r.fim?' class="hr-on"':""}>⏱️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
     $("lista").innerHTML=cidadesDaLista.map(k=>{const g=rs.filter(r=>normLoc(r.localidade)===k);return `<div class="grupo-cid">📍 ${esc(nomeCidade(k,m))} <span>${g.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras · ${g.length} livro(s)</span></div>`+g.map(itemHtml).join("")}).join("");
   }else $("lista").innerHTML=rs.length?rs.map(itemHtml).join(""):(imps.length?"":"<div style='font-size:13px;color:#6b7280;padding:8px 0'>Nenhum registro desta etapa neste mês.</div>");
   if(imps.length)$("lista").innerHTML+=imps.map(x=>`<div class="imp-item"><span>🚫 ${x.qtd} não lido(s) · ${filtroCidade?"Etapa "+p2(x.etapa)+" · ":""}${fmt(x.data)} · ${esc(x.localidade||"")}${x.ajuda?" 🤝":""}</span><span style="flex:none"><button type="button" onclick="editImp('${x.id}')" aria-label="Corrigir">✏️</button><button type="button" onclick="delImp('${x.id}')" aria-label="Apagar">🗑️</button></span></div>`).join("");
-  {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);av.hidden=!lst.length;
-   av.innerHTML=lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
-   av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(confirm("🗂️ O livro "+l+" foi sequenciado?\n\nOK = Sim (tira o aviso)\nCancelar = Não (o aviso continua nos próximos meses)")){delete resseq[l];salvarResseq();render()}})}
+  {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);
+   // 🖨️ prédio que imprimiu no mês passado e ainda não foi lançado neste mês
+   const pi=(filtroRel||filtroCidade)?[]:Object.entries(imprimir).filter(([l,v])=>predios[l]&&v.quando<m&&registros.some(r=>r.livro===l&&r.etapa===etapa&&r.data.startsWith(v.quando))&&!registros.some(r=>r.livro===l&&r.data.startsWith(m)));
+   av.hidden=!lst.length&&!pi.length;
+   av.innerHTML=pi.map(([l,v])=>`<div class="imp-aviso">🖨️ Prédio · livro <b>${esc(l)}</b>: em ${nomeMes(v.quando)} saíram <b>${v.q}</b> pra imprimir → ${txtBob(v.q)||"🧾 0"}<small>quando lançar, a conta já usa esse número · 📷 no livro pra atualizar</small></div>`).join("")+lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
+   av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>perguntaSeq(b.dataset.l))}
   // ⚫ atalho: etapa do dia (ou que já passou) sem nenhum livro → marcar "não fiz" sem ir no calendário
   {const nb=$("nfRapido"),dE=diaDaEtapa(m,etapa),h0=hoje(),sem=!registros.some(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura);
    // lançou livro nessa etapa? então foi feita: tira o "não fiz" sozinho
@@ -1293,7 +1321,7 @@ function render(){atualizarNomes();
        if(ph&&b.n>1)base+=ph>b.media?` · <span style="color:#15803d">▲ acima da base</span>`:ph<b.media?` · <span style="color:#b45309">▼ abaixo da base</span>`:" · = na base"}
      hb.innerHTML=`<div class="hr-et"><div class="hr-lin"><label>▶ Começou<input type="time" id="hrIni" value="${v.ini||""}"></label><label>⏹ Terminou<input type="time" id="hrFim" value="${v.fim||""}"></label>${!v.ini||!v.fim?`<button type="button" id="hrAgora">⏱️ Agora</button>`:`<button type="button" id="hrLimpa" aria-label="Limpar horas">🗑️</button>`}</div>`
        +(du?`<div class="hr-res">⏳ ${fmtDur(du)} de etapa${ph?` · ⚡ <b>${ph}</b> leituras/hora`:" · lance os livros pra ver as leituras/hora"}</div>`:v.ini?`<div class="hr-res">⏳ Começou às ${v.ini} · toque em ⏱️ Agora quando terminar</div>`:"")
-       +(base?`<div class="hr-base">${base}</div>`:"")+(bl=>bl.media?`<div class="hr-base hr-rk" onclick="abrirRankHora(mes())">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+` · <u>⚡ ranking</u></div>`:"")(baseLivros())+`</div>`;
+       +(base?`<div class="hr-base">${base}</div>`:"")+diaTrab()+(bl=>bl.media?`<div class="hr-base hr-rk" onclick="abrirRankHora(mes())">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+` · <u>⚡ ranking</u></div>`:"")(baseLivros())+`</div>`;
      const grava=()=>{const ni=$("hrIni").value,nf=$("hrFim").value;if(ni||nf)horas[k]={ini:ni,fim:nf};else delete horas[k];salvarHoras();render()};
      $("hrIni").onchange=grava;$("hrFim").onchange=grava;
      const ag=$("hrAgora");if(ag)ag.onclick=()=>{const d=new Date(),h=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");if(!$("hrIni").value)$("hrIni").value=h;else $("hrFim").value=h;grava()};
@@ -1611,7 +1639,7 @@ function confRepetida(r,x){
 }
 // % de não lidos sobre as leituras (ex.: 4 de 430 = 0,9%)
 function pctNL(nl,q){return q>0&&nl>0?(nl/q*100).toLocaleString("pt-BR",{maximumFractionDigits:1,minimumFractionDigits:1})+"%":""}
-function atualizarPctNL(){const e=$("impPct");if(!e)return;{const qq=[...$("livroRows").children].filter(r=>!predios[(r.querySelector(".r-livro")||{}).value]).reduce((t,r)=>t+(+(r.querySelector(".r-qtd")||{}).value||0),0),bb=$("bobDig");if(bb){bb.textContent=qq?txtBob(qq):"";bb.hidden=!qq}}const nl=+($("impQtd").value||0),q=[...document.querySelectorAll(".r-qtd")].reduce((t,i)=>t+(+i.value||0),0),p=pctNL(nl,q);e.textContent=p?" "+p:""}
+function atualizarPctNL(){const e=$("impPct");if(!e)return;{const qq=[...$("livroRows").children].reduce((t,r)=>{const l=(r.querySelector(".r-livro")||{}).value,v=+(r.querySelector(".r-qtd")||{}).value||0;return t+(predios[l]?qImp(l,v):v)},0),bb=$("bobDig");if(bb){bb.textContent=qq?txtBob(qq):"";bb.hidden=!qq}}const nl=+($("impQtd").value||0),q=[...document.querySelectorAll(".r-qtd")].reduce((t,i)=>t+(+i.value||0),0),p=pctNL(nl,q);e.textContent=p?" "+p:""}
 document.addEventListener("input",ev=>{if(ev.target&&(ev.target.id==="impQtd"||ev.target.classList&&ev.target.classList.contains("r-qtd")))atualizarPctNL()});
 // 🧾 Bobinas: ~90 leituras por bobina (dá pra mudar tocando no 🧾)
 let porBobina=90;try{porBobina=+localStorage.getItem(KEY+"_porbobina")||90}catch(e){}
@@ -1651,6 +1679,10 @@ $("eqComp").onclick=()=>{const d=equip.dono||[],tem=k=>(d.find(x=>x.k===k)||{}).
 document.querySelectorAll("#eqEscolha [data-p]").forEach(b=>b.onclick=()=>{$("eqEscolha").hidden=true;compartilharEquip(b.dataset.p)});
 async function compartilharEquip(qual){const t=textoEquip(qual);try{if(navigator.share){await navigator.share({title:"Meus equipamentos",text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
   try{await navigator.clipboard.writeText(t);alert("📋 Copiado! Agora é só colar no WhatsApp ou e-mail.")}catch(e){prompt("Copie:",t)}};
+const IMPRKEY=KEY+"_imprimir";let imprimir={};try{imprimir=JSON.parse(localStorage.getItem(IMPRKEY)||"{}")||{}}catch(e){}
+function salvarImprimir(){try{localStorage.setItem(IMPRKEY,JSON.stringify(imprimir))}catch(e){}}
+// prédio: só as contas que saem pra imprimir (Fila de Impressão) entram nas bobinas
+function qImp(livro,qtd){const v=imprimir[livro];return v?Math.min(+v.q||0,qtd||Infinity):0}
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
 // ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
@@ -1829,10 +1861,10 @@ $("nlArq").onchange=async e=>{
     await w.terminate();URL.revokeObjectURL(img.src);}
     if(!itens.length)return alert("Não consegui ler o Resumo por Mensagem nesta foto.\nTente sem reflexo (faça sombra na tela).");
     const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)||x.cod==="002").reduce((t,x)=>t+x.q,0);
-    const v=prompt((nlAlvo.startsWith("rec:")?"📊 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"📊 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
+    const v=prompt((nlAlvo.startsWith("rec:")?"🚩 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"🚩 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
     if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{$(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
-  finally{b.disabled=false;b.textContent="📊"}
+  finally{b.disabled=false;b.innerHTML='<span class="flag-x">🚩</span>'}
 };
 function lerRoteiroPDA(t){
   const out=[];
@@ -2062,8 +2094,8 @@ $("calProx").onclick=()=>{$("cartaoAtraso").hidden=true;calEditando=false;calVer
 $("calFechar").onclick=()=>$("calFundo").hidden=true;
 $("totBob").onclick=e=>{e.stopPropagation();
   // mostra o que está oculto: as bobinas do prédio (pra ver na base)
-  const m=mes(),rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura),q=rs.filter(r=>!predios[r.livro]).reduce((t,r)=>t+r.qtd,0),qp=rs.filter(r=>predios[r.livro]),qpt=qp.reduce((t,r)=>t+r.qtd,0);
-  const msg="🧾 Rua: "+q.toLocaleString("pt-BR")+" leituras → "+(bobinas(q)||0)+" bobina(s)"+(qp.length?"\n\n🏢 Prédio: "+qpt.toLocaleString("pt-BR")+" leituras → "+bobinas(qpt)+" bobina(s)\n"+qp.map(r=>"   • livro "+r.livro+" — "+r.qtd).join("\n"):"")+"\n\n("+porBobina+" leituras por bobina)\n\nOK = mudar as leituras por bobina · Cancelar = fechar";
+  const m=mes(),rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura),q=rs.filter(r=>!predios[r.livro]).reduce((t,r)=>t+r.qtd,0),qp=rs.filter(r=>predios[r.livro]),qpt=qp.reduce((t,r)=>t+r.qtd,0),qpi=qp.reduce((t,r)=>t+qImp(r.livro,r.qtd),0);
+  const msg="🧾 Rua: "+q.toLocaleString("pt-BR")+" leituras → "+(bobinas(q)||0)+" bobina(s)"+(qp.length?"\n\n🏢 Prédio: "+qpt.toLocaleString("pt-BR")+" leituras · 🖨️ "+qpi+" pra imprimir → "+bobinas(qpi)+" bobina(s)\n"+qp.map(r=>"   • livro "+r.livro+" — "+r.qtd+(imprimir[r.livro]?" · 🖨️ "+qImp(r.livro,r.qtd):" · 🖨️ ainda não informado")).join("\n"):"")+(qp.length?"\n\n🧾 Total: "+(q+qpi).toLocaleString("pt-BR")+" → "+(bobinas(q+qpi)||0)+" bobina(s)":"")+"\n\n("+porBobina+" leituras por bobina)\n\nOK = mudar as leituras por bobina · Cancelar = fechar";
   if(!confirm(msg))return;
   const v=prompt("🧾 Quantas leituras cabem numa bobina, mais ou menos?",porBobina);if(v===null)return;const n=parseInt(v,10);if(n>0){porBobina=n;try{localStorage.setItem(KEY+"_porbobina",n)}catch(e){}render()}};
 $("calMes").onclick=alternarMesTodo;
@@ -2248,7 +2280,7 @@ $("arquivoImportar").onchange=e=>{
 // 💾 Backup completo: livros, não lidos, férias, calendário, prontuários e a foto do calendário
 $("backup").onclick=()=>{
   let calSalvo={},foto=null;try{calSalvo=JSON.parse(localStorage.getItem(CALKEY)||"{}");foto=localStorage.getItem(FOTOKEY)}catch(e){}
-  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios,equip,horas};
+  const tudo={tipo:"backup-completo-controle-leituras",versao:VERSAO_APP,feitoEm:hoje(),registros,impedimentos,ferias,calendario:calSalvo,calApagados,provisorios:[...prov],editados:[...editados],prontuarios:prontPorCidade,fotoCalendario:foto,rotas,naoFiz,resseq,predios,equip,horas,imprimir,resseqHist};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(tudo)],{type:"application/json;charset=utf-8"}));
   a.download="backup-controle-leituras-"+hoje()+".json";a.click();
 };
@@ -2264,6 +2296,8 @@ function importarBackupCompleto(d){
   Object.entries(d.predios||{}).forEach(([k,v])=>{predios[k]=v});salvarPredios();
   if(d.equip){equip=d.equip;salvarEquip()}
   Object.entries(d.horas||{}).forEach(([k,v])=>{if(!horas[k])horas[k]=v});salvarHoras();
+  Object.entries(d.imprimir||{}).forEach(([k,v])=>{if(!imprimir[k])imprimir[k]=v});salvarImprimir();
+  Object.entries(d.resseqHist||{}).forEach(([k,v])=>{if(!resseqHist[k])resseqHist[k]=v});salvarResseqHist();
   try{if(d.fotoCalendario&&!localStorage.getItem(FOTOKEY))localStorage.setItem(FOTOKEY,d.fotoCalendario)}catch(e){}
   localStorage.setItem(KEY,JSON.stringify(registros));salvarImp();salvarFerias();salvarCal();salvarProv();
   try{localStorage.setItem(PRONTKEY,JSON.stringify(prontPorCidade))}catch(e){}
@@ -2357,7 +2391,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.22";
+const VERSAO_APP="15.27";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2527,6 +2561,40 @@ let iaAvisou=false;function iaFalhou(err){iaErro=String(err&&err.message||err);d
 const IA_CAIXA='Esta é uma foto da tela "Caixa de Entrada" de um PDA de leitura de energia. Cada livro tem uma linha como "B, 0200, 11, 001282" (o 3º número é a ETAPA, o último é o LIVRO com 6 dígitos) e à direita "0/232" (o número depois da barra é a QUANTIDADE de leituras). Embaixo vem o endereço, depois "Limite: dd/mm/aaaa" e a distância em Km. Leia TODOS os livros que aparecem inteiros na foto, na ordem. Responda só JSON: {"livros":[{"etapa":11,"livro":"001282","qtd":232,"end":"R DONA MARIA JOAQUINA RODRIGUES, 100, JD PAULISTA, TATUI, SP","lim":"16/10/2026","km":"5,18"}]}. Se não tiver livro, {"livros":[]}.';
 const IA_ROTEIRO='Esta é uma foto da aba "Roteiro" de um PDA de leitura de energia. Cada linha é como "( 41 - - ) R DONA MARIA JOAQUINA RODRIG.." . Leia todas as linhas na ordem, de cima pra baixo, e devolva só o nome da rua (com o tipo: R, AV, TV, PC, AL, EST, ROD...), em MAIÚSCULAS, exatamente como está escrito, SEM o número entre parênteses e sem os ".." do final. Ignore linhas cortadas pela metade na borda da tela. Pode repetir rua se ela aparece mais de uma vez. Responda só JSON: {"ruas":["R DONA MARIA JOAQUINA RODRIG","R LIONS CLUB DE TATUI"]}.';
 const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome (ex.: "002 - IMPEDIMENTO", "LEITURA NORMAL") e uma Quantidade. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO","q":3}]}. Se não achar, {"itens":[]}.';
+const IA_FILA='Esta é uma foto da tela "Fila de Impressão" de um PDA de leitura de energia. No título aparece algo como "Fila de Impressão - 0/84": o número DEPOIS da barra é o total de contas para imprimir. Responda só JSON: {"total":84}. Se não achar, {"total":null}.';
+async function lerFilaImpressao(file){let n=null;
+  if(iaChave){try{const j=await iaLer(file,IA_FILA);if(j&&j.total!=null&&!isNaN(+j.total))n=+j.total}catch(err){iaFalhou(err)}}
+  if(n==null){await carregarOCR();const img=await lerImg(file),maxL=Math.floor(Math.sqrt(15e6*img.width/img.height)),w=await Tesseract.createWorker("eng",1);
+    for(const prep of [prepararPDA,prepararClara]){const t=(await w.recognize(prep(img,Math.min(2200,maxL)))).data.text;const m=t.match(/Impress\S*\s*[-–—]?\s*\d+\s*[\/|]\s*(\d+)/i)||t.match(/Fila[^\n]*?(\d+)\s*[\/|]\s*(\d+)/i);if(m){n=+(m[2]||m[1]);break}}
+    await w.terminate();URL.revokeObjectURL(img.src)}
+  return n}
+// 📷 do lado do 🖨️: tira a foto e já guarda (pergunta só pra conferir)
+function impFotoDireto(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
+  const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=async()=>{const file=(inp.files||[])[0];if(!file)return;let n=null;try{n=await lerFilaImpressao(file)}catch(e){}
+    if(n==null)return alert("Não consegui achar o número na foto.\nTire a foto mostrando o título \"Fila de Impressão - 0/84\" e tente de novo.");
+    const v=prompt("🖨️ Prédio · livro "+r.livro+"\n\nLi na Fila de Impressão: "+n+" pra imprimir → "+bobinas(Math.min(n,r.qtd))+" bobina(s).\n\nConfira e toque OK:",n);if(v===null)return;
+    const q=parseInt(v,10);if(!(q>=0))return;imprimir[r.livro]={q,quando:r.data.slice(0,7)};salvarImprimir();render()};
+  inp.click()}
+function impPredio(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;const v=imprimir[r.livro];
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">🖨️ Prédio · livro ${esc(r.livro)}<small></small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
+  <div class="hint">${r.qtd} leituras (continuam contando no mês). Quantas saem pra <b>imprimir</b>? Só essas entram nas bobinas. Fica guardado pro mês que vem.</div>
+  <div class="hl-p" style="grid-template-columns:minmax(0,1fr) auto"><input type="number" inputmode="numeric" min="0" class="iq" placeholder="ex.: 84" value="${v?v.q:""}"><button type="button" class="ag fot">📷 Foto</button></div>
+  <div class="hint ib" style="margin-top:6px"></div>
+  <div class="hl-bts">${v?'<button type="button" class="d" aria-label="Apagar">🗑️</button>':""}<button type="button" class="o">✔ Salvar</button></div><input type="file" accept="image/*" class="ia-f" hidden></div>`;
+  document.body.appendChild(f);const iq=f.querySelector(".iq"),ib=f.querySelector(".ib"),fot=f.querySelector(".fot");
+  const mostra=()=>{const n=+iq.value||0;ib.innerHTML=n?`🧾 ${n} pra imprimir → <b>${bobinas(Math.min(n,r.qtd))}</b> bobina(s)`:""};iq.oninput=mostra;mostra();
+  f.querySelector(".c").onclick=()=>f.remove();
+  const d=f.querySelector(".d");if(d)d.onclick=()=>{delete imprimir[r.livro];salvarImprimir();f.remove();render()};
+  f.querySelector(".o").onclick=()=>{const n=parseInt(iq.value,10);if(n>=0&&iq.value!==""){imprimir[r.livro]={q:n,quando:r.data.slice(0,7)}}else delete imprimir[r.livro];salvarImprimir();f.remove();render()};
+  fot.onclick=()=>f.querySelector(".ia-f").click();
+  f.querySelector(".ia-f").onchange=async e=>{const file=(e.target.files||[])[0];e.target.value="";if(!file)return;fot.disabled=true;fot.textContent="⏳";let n=null;
+    try{n=await lerFilaImpressao(file)}catch(err){}
+    fot.disabled=false;fot.textContent="📷 Foto";
+    if(n==null)return alert("Não consegui achar o número na foto.\nTire a foto mostrando o título \"Fila de Impressão - 0/84\" e tente de novo, ou digite o número.");
+    iq.value=n;mostra()};
+}
 function desenharIA(){const d=$("iaDot");if(!d)return;d.style.background=iaChave?(iaErro?"#ef4444":"#22c55e"):"#d1d5db";$("iaBtn").title=iaChave?(iaErro?"Leitura com IA: deu problema ("+iaErro+")":"Leitura com IA: ligada"):"Leitura com IA: desligada (toque pra colocar a chave)"}
 async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+"."+(/sobrecarregado|limite/.test(iaErro)?"":"\n\nConfira se a chave está certa (é a do Google AI Studio)."))}}
 function abrirIA(){
@@ -2537,7 +2605,7 @@ let pdaAcum=[],pdaFotos=0;
 function lerImg(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=er;im.src=URL.createObjectURL(file)})}
 function pdaResumo(){
   const itens=pdaAcum,ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
-  const q=itens.filter(x=>!predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0),qp=itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0);
+  const q=itens.reduce((t,x)=>t+(predios[x.livro]?qImp(x.livro,+x.qtd):(+x.qtd||0)),0),qp=itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0);
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
   f.innerHTML=`<div class="modal obs-modal"><h3>📷 Li ${itens.length} livro(s)${et?" da Etapa "+p2(et):""}</h3><div class="hint">${pdaFotos>1?pdaFotos+" fotos somadas · ":""}livro repetido entre as fotos entra uma vez só</div>
   <div class="pda-res">${itens.map(x=>`<div>• <b>${esc(x.livro)}</b> — ${x.qtd}${predios[x.livro]?" 🏢":""} <small>(Etapa ${p2(x.etapa)})</small></div>`).join("")}</div>
