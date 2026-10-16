@@ -223,7 +223,9 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hr-lin input::-webkit-date-and-time-value{text-align:left}
 .hr-lin button{height:34px;border:0;border-radius:8px;background:#1f2937;color:#fff;font-weight:800;padding:0 9px;cursor:pointer;flex:none}#hrLimpa{background:#fee2e2}
 .crono{display:flex;align-items:center;gap:6px;width:100%;margin-top:6px;border:1px dashed #9ca3af;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left;box-sizing:border-box}
-.crono.on.pausa{border-color:#d1d5db;background:#f3f4f6}.crono.on{flex-wrap:wrap}.cr-imp{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}.crono.on .cr-imp button{width:auto;height:30px;border-radius:999px;padding:0 10px;font-size:12px;font-weight:800;background:#fff;border:1px solid #fca5a5;color:#991b1b}.crono.on .cr-imp .cr-impv{background:#fef2f2}
+.crono.on.pausa{border-color:#d1d5db;background:#f3f4f6}.crono.on{flex-wrap:wrap;padding:6px 8px;font-size:12.5px;gap:4px}.crono.on .cr-t{flex-basis:100%}.crono.on .cr-t small{display:inline;font-size:11px}
+.cr-meta{flex-basis:100%;font-size:11.5px;font-weight:700;color:#166534}.cr-meta.ruim{color:#b91c1c}
+.crono.on .cr-imp button.cr-pp{background:#1f2937;color:#fff;border-color:#1f2937}.crono.on .cr-imp button.cr-pp.v{background:#16a34a;border-color:#16a34a}.crono.on .cr-imp .cr-s{border-color:#d1d5db;color:#374151;padding:0 7px}.cr-imp{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}.crono.on .cr-imp button{width:auto;height:26px;border-radius:999px;padding:0 8px;font-size:11.5px;font-weight:800;background:#fff;border:1px solid #fca5a5;color:#991b1b}.crono.on .cr-imp .cr-impv{background:#fef2f2}
 .crono.on .cr-pp{width:auto;padding:0 10px;font-weight:800;font-size:12.5px;border-radius:999px;background:#1f2937;color:#fff}.crono.on .cr-pp.v{background:#16a34a}
 .crono.on{border:1px solid #86efac;background:#f0fdf4;cursor:default}.crono.on span{flex:1;min-width:0}.crono small{display:block;font-size:11px;color:#6b7280;font-weight:600}.crono.on button{border:0;background:#fff;border-radius:8px;height:32px;width:34px;cursor:pointer;flex:none}
 .hr-tag{display:inline-block;margin-top:2px;font-size:12px;color:#374151;background:#eef2ff;border-radius:6px;padding:1px 6px;cursor:pointer}
@@ -564,7 +566,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.29</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.30</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -776,7 +778,7 @@ function tagHoraLivro(r){const cr=cronoDoRec(r.id);
   return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
 function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   const rod=cronos.some(x=>x.run);
-  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?(x.recId?"contando · toque em ⏹ Terminei quando acabar":"contando · termina sozinho quando você lançar ✔"):"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button><div class="cr-imp">${x.recId?`<button type="button" class="cr-fim" data-cr="fim" data-id="${x.id}">⏹ Terminei</button>`:""}<button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1 impedimento</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length} neste livro</button>`:""}</div></div>`).join("")
+  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span class="cr-t">${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde ${hmDe(cronoIni(x))} · <b>${fmtDur(cronoMin(x))}</b> <small>${x.run?"contando":"pausado"}</small></span>${txtMeta(x)}<div class="cr-imp">${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}${x.recId?`<button type="button" class="cr-fim" data-cr="fim" data-id="${x.id}">⏹ Terminei</button>`:""}<button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length}</button>`:""}<button type="button" class="cr-s" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" class="cr-s" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button></div></div>`).join("")
     +`<button type="button" class="crono" id="crIni">⏱️ ${rod?"Começar outro livro (pausa o de cima)":cronos.length?"Começar outro livro":"Começar livro agora"}</button>`;
   $("crIni").onclick=()=>{
     let l=livroDigitado();
@@ -822,7 +824,16 @@ function diaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data
   return `<div class="hr-res hr-dia" onclick="verDiaTrab()">📅 ${d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7)}: <b>${fmtDur(min)}</b> trabalhadas · ⚡ ${porHora(q,min)}/h${sem?' <small>· tem livro sem horário</small>':""}</div>`}
 function verDiaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura).sort((a,b)=>(a.ini||"99").localeCompare(b.ini||"99"));const t=rs.filter(r=>duracao(r)),min=t.reduce((a,r)=>a+duracao(r),0);
   alert("📅 "+(d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7))+" · "+fmtDur(min)+" trabalhadas\n\n"+rs.map(r=>"• "+r.livro+" — "+r.qtd+" leituras · "+(duracao(r)?(r.trechos&&r.pausa?r.trechos.join(" + "):r.ini+"–"+r.fim)+" ("+fmtDur(duracao(r))+")":"sem horário")).join("\n")+"\n\nSó entra o tempo dos livros com ⏱️ (pausa não conta). Livro sem horário: toque no ⏱️ dele pra colocar.")}
-function baseHoras(){let q=0,d=0,melhor=0,n=0;for(const[k,v]of Object.entries(horas)){const du=duracao(v),[m,e]=k.split("|"),l=leitEtapa(m,+e);if(!du||!l)continue;q+=l;d+=du;n++;melhor=Math.max(melhor,porHora(l,du))}return{media:porHora(q,d),melhor,n}}
+// etapa medida pelos livros com ⏱️: começo = 1º livro, fim = último, tempo = soma dos livros (pausa não conta)
+function etapaLivros(m,e){const t=registros.filter(r=>r.etapa===e&&r.data.startsWith(m)&&!r.releitura&&duracao(r));if(!t.length)return{n:0};
+  return{n:t.length,min:t.reduce((a,r)=>a+duracao(r),0),q:t.reduce((a,r)=>a+r.qtd,0),ini:t.map(r=>r.ini).sort()[0],fim:t.map(r=>r.fim).sort().slice(-1)[0]}}
+function baseHoras(){let q=0,d=0,melhor=0,n=0;const ks=new Set(Object.keys(horas));registros.forEach(r=>{if(!r.releitura&&duracao(r))ks.add(r.data.slice(0,7)+"|"+r.etapa)});
+  for(const k of ks){const[m,e]=k.split("|"),el=etapaLivros(m,+e);let l,du;if(el.n){l=el.q;du=el.min}else{du=duracao(horas[k]);l=leitEtapa(m,+e)}if(!du||!l)continue;q+=l;d+=du;n++;melhor=Math.max(melhor,porHora(l,du))}return{media:porHora(q,d),melhor,n}}
+// 🎯 quanto o mesmo livro levou no mês passado
+function metaLivro(livro,m){if(!livro)return 0;const ant=somaMes(m,-1),r=registros.find(x=>x.livro===livro&&!x.releitura&&x.data.startsWith(ant)&&duracao(x));return r?duracao(r):0}
+function txtMeta(x){const mt=metaLivro(x.livro,mes());if(!mt)return"";const el=cronoMin(x),fa=mt-el;
+  if(fa<0)return `<div class="cr-meta ruim">🔴 passou ${fmtDur(-fa)} do mês passado (${fmtDur(mt)})</div>`;
+  return `<div class="cr-meta">🎯 mês passado ${fmtDur(mt)} · ${x.run?"meta até <b>"+hmDe(Date.now()+fa*60000)+"</b>":"faltam "+fmtDur(fa)} 🟢</div>`}
 function salvarNaoFiz(){try{localStorage.setItem(NAOFIZKEY,JSON.stringify(naoFiz))}catch(e){}}
 let ferias=[];try{ferias=JSON.parse(localStorage.getItem(FERIASKEY)||"[]")}catch(e){}
 function salvarFerias(){try{localStorage.setItem(FERIASKEY,JSON.stringify(ferias))}catch(e){}}
@@ -1355,17 +1366,22 @@ function render(){atualizarNomes();
   // ⏱️ hora que começou / terminou a etapa + leituras por hora
   {const hb=$("horaEtapa"),k=m+"|"+etapa,v=horas[k]||{},q=leitEtapa(m,etapa),dE=diaDaEtapa(m,etapa);
    const mostra=!filtroRel&&!filtroCidade&&(q>0||dE===hoje()||v.ini||v.fim);hb.hidden=!mostra;
-   if(mostra){const du=duracao(v),ph=porHora(q,du),b=baseHoras();
+   const el=etapaLivros(m,etapa);
+   if(mostra){const du=el.n?el.min:duracao(v),ph=el.n?porHora(el.q,el.min):porHora(q,du),b=baseHoras();
      let base="";if(b.media){base=`📊 Sua base: <b>${b.media}</b> leituras/hora`+(b.n>1?` · média de ${b.n} etapas`:"")+(b.melhor>b.media?` · 🏆 melhor ${b.melhor}/h`:"");
        if(ph&&b.n>1)base+=ph>b.media?` · <span style="color:#15803d">▲ acima da base</span>`:ph<b.media?` · <span style="color:#b45309">▼ abaixo da base</span>`:" · = na base"}
+     const ea=etapaLivros(somaMes(m,-1),etapa),metaE=ea.n?`<div class="hr-base">🎯 Mês passado esta etapa: <b>${fmtDur(ea.min)}</b> trabalhadas · ${porHora(ea.q,ea.min)}/h${el.n?(el.min<ea.min?' · <span style="color:#15803d">▲ mais rápido</span>':el.min>ea.min?' · <span style="color:#b45309">▼ mais devagar</span>':""):""}</div>`:"";
+     if(el.n){hb.innerHTML=`<div class="hr-et"><div class="hr-res">⏳ ${el.ini} → ${el.fim} · <b>${fmtDur(el.min)}</b> trabalhadas · ⚡ <b>${ph}</b> leituras/hora</div><div class="hr-base">pelos livros com ⏱️ · pausa não conta${q>el.q?" · tem livro sem horário":""}</div>`+metaE+(base?`<div class="hr-base">${base}</div>`:"")+diaTrab()+(bl=>bl.media?`<div class="hr-base hr-rk" onclick="abrirRankHora(mes())">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+` · <u>⚡ ranking</u></div>`:"")(baseLivros())+`</div>`}else{
      hb.innerHTML=`<div class="hr-et"><div class="hr-lin"><label>▶ Começou<input type="time" id="hrIni" value="${v.ini||""}"></label><label>⏹ Terminou<input type="time" id="hrFim" value="${v.fim||""}"></label>${!v.ini||!v.fim?`<button type="button" id="hrAgora">⏱️ Agora</button>`:`<button type="button" id="hrLimpa" aria-label="Limpar horas">🗑️</button>`}</div>`
        +(du?`<div class="hr-res">⏳ ${fmtDur(du)} de etapa${ph?` · ⚡ <b>${ph}</b> leituras/hora`:" · lance os livros pra ver as leituras/hora"}</div>`:v.ini?`<div class="hr-res">⏳ Começou às ${v.ini} · toque em ⏱️ Agora quando terminar</div>`:"")
        +(base?`<div class="hr-base">${base}</div>`:"")+diaTrab()+(bl=>bl.media?`<div class="hr-base hr-rk" onclick="abrirRankHora(mes())">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+` · <u>⚡ ranking</u></div>`:"")(baseLivros())+`</div>`;
+     }
+     if($("hrIni")){
      const grava=()=>{const ni=$("hrIni").value,nf=$("hrFim").value;if(ni||nf)horas[k]={ini:ni,fim:nf};else delete horas[k];salvarHoras();render()};
      $("hrIni").onchange=grava;$("hrFim").onchange=grava;
      const ag=$("hrAgora");if(ag)ag.onclick=()=>{const d=new Date(),h=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");if(!$("hrIni").value)$("hrIni").value=h;else $("hrFim").value=h;grava()};
      const lp=$("hrLimpa");if(lp)lp.onclick=()=>{if(confirm("Apagar a hora de começo e fim da Etapa "+p2(etapa)+"?")){delete horas[k];salvarHoras();render()}};
-   }}
+   }}}
   desenharCrono();pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
@@ -2430,7 +2446,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.29";
+const VERSAO_APP="15.30";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
