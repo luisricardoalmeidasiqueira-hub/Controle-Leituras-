@@ -223,7 +223,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hr-lin input::-webkit-date-and-time-value{text-align:left}
 .hr-lin button{height:34px;border:0;border-radius:8px;background:#1f2937;color:#fff;font-weight:800;padding:0 9px;cursor:pointer;flex:none}#hrLimpa{background:#fee2e2}
 .crono{display:flex;align-items:center;gap:6px;width:100%;margin-top:6px;border:1px dashed #9ca3af;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left;box-sizing:border-box}
-.crono.on.pausa{border-color:#d1d5db;background:#f3f4f6}.crono.on .cr-pp{width:auto;padding:0 10px;font-weight:800;font-size:12.5px;border-radius:999px;background:#1f2937;color:#fff}.crono.on .cr-pp.v{background:#16a34a}
+.crono.on.pausa{border-color:#d1d5db;background:#f3f4f6}.crono.on{flex-wrap:wrap}.cr-imp{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}.crono.on .cr-imp button{width:auto;height:30px;border-radius:999px;padding:0 10px;font-size:12px;font-weight:800;background:#fff;border:1px solid #fca5a5;color:#991b1b}.crono.on .cr-imp .cr-impv{background:#fef2f2}
+.crono.on .cr-pp{width:auto;padding:0 10px;font-weight:800;font-size:12.5px;border-radius:999px;background:#1f2937;color:#fff}.crono.on .cr-pp.v{background:#16a34a}
 .crono.on{border:1px solid #86efac;background:#f0fdf4;cursor:default}.crono.on span{flex:1;min-width:0}.crono small{display:block;font-size:11px;color:#6b7280;font-weight:600}.crono.on button{border:0;background:#fff;border-radius:8px;height:32px;width:34px;cursor:pointer;flex:none}
 .hr-tag{display:inline-block;margin-top:2px;font-size:12px;color:#374151;background:#eef2ff;border-radius:6px;padding:1px 6px;cursor:pointer}
 .item-btns .hr-on{background:#e0e7ff}
@@ -559,7 +560,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.27</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.28</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -737,6 +738,15 @@ function cronoMin(c){return Math.round((c.segs.reduce((t,s)=>t+s[1]-s[0],0)+(c.r
 function cronoIni(c){return c.segs.length?c.segs[0][0]:c.run}
 function pausarTodos(){const t=Date.now();cronos.forEach(c=>{if(c.run){c.segs.push([c.run,t]);c.run=0}})}
 function cronoDoLivro(l){return cronos.find(c=>c.livro&&c.livro===l)||cronos.find(c=>c.run&&!c.livro)||cronos.find(c=>c.run)||(cronos.length===1?cronos[0]:null)}
+// 📷 foto da tela do PDA com 002: a IA lê UC, medidor e endereço e soma +1 impedimento no livro
+const IA_IMPED='Esta é uma foto da tela de leitura de um PDA de energia, de um cliente lançado com impedimento (código 002). Leia: UC (número depois de "UC:"), MD (medidor, depois de "MD:"), o endereço e o código da mensagem/ocorrência digitado (ex.: "002"). Responda só JSON: {"uc":"000307981404503","md":"B18670249","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","cod":"002"}. Use null no que não conseguir ler.';
+function impFoto(x){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=async()=>{const f=(inp.files||[])[0];if(!f)return;let j=null;
+    if(iaChave){try{j=await iaLer(f,IA_IMPED)}catch(err){iaFalhou(err)}}
+    const it={h:agoraHM()};if(j){if(j.uc)it.uc=String(j.uc);if(j.md)it.md=String(j.md);if(j.end)it.end=String(j.end).toUpperCase()}
+    if(j&&j.cod&&!/002/.test(String(j.cod))&&!confirm("A foto parece ter o código "+j.cod+" (não 002).\nContar como impedimento mesmo assim?"))return;
+    (x.imp=x.imp||[]).push(it);salvarCrono();desenharCrono()};
+  inp.click()}
 function livroDigitado(){const i=document.querySelector("#livroRows .r-livro");return i?i.value.trim():""}
 function agoraHM(){const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function baseLivros(){let q=0,d=0,n=0,melhor=0;registros.forEach(r=>{const du=duracao(r);if(!du||r.releitura||!r.qtd)return;q+=r.qtd;d+=du;n++;melhor=Math.max(melhor,porHora(r.qtd,du))});return{media:porHora(q,d),n,melhor}}
@@ -749,7 +759,7 @@ function tagHoraLivro(r){if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHo
   return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
 function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   const rod=cronos.some(x=>x.run);
-  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?"contando · termina sozinho quando você lançar ✔":"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button></div>`).join("")
+  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span>${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde <b>${hmDe(cronoIni(x))}</b> · ${fmtDur(cronoMin(x))}<small>${x.run?"contando · termina sozinho quando você lançar ✔":"pausado · toque em ▶ Continuar pra voltar"}</small></span>${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}<button type="button" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button><div class="cr-imp"><button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1 impedimento</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length} neste livro</button>`:""}</div></div>`).join("")
     +`<button type="button" class="crono" id="crIni">⏱️ ${rod?"Começar outro livro (pausa o de cima)":cronos.length?"Começar outro livro":"Começar livro agora"}</button>`;
   $("crIni").onclick=()=>{
     let l=livroDigitado();
@@ -757,7 +767,10 @@ function desenharCrono(){const c=$("cronoLivro");if(!c)return;
     pausarTodos();cronos.push({id:Date.now(),livro:l,segs:[],run:Date.now()});salvarCrono();
     const hk=($("data").value||hoje()).slice(0,7)+"|"+etapa;if(!horas[hk]||!horas[hk].ini){horas[hk]={...(horas[hk]||{}),ini:agoraHM()};salvarHoras()}render()};
   c.querySelectorAll("[data-cr]").forEach(b=>b.onclick=()=>{const x=cronos.find(y=>String(y.id)===b.dataset.id);if(!x)return;const a=b.dataset.cr;
-    if(a==="pausa"){pausarTodos()}
+    if(a==="imp"){(x.imp=x.imp||[]).push({h:agoraHM()})}
+    else if(a==="impf"){impFoto(x);return}
+    else if(a==="impv"){const l=x.imp||[];if(confirm("🚫 Impedimentos neste livro:\n\n"+l.map(i=>"• "+i.h+(i.md?" · MD "+i.md:"")+(i.uc?" · UC "+i.uc:"")+(i.end?"\n   "+i.end:"")).join("\n")+"\n\nOK = tirar o último (lançou sem querer) · Cancelar = fechar")){l.pop()}else return}
+    else if(a==="pausa"){pausarTodos()}
     else if(a==="volta"){pausarTodos();x.run=Date.now()}
     else if(a==="x"){if(!confirm("Cancelar o cronômetro"+(x.livro?" do livro "+x.livro:"")+"?"))return;cronos=cronos.filter(y=>y!==x)}
     else if(a==="edit"){
@@ -1078,7 +1091,7 @@ $("saveAll").onclick=()=>{
     // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
     const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===dataDoLivro(x,et,data)&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
     if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
-    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
+    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}if(c.imp&&c.imp.length){novo.nl=(novo.nl||0)+c.imp.length;novo.impLista=c.imp}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
   });
   localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
@@ -2391,7 +2404,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.27";
+const VERSAO_APP="15.28";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
