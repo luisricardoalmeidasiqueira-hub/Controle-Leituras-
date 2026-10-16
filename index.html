@@ -230,6 +230,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hl-lin input{height:42px;border:1px solid #d1d5db;border-radius:10px;padding:0 8px;font:inherit;font-size:17px;font-weight:700;width:100%;min-width:0;max-width:100%;box-sizing:border-box;display:block;-webkit-appearance:none;appearance:none;text-align:left;background:#fff;color:#111827}
 .hl-lin .ag{height:42px;border:0;border-radius:10px;background:#1f2937;color:#fff;font-weight:800;padding:0 12px;cursor:pointer}
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
+.hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
 .hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
 .nf-rap.aberto{display:block;cursor:default;position:relative;border-style:solid}.nf-rap.aberto b{font-size:12.5px}
@@ -541,7 +542,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.13</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.14</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -706,7 +707,9 @@ function baseLivros(){let q=0,d=0,n=0,melhor=0;registros.forEach(r=>{const du=du
 function tagHoraLivro(r){if(!r.ini&&!r.fim)return"";const du=duracao(r),ph=porHora(r.qtd,du),b=baseLivros();
   let t=`⏱️ ${r.ini||"--:--"} → ${r.fim||"--:--"}`;if(du)t+=` · ${fmtDur(du)}`;if(ph)t+=` · ⚡ <b>${ph}</b>/h`;
   if(ph&&b.n>1&&b.media)t+=ph>b.media?' <span style="color:#15803d">▲</span>':ph<b.media?' <span style="color:#b45309">▼</span>':"";
-  return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>`}
+  const ant=somaMes(r.data.slice(0,7),-1),pa=ph&&registros.find(x=>x.livro===r.livro&&!x.releitura&&x.data.startsWith(ant)&&duracao(x));
+  let cmp="";if(pa){const pp=porHora(pa.qtd,duracao(pa));cmp=`<br><span class="hr-cmp">📅 ${nomeMes(ant).slice(0,1).toUpperCase()+nomeMes(ant).slice(1,3)}: ${pp}/h em ${fmtDur(duracao(pa))} · ${ph>pp?'<b style="color:#15803d">▲ mais rápido</b>':ph<pp?'<b style="color:#b45309">▼ mais devagar</b>':"= igual"}</span>`}
+  return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
 function desenharCrono(){const c=$("cronoLivro");if(!c)return;
   c.innerHTML=cronoLivro?`<div class="crono on"><span>⏱️ Livro começou às <b>${cronoLivro}</b><small>termina sozinho quando você lançar ✔</small></span><button type="button" id="crAjusta" aria-label="Ajustar hora">✏️</button><button type="button" id="crX" aria-label="Cancelar">✕</button></div>`
     :`<button type="button" class="crono" id="crIni">⏱️ Começar livro agora</button>`;
@@ -1089,6 +1092,17 @@ function abrirComparacao(m){
   box.hidden=false;
 }
 // ---------- 🏆 Ranking: mês que mais leu e que menos leu ----------
+function abrirRankHora(mAtual,deRanking){
+  const box=$("cartaoComp"),q={},d={},n={},top={};
+  registros.forEach(r=>{const du=duracao(r);if(!du||r.releitura||!r.qtd)return;const m=r.data.slice(0,7);q[m]=(q[m]||0)+r.qtd;d[m]=(d[m]||0)+du;n[m]=(n[m]||0)+1;const ph=porHora(r.qtd,du);if(!top[m]||ph>top[m].ph)top[m]={ph,l:r.livro}});
+  const ph=m=>porHora(q[m],d[m]),ms=Object.keys(q).sort((a,b)=>ph(b)-ph(a)),max=ms.length?ph(ms[0]):1,med=["🥇","🥈","🥉"];
+  box.innerHTML=`<b class="comp-tit">⚡ Ranking por hora</b>`+(ms.length?ms.map((m,k)=>{const fim=k===ms.length-1&&ms.length>3;
+      return `<div class="rank-l${m===mAtual?" atual":""}"><span class="rk-m">${med[k]||(fim?"🔻":"")}</span><div class="rk-tx"><b>${nomeMes(m).replace(/^./,c=>c.toUpperCase())}${m===mAtual?" · este mês":""}</b><small>${n[m]} livro(s) cronometrado(s) · ${fmtDur(d[m])} · 🏆 livro ${esc(top[m].l)} com ${top[m].ph}/h</small><i style="width:${Math.max(4,Math.round(ph(m)/max*100))}%"></i></div><b class="rk-n">${ph(m)}/h</b></div>`}).join("")+
+    `<div class="comp-dica">Leituras por hora de cada mês, só dos livros com ⏱️ começo e fim. No mês que vem o app compara sozinho.</div>`:`<div class="comp-dica">Ainda não tem livro com ⏱️ começo e fim. Toque em "⏱️ Começar livro agora" antes de ler um livro.</div>`)+
+    `<button type="button" class="comp-ok">${deRanking?"‹ Voltar":"Ok"}</button>`;
+  box.querySelector(".comp-ok").onclick=()=>deRanking?abrirRanking(mAtual):box.hidden=true;
+  box.hidden=false;if(!deRanking)box.scrollIntoView({behavior:"smooth",block:"center"});
+}
 function abrirRanking(mAtual){
   const box=$("cartaoComp"),tot={},liv={},dias={};
   registros.forEach(r=>{if(r.releitura)return;const m=r.data.slice(0,7);tot[m]=(tot[m]||0)+r.qtd;liv[m]=(liv[m]||0)+1;(dias[m]=dias[m]||new Set()).add(r.data)});
@@ -1098,8 +1112,8 @@ function abrirRanking(mAtual){
       const fim=k===ms.length-1&&ms.length>3;
       return `<div class="rank-l${m===mAtual?" atual":""}"><span class="rk-m">${med[k]||(fim?"🔻":"")}</span><div class="rk-tx"><b>${nomeMes(m).replace(/^./,c=>c.toUpperCase())}${m===mAtual?" · este mês":""}</b><small>${liv[m]} livros · ${dias[m].size} dias</small><i style="width:${Math.max(4,Math.round(tot[m]/max*100))}%"></i></div><b class="rk-n">${tot[m].toLocaleString("pt-BR")}</b></div>`}).join("")+
     `<div class="comp-dica">Média: <b>${media.toLocaleString("pt-BR")}</b> leituras por mês · releituras não entram</div>`:`<div class="comp-dica">Ainda não tem leituras lançadas.</div>`)+
-    `<button type="button" class="comp-ok">‹ Voltar</button>`;
-  box.querySelector(".comp-ok").onclick=()=>abrirComparacao(mAtual);
+    `<button type="button" class="comp-rank" id="rkHora">⚡ Ranking por hora</button><button type="button" class="comp-ok">‹ Voltar</button>`;
+  box.querySelector(".comp-ok").onclick=()=>abrirComparacao(mAtual);$("rkHora").onclick=()=>abrirRankHora(mAtual,true);
   box.hidden=false;
 }
 // ---------- 🚫 Impedimentos (opcional, guardado à parte: não mexe no total de leituras) ----------
@@ -1249,7 +1263,7 @@ function render(){atualizarNomes();
        if(ph&&b.n>1)base+=ph>b.media?` · <span style="color:#15803d">▲ acima da base</span>`:ph<b.media?` · <span style="color:#b45309">▼ abaixo da base</span>`:" · = na base"}
      hb.innerHTML=`<div class="hr-et"><div class="hr-lin"><label>▶ Começou<input type="time" id="hrIni" value="${v.ini||""}"></label><label>⏹ Terminou<input type="time" id="hrFim" value="${v.fim||""}"></label>${!v.ini||!v.fim?`<button type="button" id="hrAgora">⏱️ Agora</button>`:`<button type="button" id="hrLimpa" aria-label="Limpar horas">🗑️</button>`}</div>`
        +(du?`<div class="hr-res">⏳ ${fmtDur(du)} de etapa${ph?` · ⚡ <b>${ph}</b> leituras/hora`:" · lance os livros pra ver as leituras/hora"}</div>`:v.ini?`<div class="hr-res">⏳ Começou às ${v.ini} · toque em ⏱️ Agora quando terminar</div>`:"")
-       +(base?`<div class="hr-base">${base}</div>`:"")+(bl=>bl.media?`<div class="hr-base">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+`</div>`:"")(baseLivros())+`</div>`;
+       +(base?`<div class="hr-base">${base}</div>`:"")+(bl=>bl.media?`<div class="hr-base hr-rk" onclick="abrirRankHora(mes())">📗 Por livro: <b>${bl.media}</b> leituras/hora`+(bl.n>1?` · média de ${bl.n} livros`:"")+(bl.melhor>bl.media?` · 🏆 melhor ${bl.melhor}/h`:"")+` · <u>⚡ ranking</u></div>`:"")(baseLivros())+`</div>`;
      const grava=()=>{const ni=$("hrIni").value,nf=$("hrFim").value;if(ni||nf)horas[k]={ini:ni,fim:nf};else delete horas[k];salvarHoras();render()};
      $("hrIni").onchange=grava;$("hrFim").onchange=grava;
      const ag=$("hrAgora");if(ag)ag.onclick=()=>{const d=new Date(),h=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");if(!$("hrIni").value)$("hrIni").value=h;else $("hrFim").value=h;grava()};
@@ -2295,7 +2309,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.13";
+const VERSAO_APP="15.14";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
