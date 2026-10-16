@@ -232,6 +232,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
 .hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
 .pda-res{max-height:42vh;overflow:auto;margin-top:8px;font-size:14px;line-height:1.55}.pda-res small{color:#6b7280}.pda-tot{margin-top:8px;font-size:13.5px;font-weight:700;color:#374151}.obs-bts .m{background:#dbeafe;color:#1e3a8a}
+.ia-btn{display:block;margin:8px auto 0;border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:#374151;cursor:pointer}
 .hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
 .nf-rap.aberto{display:block;cursor:default;position:relative;border-style:solid}.nf-rap.aberto b{font-size:12.5px}
@@ -543,7 +544,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.15</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.16</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1790,13 +1791,16 @@ $("edNlFoto").onclick=()=>{nlAlvo="edNl";nlBtn="edNlFoto";$("nlArq").click()};
 $("nlArq").onchange=async e=>{
   const f=(e.target.files||[])[0];e.target.value="";if(!f)return;const b=$(nlBtn);b.disabled=true;b.textContent="⏳";
   try{
+    let itens=[];
+    if(iaChave){b.textContent="🤖";try{const j=await iaLer(f,IA_RESUMO);itens=((j&&j.itens)||[]).map(x=>({cod:String(x.cod||"").replace(/\D/g,"").padStart(x.cod?3:0,"0"),nome:String(x.nome||"").toUpperCase().trim(),q:+x.q||0})).filter(x=>x.nome)}catch(err){iaFalhou(err)}b.textContent="⏳"}
+    if(!itens.length){
     await carregarOCR();const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
     const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height)),w=await Tesseract.createWorker("eng",1);await w.setParameters({tessedit_pageseg_mode:"6"});
-    let itens=lerResumoPDA((await w.recognize(prepararPDA(img,Math.min(2200,maxL)))).data.text);
+    itens=lerResumoPDA((await w.recognize(prepararPDA(img,Math.min(2200,maxL)))).data.text);
     lerResumoPDA((await w.recognize(prepararClara(img,Math.min(2200,maxL)))).data.text).forEach(x=>{if(!itens.some(o=>o.nome.slice(0,10)===x.nome.slice(0,10)))itens.push(x)});
-    await w.terminate();URL.revokeObjectURL(img.src);
+    await w.terminate();URL.revokeObjectURL(img.src);}
     if(!itens.length)return alert("Não consegui ler o Resumo por Mensagem nesta foto.\nTente sem reflexo (faça sombra na tela).");
-    const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)).reduce((t,x)=>t+x.q,0);
+    const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)||x.cod==="002").reduce((t,x)=>t+x.q,0);
     const v=prompt((nlAlvo.startsWith("rec:")?"📊 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"📊 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
     if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{$(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
@@ -1838,18 +1842,20 @@ $("rotaArq").onchange=async e=>{
   const files=[...(e.target.files||[])];e.target.value="";if(!files.length)return;
   const r=rotaDoLivro(rcChave),b=$("rotaFotoBtn"),txt=b.textContent;b.disabled=true;
   try{
-    b.textContent="⏳ Preparando leitor...";await carregarOCR();
-    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
-    await w.setParameters({tessedit_pageseg_mode:"6"});
+    let w=null;const leitor=async()=>{if(!w){b.textContent="⏳ Preparando leitor...";await carregarOCR();w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});await w.setParameters({tessedit_pageseg_mode:"6"})}return w};
     let ruas=[];
     for(const f of files){
+      if(iaChave){b.textContent="🤖 Lendo com IA...";let ri=[];
+        try{const j=await iaLer(f,IA_ROTEIRO);ri=((j&&j.ruas)||[]).map(x=>separarTipo(String(x).toUpperCase().replace(/\([^)]*\)/g," ").replace(/\.{2,}.*$/,"").replace(/[^A-ZÀ-Ú0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^[\d\s]+(?=[A-Z])/,""))).filter(x=>x&&ruaValida(x))}catch(err){iaFalhou(err)}
+        if(ri.length){ruas=ruas.concat(ri);continue}}
+      const w=await leitor();
       const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
       const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
       const res=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
       const res2=await w.recognize(prepararClara(img,Math.min(2200,maxL)));URL.revokeObjectURL(img.src);
       {const r1=lerRoteiroPDA(res.data.text);ruas=ruas.concat(r1.length?r1:lerRuasDaFoto(res.data.text));const r2=lerRoteiroPDA(res2.data.text);ruas=ruas.concat(r2.length?r2:(r1.length>=3?lerRuasDaFoto(res2.data.text):lerRuasTolerante(res2.data.text)))}
     }
-    await w.terminate();ruas=arrumarRuas(ruas);
+    if(w)await w.terminate();ruas=arrumarRuas(ruas);
     // não repete rua que já está na rota
     {const base=r.ruas.filter(x=>x.trim());ruas=ruas.filter(x=>{if(ruaRepetida(x,base))return false;base.push(x);return true})}
     if(!ruas.length)return alert("Não achei endereço novo nesta(s) foto(s).\nTente uma foto reta, com boa luz, onde dê pra ler as ruas.");
@@ -2310,7 +2316,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.15";
+const VERSAO_APP="15.16";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2450,6 +2456,34 @@ function preencherDoPDA(itens,et){
   escolherEtapa(pdaFila[0].etapa);
 }
 $("pdaBtn").onclick=()=>$("pdaArq").click();
+// ---------- 🤖 Leitura com IA (Google Gemini). A chave fica SÓ neste celular, não vai no arquivo nem no backup ----------
+const IAKEY=KEY+"_ia";let iaChave="",iaModelo="",iaErro="";try{iaChave=localStorage.getItem(IAKEY)||"";iaModelo=localStorage.getItem(IAKEY+"_m")||""}catch(e){}
+const IA_MODELOS=["gemini-flash-latest","gemini-2.5-flash","gemini-2.0-flash","gemini-flash-lite-latest","gemini-2.5-flash-lite"];
+function iaSalvar(){try{iaChave?localStorage.setItem(IAKEY,iaChave):localStorage.removeItem(IAKEY);iaModelo?localStorage.setItem(IAKEY+"_m",iaModelo):localStorage.removeItem(IAKEY+"_m")}catch(e){}}
+function fotoBase64(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>{const M=1600,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL("image/jpeg",.85).split(",")[1])};im.onerror=er;im.src=URL.createObjectURL(file)})}
+function iaMotivo(st,t){return st===429?"o limite grátis da chave acabou por agora (tente mais tarde)":(st===400||st===401||st===403)&&/key|chave|API_KEY|permission|PERMISSION/i.test(t)?"a chave não foi aceita pelo Google":"erro "+st}
+async function iaChamar(parts){
+  const ms=iaModelo?[iaModelo,...IA_MODELOS.filter(m=>m!==iaModelo)]:IA_MODELOS;let ult="nenhum modelo respondeu";
+  for(const m of ms){
+    const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+m+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":iaChave},body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0,responseMimeType:"application/json"}})});
+    if(r.status===404){ult="modelo "+m+" não existe";continue}
+    if(!r.ok){const t=await r.text();throw new Error(iaMotivo(r.status,t))}
+    const j=await r.json(),t=((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(x=>x.text||"").join("");
+    if(iaModelo!==m){iaModelo=m;iaSalvar()}
+    return JSON.parse(t.replace(/^\s*```(?:json)?/,"").replace(/```\s*$/,""));
+  }
+  throw new Error(ult);
+}
+async function iaLer(file,instr){if(!iaChave||navigator.onLine===false)return null;const b64=await fotoBase64(file);const j=await iaChamar([{text:instr},{inline_data:{mime_type:"image/jpeg",data:b64}}]);iaErro="";desenharIA();return j}
+let iaAvisou=false;function iaFalhou(err){iaErro=String(err&&err.message||err);desenharIA();if(!iaAvisou){iaAvisou=true;setTimeout(()=>iaAvisou=false,8000);alert("🤖 A IA não conseguiu ler agora ("+iaErro+").\nVou usar o leitor do celular.")}}
+const IA_CAIXA='Esta é uma foto da tela "Caixa de Entrada" de um PDA de leitura de energia. Cada livro tem uma linha como "B, 0200, 11, 001282" (o 3º número é a ETAPA, o último é o LIVRO com 6 dígitos) e à direita "0/232" (o número depois da barra é a QUANTIDADE de leituras). Embaixo vem o endereço, depois "Limite: dd/mm/aaaa" e a distância em Km. Leia TODOS os livros que aparecem inteiros na foto, na ordem. Responda só JSON: {"livros":[{"etapa":11,"livro":"001282","qtd":232,"end":"R DONA MARIA JOAQUINA RODRIGUES, 100, JD PAULISTA, TATUI, SP","lim":"16/10/2026","km":"5,18"}]}. Se não tiver livro, {"livros":[]}.';
+const IA_ROTEIRO='Esta é uma foto da aba "Roteiro" de um PDA de leitura de energia. Cada linha é como "( 41 - - ) R DONA MARIA JOAQUINA RODRIG.." . Leia todas as linhas na ordem, de cima pra baixo, e devolva só o nome da rua (com o tipo: R, AV, TV, PC, AL, EST, ROD...), em MAIÚSCULAS, exatamente como está escrito, SEM o número entre parênteses e sem os ".." do final. Ignore linhas cortadas pela metade na borda da tela. Pode repetir rua se ela aparece mais de uma vez. Responda só JSON: {"ruas":["R DONA MARIA JOAQUINA RODRIG","R LIONS CLUB DE TATUI"]}.';
+const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome (ex.: "002 - IMPEDIMENTO", "LEITURA NORMAL") e uma Quantidade. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO","q":3}]}. Se não achar, {"itens":[]}.';
+function desenharIA(){const b=$("iaBtn");if(!b)return;b.innerHTML=iaChave?(iaErro?"🤖 Leitura com IA 🔴":"🤖 Leitura com IA 🟢"):"🤖 Leitura com IA ⚪"}
+async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+".\n\nConfira se a chave está certa (é a do Google AI Studio).")}}
+function abrirIA(){
+  const v=prompt("🤖 Leitura das fotos com IA (Google Gemini)\n\nCole aqui a sua chave do Google AI Studio.\nEla fica guardada SÓ neste celular (não vai no arquivo nem no backup).\n\nDeixe em branco e toque OK para desligar."+(iaErro?"\n\n🔴 Último problema: "+iaErro:""),iaChave);
+  if(v===null)return;iaChave=v.trim().replace(/\s+/g,"");iaErro="";if(!iaChave)iaModelo="";iaSalvar();desenharIA();if(iaChave)iaTestar();else alert("⚪ Leitura com IA desligada. O 📷 volta a usar só o leitor do celular.")}
 // 📷 várias fotos: lê uma ou mais telas da Caixa de Entrada e soma tudo (livro repetido entra uma vez só)
 let pdaAcum=[],pdaFotos=0;
 function lerImg(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=er;im.src=URL.createObjectURL(file)})}
@@ -2468,24 +2502,26 @@ function pdaResumo(){
 }
 $("pdaArq").onchange=async e=>{
   const files=[...(e.target.files||[])];if(!files.length)return;
-  const b=$("pdaBtn"),txt=b.textContent;b.disabled=true;let falhou=0;
+  const b=$("pdaBtn"),txt=b.textContent;b.disabled=true;let falhou=0,w=null,fi=0;
+  const leitor=async()=>{if(!w){b.textContent="⏳ Preparando leitor...";await carregarOCR();w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ "+(files.length>1?"Foto "+(fi+1)+"/"+files.length+" · ":"")+"Lendo... "+Math.round(l.progress*100)+"%"}});await w.setParameters({tessedit_pageseg_mode:"6"})}return w};
   try{
-    b.textContent="⏳ Preparando leitor...";await carregarOCR();
-    let fi=0;
-    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ "+(files.length>1?"Foto "+(fi+1)+"/"+files.length+" · ":"")+"Lendo... "+Math.round(l.progress*100)+"%"}});
-    await w.setParameters({tessedit_pageseg_mode:"6"});
     for(fi=0;fi<files.length;fi++){
-      const img=await lerImg(files[fi]);
-      const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
-      const r=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
-      let itens=lerListaPDA(r.data.text);
-      if(!itens.length){b.textContent="⏳ Foto clara, tentando de novo...";const r2=await w.recognize(prepararClara(img,Math.min(2200,maxL)));itens=lerListaPDA(r2.data.text)}
-      URL.revokeObjectURL(img.src);
+      let itens=[];
+      if(iaChave){b.textContent="🤖 "+(files.length>1?"Foto "+(fi+1)+"/"+files.length+" · ":"")+"Lendo com IA...";
+        try{const j=await iaLer(files[fi],IA_CAIXA);itens=((j&&j.livros)||[]).map(x=>({livro:String(x.livro||"").replace(/\D/g,"").padStart(6,"0"),etapa:+x.etapa,qtd:+x.qtd,end:String(x.end||"").toUpperCase().replace(/\s+/g," ").trim(),lim:String(x.lim||""),km:String(x.km||"").replace(".",",")})).filter(x=>x.qtd>0&&x.etapa>=1&&x.etapa<=18&&/^\d{6}$/.test(x.livro))}catch(err){iaFalhou(err)}}
+      if(!itens.length){
+        const img=await lerImg(files[fi]),wk=await leitor();
+        const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
+        const r=await wk.recognize(prepararPDA(img,Math.min(2200,maxL)));
+        itens=lerListaPDA(r.data.text);
+        if(!itens.length){b.textContent="⏳ Foto clara, tentando de novo...";const r2=await wk.recognize(prepararClara(img,Math.min(2200,maxL)));itens=lerListaPDA(r2.data.text)}
+        URL.revokeObjectURL(img.src);
+      }
       if(!itens.length){falhou++;continue}
       pdaFotos++;
       itens.forEach(x=>{if(!pdaAcum.some(y=>y.livro===x.livro&&y.etapa===x.etapa))pdaAcum.push(x)});
     }
-    await w.terminate();
+    if(w)await w.terminate();
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.textContent=txt;e.target.value=""}
   if(falhou)alert(falhou===1&&files.length===1&&!pdaAcum.length?"Não consegui ler os livros desta foto.\nTente uma foto reta, com boa luz, mostrando só a Caixa de Entrada do PDA.":"⚠️ "+(falhou===1?"Uma foto":"Algumas fotos")+" não deu pra ler. Tente tirar de novo, reta e com boa luz.");
@@ -2536,6 +2572,6 @@ completarProvisorio();
 // Ao abrir: usa o prontuário que já está escrito pra completar os livros antigos daquela cidade
 setTimeout(()=>{const l=$("localidade").value,p=$("prontuario").value.trim();if(l&&p)guardarPront(l,p)},400);
 const eHoje=etapaAmarrada(hoje())||etapaAutomatica(hoje());
-sel(pdaFila.length?pdaFila[0].etapa:(eHoje||1),false);
+sel(pdaFila.length?pdaFila[0].etapa:(eHoje||1),false);desenharIA();
 </script>
 </body></html>
