@@ -544,7 +544,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.17</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.19</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2329,14 +2329,14 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.17";
+const VERSAO_APP="15.19";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
   try{
     // cópias antigas guardadas (service worker / cache) atrapalham: limpa
     if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();if(regs.length){await Promise.all(regs.map(r=>r.unregister()));if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}}
-    const r=await fetch(location.pathname+"?chk="+Date.now(),{cache:"no-store"});if(!r.ok)return;
+    const r=await fetch(location.pathname+"?chk="+Date.now(),{cache:"no-store",headers:{"Cache-Control":"no-cache","Pragma":"no-cache"}});if(!r.ok)return;
     const m=(await r.text()).match(/Versão (\d+(?:\.\d+)*)/);if(!m)return;
     let tentou="";try{tentou=sessionStorage.getItem("atualizando")||""}catch(e){}
     if(versaoMaior(m[1],VERSAO_APP)&&tentou!==m[1]){
@@ -2347,6 +2347,10 @@ async function conferirAtualizacao(){
 }
 setTimeout(conferirAtualizacao,800);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)conferirAtualizacao()});
+// iPhone guarda a página "congelada" ao voltar pro app: confere de novo; e a cada 5 min com o app aberto
+window.addEventListener("pageshow",e=>{if(e.persisted)conferirAtualizacao()});
+window.addEventListener("focus",()=>conferirAtualizacao());
+setInterval(()=>{if(!document.hidden)conferirAtualizacao()},5*60*1000);
 
 // ---------- 📷 Foto do PDA: lê livro, quantidade e endereço da Caixa de Entrada ----------
 function pdaPin(r,e){
@@ -2474,18 +2478,21 @@ const IAKEY=KEY+"_ia";let iaChave="",iaModelo="",iaErro="";try{iaChave=localStor
 const IA_MODELOS=["gemini-flash-latest","gemini-2.5-flash","gemini-2.0-flash","gemini-flash-lite-latest","gemini-2.5-flash-lite"];
 function iaSalvar(){try{iaChave?localStorage.setItem(IAKEY,iaChave):localStorage.removeItem(IAKEY);iaModelo?localStorage.setItem(IAKEY+"_m",iaModelo):localStorage.removeItem(IAKEY+"_m")}catch(e){}}
 function fotoBase64(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>{const M=1600,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL("image/jpeg",.85).split(",")[1])};im.onerror=er;im.src=URL.createObjectURL(file)})}
-function iaMotivo(st,t){return st===429?"o limite grátis da chave acabou por agora (tente mais tarde)":(st===400||st===401||st===403)&&/key|chave|API_KEY|permission|PERMISSION/i.test(t)?"a chave não foi aceita pelo Google":"erro "+st}
+function iaMotivo(st,t){return st>=500?"o Google está sobrecarregado agora (a chave está certa, é só tentar de novo daqui a pouco)":st===429?"o limite grátis da chave acabou por agora (tente mais tarde)":(st===400||st===401||st===403)&&/key|chave|API_KEY|permission|PERMISSION/i.test(t)?"a chave não foi aceita pelo Google":"erro "+st}
 async function iaChamar(parts){
-  const ms=iaModelo?[iaModelo,...IA_MODELOS.filter(m=>m!==iaModelo)]:IA_MODELOS;let ult="nenhum modelo respondeu";
+  const ms=iaModelo?[iaModelo,...IA_MODELOS.filter(m=>m!==iaModelo)]:IA_MODELOS;let ult="nenhum modelo respondeu",ocup=null;
+  // 503/500 (Google ocupado) ou 429 (limite daquele modelo): tenta o próximo modelo; no fim, espera um pouco e tenta mais uma vez
+  for(let volta=0;volta<2;volta++){if(volta){if(!ocup)break;await new Promise(ok=>setTimeout(ok,2500))}
   for(const m of ms){
     const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+m+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":iaChave},body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0,responseMimeType:"application/json"}})});
     if(r.status===404){ult="modelo "+m+" não existe";continue}
+    if(r.status===429||r.status>=500){ocup=iaMotivo(r.status,await r.text());continue}
     if(!r.ok){const t=await r.text();throw new Error(iaMotivo(r.status,t))}
     const j=await r.json(),t=((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(x=>x.text||"").join("");
     if(iaModelo!==m){iaModelo=m;iaSalvar()}
     return JSON.parse(t.replace(/^\s*```(?:json)?/,"").replace(/```\s*$/,""));
-  }
-  throw new Error(ult);
+  }}
+  throw new Error(ocup||ult);
 }
 async function iaLer(file,instr){if(!iaChave||navigator.onLine===false)return null;const b64=await fotoBase64(file);const j=await iaChamar([{text:instr},{inline_data:{mime_type:"image/jpeg",data:b64}}]);iaErro="";desenharIA();return j}
 let iaAvisou=false;function iaFalhou(err){iaErro=String(err&&err.message||err);desenharIA();if(!iaAvisou){iaAvisou=true;setTimeout(()=>iaAvisou=false,8000);alert("🤖 A IA não conseguiu ler agora ("+iaErro+").\nVou usar o leitor do celular.")}}
@@ -2493,7 +2500,7 @@ const IA_CAIXA='Esta é uma foto da tela "Caixa de Entrada" de um PDA de leitura
 const IA_ROTEIRO='Esta é uma foto da aba "Roteiro" de um PDA de leitura de energia. Cada linha é como "( 41 - - ) R DONA MARIA JOAQUINA RODRIG.." . Leia todas as linhas na ordem, de cima pra baixo, e devolva só o nome da rua (com o tipo: R, AV, TV, PC, AL, EST, ROD...), em MAIÚSCULAS, exatamente como está escrito, SEM o número entre parênteses e sem os ".." do final. Ignore linhas cortadas pela metade na borda da tela. Pode repetir rua se ela aparece mais de uma vez. Responda só JSON: {"ruas":["R DONA MARIA JOAQUINA RODRIG","R LIONS CLUB DE TATUI"]}.';
 const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome (ex.: "002 - IMPEDIMENTO", "LEITURA NORMAL") e uma Quantidade. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO","q":3}]}. Se não achar, {"itens":[]}.';
 function desenharIA(){const b=$("iaBtn");if(!b)return;b.innerHTML=iaChave?(iaErro?"🤖 Leitura com IA 🔴":"🤖 Leitura com IA 🟢"):"🤖 Leitura com IA ⚪"}
-async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+".\n\nConfira se a chave está certa (é a do Google AI Studio).")}}
+async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+"."+(/sobrecarregado|limite/.test(iaErro)?"":"\n\nConfira se a chave está certa (é a do Google AI Studio)."))}}
 function abrirIA(){
   const v=prompt("🤖 Leitura das fotos com IA (Google Gemini)\n\nCole aqui a sua chave do Google AI Studio.\nEla fica guardada SÓ neste celular (não vai no arquivo nem no backup).\n\nDeixe em branco e toque OK para desligar."+(iaErro?"\n\n🔴 Último problema: "+iaErro:""),iaChave);
   if(v===null)return;iaChave=v.trim().replace(/\s+/g,"");iaErro="";if(!iaChave)iaModelo="";iaSalvar();desenharIA();if(iaChave)iaTestar();else alert("⚪ Leitura com IA desligada. O 📷 volta a usar só o leitor do celular.")}
