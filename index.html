@@ -231,6 +231,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .hl-lin .ag{height:42px;border:0;border-radius:10px;background:#1f2937;color:#fff;font-weight:800;padding:0 12px;cursor:pointer}
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
 .hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
+.pda-res{max-height:42vh;overflow:auto;margin-top:8px;font-size:14px;line-height:1.55}.pda-res small{color:#6b7280}.pda-tot{margin-top:8px;font-size:13.5px;font-weight:700;color:#374151}.obs-bts .m{background:#dbeafe;color:#1e3a8a}
 .hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
 .nf-rap.aberto{display:block;cursor:default;position:relative;border-style:solid}.nf-rap.aberto b{font-size:12.5px}
@@ -504,7 +505,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" hidden></div>
+<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
 <div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
@@ -542,7 +543,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.14</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.15</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2309,7 +2310,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.14";
+const VERSAO_APP="15.15";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2449,27 +2450,46 @@ function preencherDoPDA(itens,et){
   escolherEtapa(pdaFila[0].etapa);
 }
 $("pdaBtn").onclick=()=>$("pdaArq").click();
-$("pdaArq").onchange=e=>{
-  const file=e.target.files&&e.target.files[0];if(!file)return;
-  const b=$("pdaBtn"),txt=b.textContent,img=new Image();
-  img.onload=async()=>{
-    b.disabled=true;
-    try{
-      b.textContent="⏳ Preparando leitor...";await carregarOCR();
-      const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
-      await w.setParameters({tessedit_pageseg_mode:"6"});
+// 📷 várias fotos: lê uma ou mais telas da Caixa de Entrada e soma tudo (livro repetido entra uma vez só)
+let pdaAcum=[],pdaFotos=0;
+function lerImg(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=er;im.src=URL.createObjectURL(file)})}
+function pdaResumo(){
+  const itens=pdaAcum,ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
+  const q=itens.filter(x=>!predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0),qp=itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0);
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal"><h3>📷 Li ${itens.length} livro(s)${et?" da Etapa "+p2(et):""}</h3><div class="hint">${pdaFotos>1?pdaFotos+" fotos somadas · ":""}livro repetido entre as fotos entra uma vez só</div>
+  <div class="pda-res">${itens.map(x=>`<div>• <b>${esc(x.livro)}</b> — ${x.qtd}${predios[x.livro]?" 🏢":""} <small>(Etapa ${p2(x.etapa)})</small></div>`).join("")}</div>
+  ${q||qp?`<div class="pda-tot">Total: <b>${(q+qp).toLocaleString("pt-BR")}</b> leituras · ${q?txtBob(q)+" (cabem "+bobinas(q)*porBobina+")":"🧾 sem bobina"}</div>`:""}
+  <div class="obs-bts"><button type="button" class="m">➕ Mais uma foto</button><button type="button" class="o">✔ Preencher</button></div><button type="button" class="c hl-canc">Cancelar</button></div>`;
+  document.body.appendChild(f);
+  f.querySelector(".m").onclick=()=>{f.remove();$("pdaArq").click()};
+  f.querySelector(".c").onclick=()=>{f.remove();pdaAcum=[];pdaFotos=0};
+  f.querySelector(".o").onclick=()=>{f.remove();const it=pdaAcum;pdaAcum=[];pdaFotos=0;preencherDoPDA(it,et)};
+}
+$("pdaArq").onchange=async e=>{
+  const files=[...(e.target.files||[])];if(!files.length)return;
+  const b=$("pdaBtn"),txt=b.textContent;b.disabled=true;let falhou=0;
+  try{
+    b.textContent="⏳ Preparando leitor...";await carregarOCR();
+    let fi=0;
+    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ "+(files.length>1?"Foto "+(fi+1)+"/"+files.length+" · ":"")+"Lendo... "+Math.round(l.progress*100)+"%"}});
+    await w.setParameters({tessedit_pageseg_mode:"6"});
+    for(fi=0;fi<files.length;fi++){
+      const img=await lerImg(files[fi]);
       const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
       const r=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
       let itens=lerListaPDA(r.data.text);
       if(!itens.length){b.textContent="⏳ Foto clara, tentando de novo...";const r2=await w.recognize(prepararClara(img,Math.min(2200,maxL)));itens=lerListaPDA(r2.data.text)}
-      await w.terminate();
-      if(!itens.length){alert("Não consegui ler os livros desta foto.\nTente uma foto reta, com boa luz, mostrando só a Caixa de Entrada do PDA.");return}
-      const ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
-      if(!confirm("📷 Li "+itens.length+" livro(s)"+(et?" da Etapa "+p2(et):"")+":\n\n"+itens.map(x=>"• "+x.livro+" — "+x.qtd+" (Etapa "+p2(x.etapa)+")").join("\n")+((q,qp)=>q||qp?"\n\nTotal: "+(q+qp).toLocaleString("pt-BR")+" leituras · "+(q?txtBob(q)+" (cabem "+bobinas(q)*porBobina+")":"🧾 sem bobina"):"")(itens.filter(x=>!predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0),itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0))+"\n\nPreencher o lançamento?"))return;
-      preencherDoPDA(itens,et);
-    }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
-    finally{b.disabled=false;b.textContent=txt;URL.revokeObjectURL(img.src);e.target.value=""}
-  };img.src=URL.createObjectURL(file);
+      URL.revokeObjectURL(img.src);
+      if(!itens.length){falhou++;continue}
+      pdaFotos++;
+      itens.forEach(x=>{if(!pdaAcum.some(y=>y.livro===x.livro&&y.etapa===x.etapa))pdaAcum.push(x)});
+    }
+    await w.terminate();
+  }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
+  finally{b.disabled=false;b.textContent=txt;e.target.value=""}
+  if(falhou)alert(falhou===1&&files.length===1&&!pdaAcum.length?"Não consegui ler os livros desta foto.\nTente uma foto reta, com boa luz, mostrando só a Caixa de Entrada do PDA.":"⚠️ "+(falhou===1?"Uma foto":"Algumas fotos")+" não deu pra ler. Tente tirar de novo, reta e com boa luz.");
+  if(pdaAcum.length)pdaResumo();
 };
 
 
