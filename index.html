@@ -544,7 +544,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.16</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.17</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1838,6 +1838,18 @@ function lerRuasDaFoto(t){t=String(t).split(/\n/).map(l=>l.replace(/(^|[)\]|\s])
   }
   return out;
 }
+// 📷 rota com várias fotos: lê uma, toca em ➕ e manda a próxima; no fim coloca tudo de uma vez
+let rotaAcum=[],rotaFotos=0;
+function rotaResumo(r){
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal"><h3>📷 Achei ${rotaAcum.length} rua(s)</h3><div class="hint">${rotaFotos>1?rotaFotos+" fotos somadas · ":""}rua repetida entra uma vez só · tem mais tela no PDA? toque em ➕</div>
+  <div class="pda-res">${rotaAcum.map(x=>`<div>• ${esc(x)}</div>`).join("")}</div>
+  <div class="obs-bts"><button type="button" class="m">➕ Mais uma foto</button><button type="button" class="o">✔ Colocar na rota</button></div><button type="button" class="c hl-canc">Cancelar</button></div>`;
+  document.body.appendChild(f);
+  f.querySelector(".m").onclick=()=>{f.remove();$("rotaArq").click()};
+  f.querySelector(".c").onclick=()=>{f.remove();rotaAcum=[];rotaFotos=0};
+  f.querySelector(".o").onclick=()=>{f.remove();r.ruas=r.ruas.filter(Boolean).concat(rotaAcum);rotaAcum=[];rotaFotos=0;salvarRotas();desenharRota();render()};
+}
 $("rotaArq").onchange=async e=>{
   const files=[...(e.target.files||[])];e.target.value="";if(!files.length)return;
   const r=rotaDoLivro(rcChave),b=$("rotaFotoBtn"),txt=b.textContent;b.disabled=true;
@@ -1857,10 +1869,11 @@ $("rotaArq").onchange=async e=>{
     }
     if(w)await w.terminate();ruas=arrumarRuas(ruas);
     // não repete rua que já está na rota
-    {const base=r.ruas.filter(x=>x.trim());ruas=ruas.filter(x=>{if(ruaRepetida(x,base))return false;base.push(x);return true})}
-    if(!ruas.length)return alert("Não achei endereço novo nesta(s) foto(s).\nTente uma foto reta, com boa luz, onde dê pra ler as ruas.");
-    if(!confirm("📷 Achei "+ruas.length+" rua(s):\n\n"+ruas.map(x=>"• "+x).join("\n")+"\n\nColocar na rota (no fim da lista)?"))return;
-    r.ruas=r.ruas.filter(Boolean).concat(ruas);salvarRotas();desenharRota();render();
+    {const base=r.ruas.filter(x=>x.trim()).concat(rotaAcum);ruas=ruas.filter(x=>{if(ruaRepetida(x,base))return false;base.push(x);return true})}
+    if(ruas.length)rotaFotos++;rotaAcum=rotaAcum.concat(ruas);
+    if(!rotaAcum.length)return alert("Não achei endereço novo nesta(s) foto(s).\nTente uma foto reta, com boa luz, onde dê pra ler as ruas.");
+    if(!ruas.length)alert("Nesta foto não tinha rua nova (as ruas já estavam na lista).");
+    rotaResumo(r);
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.textContent=txt}
 };
@@ -2316,7 +2329,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.16";
+const VERSAO_APP="15.17";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
