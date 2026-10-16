@@ -232,6 +232,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .obs-bts .d{background:#fee2e2}.hl-canc{width:100%;margin-top:8px;height:38px;border:0;border-radius:10px;background:#f3f4f6;font-weight:700;cursor:pointer}
 .hr-cmp{font-size:11.5px;color:#4b5563}.hr-rk{cursor:pointer}
 .pda-res{max-height:42vh;overflow:auto;margin-top:8px;font-size:14px;line-height:1.55}.pda-res small{color:#6b7280}.pda-tot{margin-top:8px;font-size:13.5px;font-weight:700;color:#374151}.obs-bts .m{background:#dbeafe;color:#1e3a8a}
+.ia-ic{position:relative;background:#f5f3ff!important;border-color:#c4b5fd!important}
 .ia-btn{display:block;margin:8px auto 0;border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:#374151;cursor:pointer}
 .hr-res{margin-top:5px;font-weight:700;color:#374151}.hr-base{margin-top:3px;font-size:12px;color:#6b7280}
 .nf-rap{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;border:1px dashed #6b7280;background:#f9fafb;color:#374151;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer;text-align:left}
@@ -506,7 +507,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
+<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
 <div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
@@ -544,7 +545,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.19</span><button type="button" id="iaBtn" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA ⚪</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.20</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2329,7 +2330,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.19";
+const VERSAO_APP="15.20";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2499,7 +2500,7 @@ let iaAvisou=false;function iaFalhou(err){iaErro=String(err&&err.message||err);d
 const IA_CAIXA='Esta é uma foto da tela "Caixa de Entrada" de um PDA de leitura de energia. Cada livro tem uma linha como "B, 0200, 11, 001282" (o 3º número é a ETAPA, o último é o LIVRO com 6 dígitos) e à direita "0/232" (o número depois da barra é a QUANTIDADE de leituras). Embaixo vem o endereço, depois "Limite: dd/mm/aaaa" e a distância em Km. Leia TODOS os livros que aparecem inteiros na foto, na ordem. Responda só JSON: {"livros":[{"etapa":11,"livro":"001282","qtd":232,"end":"R DONA MARIA JOAQUINA RODRIGUES, 100, JD PAULISTA, TATUI, SP","lim":"16/10/2026","km":"5,18"}]}. Se não tiver livro, {"livros":[]}.';
 const IA_ROTEIRO='Esta é uma foto da aba "Roteiro" de um PDA de leitura de energia. Cada linha é como "( 41 - - ) R DONA MARIA JOAQUINA RODRIG.." . Leia todas as linhas na ordem, de cima pra baixo, e devolva só o nome da rua (com o tipo: R, AV, TV, PC, AL, EST, ROD...), em MAIÚSCULAS, exatamente como está escrito, SEM o número entre parênteses e sem os ".." do final. Ignore linhas cortadas pela metade na borda da tela. Pode repetir rua se ela aparece mais de uma vez. Responda só JSON: {"ruas":["R DONA MARIA JOAQUINA RODRIG","R LIONS CLUB DE TATUI"]}.';
 const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome (ex.: "002 - IMPEDIMENTO", "LEITURA NORMAL") e uma Quantidade. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO","q":3}]}. Se não achar, {"itens":[]}.';
-function desenharIA(){const b=$("iaBtn");if(!b)return;b.innerHTML=iaChave?(iaErro?"🤖 Leitura com IA 🔴":"🤖 Leitura com IA 🟢"):"🤖 Leitura com IA ⚪"}
+function desenharIA(){const d=$("iaDot");if(!d)return;d.style.background=iaChave?(iaErro?"#ef4444":"#22c55e"):"#d1d5db";$("iaBtn").title=iaChave?(iaErro?"Leitura com IA: deu problema ("+iaErro+")":"Leitura com IA: ligada"):"Leitura com IA: desligada (toque pra colocar a chave)"}
 async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+"."+(/sobrecarregado|limite/.test(iaErro)?"":"\n\nConfira se a chave está certa (é a do Google AI Studio)."))}}
 function abrirIA(){
   const v=prompt("🤖 Leitura das fotos com IA (Google Gemini)\n\nCole aqui a sua chave do Google AI Studio.\nEla fica guardada SÓ neste celular (não vai no arquivo nem no backup).\n\nDeixe em branco e toque OK para desligar."+(iaErro?"\n\n🔴 Último problema: "+iaErro:""),iaChave);
