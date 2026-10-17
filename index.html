@@ -81,7 +81,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .troca-etapa button:disabled{opacity:.35}
 .troca-dica{font-size:11px;color:#6b7280;font-weight:700}
 .etapas-dica{grid-column:1/-1;font-size:11px;color:#4b5563;font-weight:700;margin-bottom:2px}
-.ic.escuro{background:#4b5563}.ic.trash{background:#f5e7e7}
+.ic{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:48px}.ic .ico{font-size:17px;line-height:1}.ic .rot{font-size:10.5px;font-weight:600;line-height:1}.ic.escuro{background:#4b5563;color:#fff}.ic.trash{background:#f5e7e7}
 .action{height:42px;border:0;border-radius:10px;background:#4b5563;color:#fff;font-weight:bold;font-size:14px;cursor:pointer}.action.sec{background:#e5e7eb;color:#4b5563}
 
 /* Janelas */
@@ -429,7 +429,7 @@ input{height:38px;border-radius:9px}
 .hint{font-size:10.5px}
 .save-all{width:46px;height:36px;border-radius:9px}
 .lista-head strong{font-size:13px}.lista-head small{font-size:11px}.pill{font-size:11px!important;padding:4px 9px!important}
-.tools{margin-top:7px}.ic{height:32px;font-size:15px;border-radius:8px}
+.tools{margin-top:7px}.ic{height:44px;border-radius:8px}.ic .ico{font-size:15px}
 .item{font-size:12px;padding:7px 0}
 .item>div:first-child{min-width:0;flex:1}
 /* C2: número do livro em etiqueta e botões numa linha embaixo */
@@ -497,7 +497,12 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 .topo-q{position:absolute;top:-9px;right:-8px;z-index:4;width:22px;height:22px;border-radius:50%;border:2px solid #fecaca;background:#fff;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px #0002}.topo-q[hidden]{display:none}
 .dt-edit{position:relative;display:inline-block;border-bottom:1px dashed #9ca3af;cursor:pointer;padding:0 1px}
 .dt-edit input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;margin:0;font-size:16px;-webkit-appearance:none;appearance:none}
-</style>
+.cal-icones button,#calFundo .cal-nav4 .cal-lupa,#calFundo .cal-nav4 .cal-info-btn,#calFundo .cal-nav4 .btn-editar{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1}
+.cal-icones button{height:48px}.cal-icones .ico{font-size:18px}.cal-icones .rot{font-size:9px;font-weight:700;color:#4b5563}.cal-icones button.azul .rot{color:#fff}
+#calFundo .cal-nav4 .ico{font-size:16px}#calFundo .cal-nav4 .rot{font-size:9px;font-weight:700;color:#4b5563}
+#calFundo .cal-nav4 button,#calFundo .cal-nav4 div,#calFundo .cal-nav4 .cal-lupa{height:46px}#calFundo .cal-nav4 .btn-editar{height:46px}#calFundo .cal-nav4 .btn-editar .rot{color:#4b5563}#calFundo .cal-nav4 .btn-editar.pronto .rot{color:#fff}
+#calFundo .cal-nav4{display:grid;grid-template-columns:34px 88px 34px 46px 46px 1fr}
+.cal-atrasos{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:6px 8px;border-radius:10px;background:#fef2f2;border:1px solid #fecaca;font-size:12px;font-weight:800;color:#991b1b}.cal-atrasos button{border:1px solid #fca5a5;background:#fff;color:#991b1b;border-radius:8px;height:28px;padding:0 9px;font-size:12px;font-weight:800}.cal-btn .mini-cal{display:flex;flex-direction:column;width:26px;height:28px;margin:auto;border-radius:5px;overflow:hidden;background:#fff;border:1px solid #9ca3af;box-shadow:0 1px 2px #0003}.mini-cal i{font-style:normal;background:#dc2626;color:#fff;font-size:7.5px;font-weight:800;line-height:9px;height:9px;text-align:center}.mini-cal b{flex:1;display:flex;align-items:center;justify-content:center;color:#1f2937;font-size:14px;line-height:1}.head-tit{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.foto-perfil{width:40px;height:40px;flex:none;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7)}.head-tit h1{font-size:16px!important;line-height:1.15;margin:0 0 2px!important}.head-tit p{display:block!important;font-size:10.5px!important;line-height:1.2}.head-btns{gap:5px!important}.head-btns .hbtn{width:40px!important}.avatar-wrap{position:relative;flex:none;width:40px;height:40px;cursor:pointer}.foto-vazia{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);font-size:20px}.foto-lapis{position:absolute;right:-5px;bottom:-5px;width:20px;height:20px;border-radius:50%;border:1.5px solid #4b5563;background:#fff;font-size:10px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer}.foto-opc{display:grid;gap:8px}.foto-opc button{height:46px;border:0;border-radius:10px;background:#e5e7eb;color:#374151;font-size:15px;font-weight:800;cursor:pointer}.foto-opc .verm{background:#fef2f2;color:#b91c1c}.foto-dica2{font-size:12px;color:#6b7280;margin:0 0 10px}</style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Controle de Leituras">
@@ -507,7 +512,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </head>
 <body>
 <div class="app">
-<header><div class="head-row"><div><h1>📚 Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div>
+<header><div class="head-row"><div class="head-tit"><div class="avatar-wrap"><img id="fotoPerfil" class="foto-perfil" alt="Minha foto"><span id="fotoVazia" class="foto-perfil foto-vazia" role="button" aria-label="Escolher foto" hidden>👤</span><button id="fotoLapis" class="foto-lapis" type="button" aria-label="Editar foto">✏️</button></div><div><h1>Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div></div>
 <div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
 <main>
 <section class="card">
@@ -565,15 +570,15 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <div id="lista" hidden></div>
 <div id="desfLinha" class="desf-linha" hidden><button id="desfazer" class="desfazer" type="button"></button><button id="desfazerX" class="desf-x" type="button" aria-label="Dispensar">✕</button></div>
 <div class="tools">
-<button id="csv" class="ic escuro" type="button" title="Exportar" aria-label="Exportar">📄</button>
-<button id="importar" class="ic" type="button" title="Importar" aria-label="Importar">📥</button>
-<button id="backup" class="ic" type="button" title="Backup" aria-label="Backup">💾</button>
-<button id="lixeira" class="ic trash" type="button" title="Lixeira" aria-label="Lixeira">🗑️</button>
+<button id="csv" class="ic escuro" type="button" title="Exportar" aria-label="Exportar"><span class="ico">📄</span><span class="rot">Exportar</span></button>
+<button id="importar" class="ic" type="button" title="Importar" aria-label="Importar"><span class="ico">📥</span><span class="rot">Importar</span></button>
+<button id="backup" class="ic" type="button" title="Backup" aria-label="Backup"><span class="ico">💾</span><span class="rot">Backup</span></button>
+<button id="lixeira" class="ic trash" type="button" title="Lixeira" aria-label="Lixeira"><span class="ico">🗑️</span><span class="rot">Lixeira</span></button>
 </div>
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.31</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.32</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -646,22 +651,23 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <!-- Calendário de leitura -->
 <div id="calFundo" class="modal-fundo" hidden><div class="modal">
 <div class="modal-top"><button id="calVoltar" class="voltar" type="button">‹ Voltar</button><h3>📅 Calendário de leitura</h3></div>
-<div class="cal-nav cal-nav4"><button id="calAnt" type="button">‹</button><div id="calMes" role="button" tabindex="0" title="Ver o mês todo"></div><button id="calProx" type="button">›</button><label class="cal-lupa" title="Consultar um dia">🔎<input id="calBusca" type="date" aria-label="Consultar um dia"></label><button id="calInfoBtn" type="button" class="cal-info-btn" title="Legenda" aria-label="Legenda">ℹ️</button><button id="calEditar" class="btn-editar" type="button">✏️ Editar mês</button></div>
+<div class="cal-nav cal-nav4"><button id="calAnt" type="button">‹</button><div id="calMes" role="button" tabindex="0" title="Ver o mês todo"></div><button id="calProx" type="button">›</button><label class="cal-lupa" title="Consultar um dia"><span class="ico">🔎</span><span class="rot">Dia</span><input id="calBusca" type="date" aria-label="Consultar um dia"></label><button id="calInfoBtn" type="button" class="cal-info-btn" title="Legenda" aria-label="Legenda"><span class="ico">ℹ️</span><span class="rot">Legenda</span></button><button id="calEditar" class="btn-editar" type="button"><span class="ico">✏️</span><span class="rot">Editar</span></button></div>
 <div id="calBuscaRes" class="consulta-res" hidden></div>
 <div id="provAviso" class="prov-aviso" hidden>🟡 <b>Provisório</b> — calculado pelo app, pode ter erro. Pra corrigir, toque em ✏️ Editar mês: mudou uma data, as seguintes se ajustam sozinhas.</div>
 <div id="calInfo" class="leg-cal" hidden><div class="leg-mes">13/10 = dia · Et 08 = etapa · 29d = ciclo · <b class="md-at-leg"></b> à esquerda: mês passado foi lida atrasada (toque pra ver os dias) · <b class="bol-rosa"></b> à esquerda: mês passado você não fez · bolinha à direita: este mês → 🟢 no dia · 🔴 lançada atrasada · 🟠 sábado/feriado · 🔵 férias · 🟣 folga · <b class="bol-rosa"></b> não fiz esta etapa (li em outro lugar) · ⚪ passou e não lançou · toque num dia pra ver</div><div class="legenda"><span><i style="background:#fee2e2;border:1px solid #f87171"></i>Sábado</span><span><i style="background:#ffedd5;border:1px solid #fb923c"></i>Feriado com leitura</span><span><i style="background:#fef9c3;border:1px solid #facc15"></i>Provisório</span><span><i style="background:#dbeafe;border:1px solid #60a5fa"></i>Férias</span><span><i style="background:#ede9fe;border:1px solid #a78bfa"></i>Folga</span><span>❓ Dia escolhido: mês passado essa etapa foi lida atrasada</span><span style="flex-basis:100%;font-size:11px;color:#6b7280">Bolinha ao lado da data: ⚪ sem leitura · 🟢 no dia · 🟠 sábado/feriado com leitura · 🔵 férias · 🟣 folga · 🟡 atenção · 🔴 atrasada</span><span style="color:#2563eb">"lida 24/09" = dia que você leu de verdade</span></div>
 <div class="leg-bts"><b>Nas confirmações:</b> 📷 tira foto do visor do medidor e preenche a leitura (você confere) · ✏️ corrige · 🙅 recusada · 🗑️ tira · 🗺️ abre o mapa.<br><b>✏️ lá em cima:</b> corrigir as datas das etapas do mês (quando a empresa muda uma data, ou pra acertar o calendário provisório de 2027). Toque no ✅ quando terminar.<br><b>Botões de baixo:</b><br>📷 Ler foto do calendário (chegou o oficial? o app lê as datas e troca o provisório — precisa de internet; ou corrija em ✏️ Editar mês)<br>📤 Enviar este mês · 🗓️ Enviar o ano · 🖼️ Enviar foto original<br>🏖️ Minhas férias / folgas · 🗑️ Apagar calendário do ano · ✖️ Fechar<br>🔎 lá em cima: consultar um dia</div></div>
+<div id="calAtrasos" class="cal-atrasos" hidden></div>
 <div id="calMesTodo" class="mes-todo" hidden></div>
 <div id="calGrid" class="cal-grid"></div>
 <div id="calStatus" class="cal-status" hidden></div>
 <div class="cal-icones">
-<button id="calFotoBtn" type="button" class="azul" title="Ler foto do calendário" aria-label="Ler foto do calendário">📷</button>
-<button id="calCompMes" type="button" title="Enviar este mês" aria-label="Enviar este mês">📤</button>
-<button id="calCompTabela" type="button" title="Enviar o ano" aria-label="Enviar o ano">🗓️</button>
-<button id="calCompFoto" type="button" title="Enviar foto original" aria-label="Enviar foto original">🖼️</button>
-<button id="feriasBtn" type="button" title="Minhas férias / folgas" aria-label="Minhas férias e folgas">🏖️</button>
-<button id="calApagar" type="button" class="verm" title="Apagar calendário do ano" aria-label="Apagar calendário do ano">🗑️</button>
-<button id="calFechar" type="button" title="Fechar" aria-label="Fechar">✖️</button>
+<button id="calFotoBtn" type="button" class="azul" title="Ler foto do calendário" aria-label="Ler foto do calendário"><span class="ico">📷</span><span class="rot">Ler foto</span></button>
+<button id="calCompMes" type="button" title="Enviar este mês" aria-label="Enviar este mês"><span class="ico">📤</span><span class="rot">Env. mês</span></button>
+<button id="calCompTabela" type="button" title="Enviar o ano" aria-label="Enviar o ano"><span class="ico">🗓️</span><span class="rot">Env. ano</span></button>
+<button id="calCompFoto" type="button" title="Enviar foto original" aria-label="Enviar foto original"><span class="ico">🖼️</span><span class="rot">Env. foto</span></button>
+<button id="feriasBtn" type="button" title="Minhas férias / folgas" aria-label="Minhas férias e folgas"><span class="ico">🏖️</span><span class="rot">Férias</span></button>
+<button id="calApagar" type="button" class="verm" title="Apagar calendário do ano" aria-label="Apagar calendário do ano"><span class="ico">🗑️</span><span class="rot">Apagar</span></button>
+<button id="calFechar" type="button" title="Fechar" aria-label="Fechar"><span class="ico">✖️</span><span class="rot">Fechar</span></button>
 </div>
 <input id="calFotoArq" type="file" accept="image/*" hidden>
 <div id="fotoDica" class="foto-dica" hidden>👆 Toque na foto para ampliar</div>
@@ -1399,6 +1405,7 @@ function atualizarChip(){
   // A etapa já aparece no botão ao lado: este aviso só aparece quando o dia tem algo diferente
   const info=$("calTexto"),cor=e?corDoDia(h):"";let txt="";
   const [da,dm,dd]=h.split("-").map(Number),dsem=new Date(da,dm-1,dd).getDay();
+  c.innerHTML='<span class="mini-cal"><i>'+["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"][dm-1]+'</i><b>'+dd+'</b></span>';
   $("dataTxt").innerHTML=p2(dd)+"/"+p2(dm)+"/"+String(da).slice(2)+"<em>"+["dom","seg","ter","qua","qui","sex","sáb"][dsem]+"</em>";
   if(ajuda){
     $("cicloBadge").hidden=true;$("dataTxt").parentNode.classList.remove("atrasado");
@@ -2045,8 +2052,17 @@ function atualizarBannerCal(){
 // ---------- Mês todo (calendário de parede) com as etapas nos dias ----------
 // mês todo aberto por padrão; a lista das 18 etapas só aparece no ✏️ Editar
 let calMesAberto=false;
+function desenharAtrasosCal(){
+  const bx=$("calAtrasos");if(!bx)return;
+  if(calMesAberto||calEditando){bx.hidden=true;return}
+  const lista=cal[calVer]||[],h=hoje(),ls=[];
+  lista.forEach((d,i)=>{if(d&&d>=h&&!ultimaLeituraReal(calVer,i+1)&&atrasoMesPassado(calVer,i+1))ls.push(i+1)});
+  if(!ls.length){bx.hidden=true;return}
+  bx.innerHTML='<span>❓ Atrasou mês passado:</span>'+ls.map(n=>`<button type="button" onclick="verAtraso(${n})">Et ${p2(n)}</button>`).join("");
+  bx.hidden=false;
+}
 function desenharMesTodo(){
-  const box=$("calMesTodo");if(!box)return;box.hidden=!calMesAberto;$("calGrid").hidden=!calEditando;if(!calMesAberto)return;
+  const box=$("calMesTodo");if(!box)return;box.hidden=!calMesAberto;$("calGrid").hidden=!calEditando;desenharAtrasosCal();if(!calMesAberto)return;
   const [a,mo]=calVer.split("-").map(Number),lista=cal[calVer]||[],h=hoje(),ini=new Date(a,mo-1,1).getDay(),nd=new Date(a,mo,0).getDate();
   let html=["D","S","T","Q","Q","S","S"].map((x,i)=>`<b class="${i===0?"dom":i===6?"sab":""}">${x}</b>`).join("");
   for(let i=0;i<ini;i++)html+="<span></span>";
@@ -2081,7 +2097,7 @@ function desenharCal(){
   // ❓ vai no dia escolhido lá na tela principal (ex.: 14/10); se ele não for dia de etapa deste mês, vai na próxima que falta ler
   const dSel=$("data").value||h,iSel=lista.indexOf(dSel);
   const iProx=iSel>-1?iSel:lista.findIndex((d,i)=>d&&d>=h&&!ultimaLeituraReal(calVer,i+1));
-  const b=$("calEditar");b.textContent=calEditando?"✅":"✏️";b.title=calEditando?"Pronto":"Corrigir as datas das etapas deste mês";b.setAttribute("aria-label",b.title);b.classList.toggle("pronto",calEditando);
+  const b=$("calEditar");b.innerHTML=calEditando?'<span class="ico">✅</span><span class="rot">Pronto</span>':'<span class="ico">✏️</span><span class="rot">Editar</span>';b.title=calEditando?"Pronto":"Corrigir as datas das etapas deste mês";b.setAttribute("aria-label",b.title);b.classList.toggle("pronto",calEditando);
   // Fora da edição: datas só pra ver, curtinhas (04/08 qua). Editando: campos de data.
   const campo=(d,i)=>{
     if(calEditando){const pr=diaDaEtapa(somaMes(calVer,1),i+1);return `<input type="date" data-i="${i}" value="${d||""}">${pr?`<small class="ed-prox">📅 mês que vem ${pr.slice(8)}/${pr.slice(5,7)}</small>`:""}`}
@@ -2453,7 +2469,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.31";
+const VERSAO_APP="15.32";
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2756,5 +2772,30 @@ completarProvisorio();
 setTimeout(()=>{const l=$("localidade").value,p=$("prontuario").value.trim();if(l&&p)guardarPront(l,p)},400);
 const eHoje=etapaAmarrada(hoje())||etapaAutomatica(hoje());
 sel(pdaFila.length?pdaFila[0].etapa:(eHoje||1),false);desenharIA();
+</script>
+<div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
+<script>
+(function(){
+const FK="controle_leituras_luis_ricardo_v1_foto_perfil",PADRAO="data:image/jpeg;base64,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",$=x=>document.getElementById(x);
+// sem nada guardado = foto original; "" = sem foto (bonequinho); outro valor = foto escolhida
+function lerFoto(){let u=null;try{u=localStorage.getItem(FK)}catch(e){}return u===null?PADRAO:u}
+function mostrar(){const u=lerFoto();$("fotoPerfil").hidden=!u;$("fotoVazia").hidden=!!u;if(u)$("fotoPerfil").src=u;
+ $("fotoTirar").hidden=!u;let g=null;try{g=localStorage.getItem(FK)}catch(e){}$("fotoOriginal").hidden=g===null}
+function abrir(){mostrar();$("fotoMenu").hidden=false}
+$("fotoPerfil").onclick=$("fotoVazia").onclick=$("fotoLapis").onclick=abrir;
+$("fotoFechar").onclick=()=>$("fotoMenu").hidden=true;
+$("fotoMenu").onclick=e=>{if(e.target===$("fotoMenu"))$("fotoMenu").hidden=true};
+$("fotoEscolher").onclick=()=>$("fotoArq").click();
+$("fotoTirar").onclick=()=>{try{localStorage.setItem(FK,"")}catch(e){}mostrar();$("fotoMenu").hidden=true};
+$("fotoOriginal").onclick=()=>{try{localStorage.removeItem(FK)}catch(e){}mostrar();$("fotoMenu").hidden=true};
+$("fotoArq").onchange=e=>{const f=e.target.files[0];if(!f)return;
+ const img=new Image(),url=URL.createObjectURL(f);
+ img.onload=()=>{const t=Math.min(img.width,img.height),c=document.createElement("canvas");c.width=c.height=200;
+  c.getContext("2d").drawImage(img,(img.width-t)/2,(img.height-t)/2,t,t,0,0,200,200);
+  try{localStorage.setItem(FK,c.toDataURL("image/jpeg",.85))}catch(x){alert("Não consegui guardar a foto neste aparelho.")}
+  URL.revokeObjectURL(url);e.target.value="";mostrar();$("fotoMenu").hidden=true};
+ img.onerror=()=>{alert("Não consegui abrir essa foto.");URL.revokeObjectURL(url)};img.src=url};
+mostrar();
+})();
 </script>
 </body></html>
