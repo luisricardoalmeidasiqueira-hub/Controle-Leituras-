@@ -505,7 +505,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 .cal-atrasos{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:6px 8px;border-radius:10px;background:#fef2f2;border:1px solid #fecaca;font-size:12px;font-weight:800;color:#991b1b}.cal-atrasos button{border:1px solid #fca5a5;background:#fff;color:#991b1b;border-radius:8px;height:28px;padding:0 9px;font-size:12px;font-weight:800}.cal-btn .mini-cal{display:flex;flex-direction:column;width:26px;height:28px;margin:auto;border-radius:5px;overflow:hidden;background:#fff;border:1px solid #9ca3af;box-shadow:0 1px 2px #0003}.mini-cal i{font-style:normal;background:#dc2626;color:#fff;font-size:7.5px;font-weight:800;line-height:9px;height:9px;text-align:center}.mini-cal b{flex:1;display:flex;align-items:center;justify-content:center;color:#1f2937;font-size:14px;line-height:1}.head-tit{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.foto-perfil{width:40px;height:40px;flex:none;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7)}.head-tit h1{font-size:16px!important;line-height:1.15;margin:0 0 2px!important}.head-tit p{display:block!important;font-size:10.5px!important;line-height:1.2}.head-btns{gap:5px!important}.head-btns .hbtn{width:40px!important}.avatar-wrap{position:relative;flex:none;width:40px;height:40px;cursor:pointer}.foto-vazia{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);font-size:20px}.foto-lapis{position:absolute;right:-5px;bottom:-5px;width:20px;height:20px;border-radius:50%;border:1.5px solid #4b5563;background:#fff;font-size:10px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer}.foto-opc{display:grid;gap:8px}.foto-opc button{height:46px;border:0;border-radius:10px;background:#e5e7eb;color:#374151;font-size:15px;font-weight:800;cursor:pointer}.foto-opc .verm{background:#fef2f2;color:#b91c1c}.foto-dica2{font-size:12px;color:#6b7280;margin:0 0 10px}.bob-livro{display:inline-block;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;border-radius:999px;padding:0 8px;font-size:.85em;font-weight:700;white-space:nowrap}
 .topo-rel{flex:none;margin-left:4px;color:#b91c1c;font-weight:800;font-size:12px;line-height:1;cursor:pointer;white-space:nowrap;position:relative;z-index:3;padding:8px 2px}.topo-rel[hidden]{display:none}
 .usar-data button{padding:5px 10px!important;font-size:12.5px!important}
-</style>
+.hbtn.ver-pill,#atualizarApp{width:auto!important;padding:0 8px!important;font-size:12px!important;font-weight:800;display:flex;align-items:center;gap:3px;border:1px solid rgba(251,191,36,.85)!important;color:#fde68a!important;white-space:nowrap}#atualizarApp #verPill{font-size:12px}.head-btns .hbtn{width:34px!important;height:34px!important;font-size:16px!important;border-radius:9px!important}.head-btns #atualizarApp{width:auto!important;font-size:11px!important;padding:0 6px!important;gap:2px}.head-btns #atualizarApp #verPill{font-size:11px}.head-tit h1{font-size:14px!important;white-space:nowrap}.head-tit p{font-size:10px!important}.head-btns{gap:4px!important}</style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Controle de Leituras">
@@ -516,7 +516,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <body>
 <div class="app">
 <header><div class="head-row"><div class="head-tit"><div class="avatar-wrap"><img id="fotoPerfil" class="foto-perfil" alt="Minha foto"><span id="fotoVazia" class="foto-perfil foto-vazia" role="button" aria-label="Escolher foto" hidden>👤</span><button id="fotoLapis" class="foto-lapis" type="button" aria-label="Editar foto">✏️</button></div><div><h1>Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div></div>
-<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄</button></div></div></header>
+<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄 <span id="verPill"></span></button></div></div></header>
 <main>
 <section class="card">
 <div class="topo">
@@ -581,7 +581,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.34</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.36</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2473,7 +2473,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.34";
+const VERSAO_APP="15.36";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
