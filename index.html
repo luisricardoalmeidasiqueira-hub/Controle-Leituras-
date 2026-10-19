@@ -581,7 +581,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.36</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.37</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2473,7 +2473,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.36";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.37";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2807,4 +2807,97 @@ $("fotoArq").onchange=e=>{const f=e.target.files[0];if(!f)return;
 mostrar();
 })();
 </script>
+<!-- ===== ACRÉSCIMO v15.37: todo livro com a mesma linha de horário + total do dia ===== -->
+<style>
+.hr2-sem{background:#fff7ed;color:#9a3412}
+.hr2-sem b{color:#15803d;cursor:pointer;text-decoration:underline}
+.hr2-dia{display:flex;align-items:center;gap:8px;margin:6px 0;padding:6px 10px;border-radius:10px;font-size:12.5px;line-height:1.4;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.hr2-txt{flex:1;cursor:pointer}.hr2-dia .hr2-b{flex:none;margin:0}
+.hr2-dia b{font-size:14px}
+.hr2-dia.ok{background:#dcfce7;color:#166534;border-color:#86efac}
+.hr2-dia small{display:block;font-size:11px;opacity:.85}
+.hr2-dia[hidden]{display:none}
+.hr-dia{display:none!important}
+.hr2-b{border:1px solid #d1d5db;background:#fff;border-radius:999px;height:26px;padding:0 10px;font-size:12px;font-weight:700;margin:4px 5px 0 0;cursor:pointer;color:#374151}
+.hr2-go{background:#dcfce7;border-color:#86efac;color:#166534}
+</style>
+<script>
+(function(){
+const dia=()=>$("data").value||hoje();
+// 1) Todo livro (sem cronômetro aberto) ganha a MESMA linha de controles do livro que está no cronômetro:
+//    ▶ Começar/Continuar · 🚩 +1 (impedimento) · 📷 (foto do PDA do impedimento)
+function marcar(){
+  const L=$("lista");if(!L)return;
+  L.querySelectorAll(".item:not(.rel-mini):not([data-hr2])").forEach(it=>{
+    it.dataset.hr2="1";
+    const m=it.innerHTML.match(/editar\('([^']+)'\)/);if(!m)return;
+    const r=registros.find(x=>String(x.id)===m[1]);
+    if(!r||r.releitura||cronoDoRec(r.id))return;
+    const sem=!r.ini&&!r.fim,pronto=r.ini&&r.fim;
+    (it.firstElementChild||it).insertAdjacentHTML("beforeend",`<br>${sem?`<span class="hr-tag hr2-sem"><span onclick="horaLivro('${r.id}')">⏱️ sem horário</span></span> `:""}<button type="button" class="hr2-b hr2-go" onclick="hr2Ini('${r.id}')">▶ ${pronto?"Continuar":"Começar"}</button><button type="button" class="hr2-b" onclick="hr2Imp('${r.id}')"><span class="flag-x">🚩</span> +1</button><button type="button" class="hr2-b" onclick="hr2Imp('${r.id}',1)" aria-label="Foto do impedimento">📷</button>`);
+  });
+}
+// ▶ Começar: igual ao ⏱️ do livro. ▶ Continuar: volta a contar de onde parou (soma o tempo de antes)
+window.hr2Ini=function(id){
+  const r=registros.find(x=>String(x.id)===String(id));if(!r||cronoDoRec(id))return;
+  if(!(r.ini&&r.fim))return iniciarCronoRec(id);
+  const base=new Date(r.data+"T00:00:00").getTime(),hm=h=>{const[a,b]=h.split(":").map(Number);return base+(a*60+b)*60000};
+  let segs=[];
+  if(r.trechos&&r.trechos.length)segs=r.trechos.map(t=>{const[a,b]=t.split("–");return[hm(a),hm(b)]});
+  else{let a=hm(r.ini),b=hm(r.fim);if(b<a)b+=864e5;segs=[[a,b]]}
+  pausarTodos();cronos.push({id:Date.now(),livro:r.livro,recId:String(r.id),segs,run:Date.now()});salvarCrono();render();
+};
+// 🚩 +1 e 📷: se o livro está no cronômetro vai pro cronômetro; se não, soma direto no livro (igual o Terminei faz)
+window.hr2Imp=function(id,foto){
+  const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
+  const c=cronoDoRec(id);
+  const alvo=c||{imp:{push(it){r.nl=(r.nl||0)+1;(r.impLista=r.impLista||[]).push(it);try{localStorage.setItem(KEY,JSON.stringify(registros))}catch(e){}render()}}};
+  if(foto)return impFoto(alvo);
+  (alvo.imp=alvo.imp||[]).push({h:agoraHM()});
+  if(c){salvarCrono();desenharCrono()}
+};
+// 2) Total do dia = do começo do 1º livro até o fim do último, menos o intervalo (almoço). Só fecha em "🏁 Encerrar o dia"
+const FK=KEY+"_dia_fechado",IK=KEY+"_dia_intervalo";let fechado={},interv={};
+try{fechado=JSON.parse(localStorage.getItem(FK)||"{}")||{}}catch(e){}try{interv=JSON.parse(localStorage.getItem(IK)||"{}")||{}}catch(e){}
+const salvaF=()=>{try{localStorage.setItem(FK,JSON.stringify(fechado));localStorage.setItem(IK,JSON.stringify(interv))}catch(e){}};
+const barra=document.createElement("div");barra.id="hr2Dia";barra.className="hr2-dia";barra.hidden=true;
+$("cronoLivro").after(barra);
+barra.addEventListener("click",e=>{
+  const b=e.target.closest("button"),d=dia(),rs=registros.filter(r=>r.data===d&&!r.releitura);
+  if(!b){if(e.target.closest(".hr2-txt")&&typeof verDiaTrab==="function")verDiaTrab();return}
+  const a=b.dataset.a;
+  if(a==="reabrir"){delete fechado[d];salvaF();resumo();return}
+  if(a==="int"){const v=prompt("☕ Quantos minutos de intervalo (almoço, descanso) tirar do dia?\n(0 = nenhum)",String(interv[d]||0));if(v===null)return;const n=parseInt(v,10);if(isNaN(n)||n<0)return;if(n)interv[d]=n;else delete interv[d];salvaF();resumo();return}
+  if(a==="fechar"){
+    if(cronos.length&&!confirm("Tem cronômetro aberto ("+cronos.length+").\n\nEncerrar o dia mesmo assim? O fim do dia será o último livro terminado."))return;
+    fechado[d]=rs.length;salvaF();resumo()
+  }
+});
+function resumo(){
+  const d=dia(),rs=registros.filter(r=>r.data===d&&!r.releitura);
+  if(!rs.length){barra.hidden=true;return}
+  const com=rs.filter(r=>duracao(r)),sem=rs.filter(r=>!duracao(r)),minLiv=com.reduce((t,r)=>t+duracao(r),0),q=com.reduce((t,r)=>t+r.qtd,0);
+  const ini=com.map(r=>r.ini).filter(Boolean).sort()[0],fim=com.map(r=>r.fim).filter(Boolean).sort().slice(-1)[0];
+  let span=0;if(ini&&fim){span=minDe(fim)-minDe(ini);if(span<0)span+=1440}
+  const it=interv[d]||0,total=span?Math.max(0,span-it):minLiv;
+  const aberto=cronos.length,dl=d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7);
+  const btInt=`<button type="button" class="hr2-b" data-a="int" aria-label="Intervalo">☕${it?" "+fmtDur(it):""}</button>`;
+  barra.hidden=false;
+  if(fechado[d]===rs.length&&!aberto&&com.length){
+    barra.className="hr2-dia ok";
+    barra.innerHTML=`<span class="hr2-txt">🏁 ${dl} encerrado: <b>${fmtDur(total)}</b> trabalhadas<small>${ini||"--:--"} → ${fim||"--:--"}${it?" · intervalo "+fmtDur(it):""} · nos livros ${fmtDur(minLiv)} · ${rs.length} livro(s) · ${rs.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras</small></span>${btInt}<button type="button" class="hr2-b" data-a="reabrir">↩</button>`;
+  }else{
+    barra.className="hr2-dia";
+    barra.innerHTML=`<span class="hr2-txt">⏱️ ${dl}: <b>${fmtDur(total)}</b> trabalhadas até agora<small>${ini?"desde "+ini+" até o último livro"+(it?" · intervalo "+fmtDur(it):"")+" · ":""}${sem.length?sem.length+" livro(s) sem horário · ":""}${aberto?"cronômetro aberto ("+aberto+") · ":""}toque em Encerrar quando acabar</small></span>${btInt}<button type="button" class="hr2-b hr2-go" data-a="fechar">🏁 Encerrar</button>`;
+  }
+}
+const atualizar=()=>{marcar();resumo()};
+new MutationObserver(atualizar).observe($("totEtapa"),{childList:true,characterData:true,subtree:true});
+new MutationObserver(marcar).observe($("lista"),{childList:true});
+new MutationObserver(resumo).observe($("cronoLivro"),{childList:true});
+$("data").addEventListener("change",atualizar);
+atualizar();
+})();
+</script>
+
 </body></html>
