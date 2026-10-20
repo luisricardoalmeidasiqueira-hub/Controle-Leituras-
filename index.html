@@ -581,7 +581,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.43</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.44</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1959,7 +1959,11 @@ $("nlArq").onchange=async e=>{
     const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)||x.cod==="002").reduce((t,x)=>t+x.q,0);
     const feitas=itens.filter(x=>["000","011","012"].includes(x.cod)||/^LEITURA/.test(x.nome)).reduce((t,x)=>t+x.q,0),recF=nlAlvo.startsWith("rec:")?registros.find(x=>String(x.id)===nlAlvo.slice(4)):null,txtFeitas=feitas?"\n\n✅ Leituras feitas (normal + acima + abaixo): "+feitas+(recF&&recF.qtd?" · livro: "+recF.qtd:""):"";
     const v=prompt((nlAlvo.startsWith("rec:")?"🚩 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"🚩 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+txtFeitas+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
-    if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{$(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
+    if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{
+      // Bandeirinha da tela principal usada DEPOIS de salvar o livro: oferece colar no último livro salvo
+      const vazias=![...$("livroRows").children].some(linhaPreenchida),ult=registros[registros.length-1];
+      if(n>0&&nlAlvo==="impQtd"&&vazias&&ult&&!ult.releitura&&n<=ult.qtd&&Number.isFinite(+ult.id)&&Date.now()-Math.floor(+ult.id)<4*36e5&&confirm("🚫 Colocar "+n+" não lido"+(n>1?"s":"")+" dentro do livro "+ult.livro+" (o último que você salvou)?\n\nOK = no livro (o app avisa no mês que vem)\nCancelar = só no dia")){ult.nl=n;localStorage.setItem(KEY,JSON.stringify(registros));render();return}
+      $(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
   finally{b.disabled=false;b.innerHTML='<span class="flag-x">🚩</span>'}
 };
@@ -2497,7 +2501,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.43";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.44";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
