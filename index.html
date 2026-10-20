@@ -285,6 +285,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .cr2-lst{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto;margin-top:6px}.cr2-lst button{display:grid;grid-template-columns:auto 1fr;gap:0 10px;text-align:left;border:1px solid #e5e7eb;background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
 .cr2-lst button b{font-size:17px;grid-row:span 2}.cr2-lst button span{font-size:12.5px;color:#374151}.cr2-lst button small{font-size:11.5px;color:#166534;font-weight:700}.cr2-lst button:disabled{opacity:.55}
 .cr2-outro{display:flex;gap:6px;margin-top:8px}.cr2-outro input{flex:1;min-width:0;height:38px;border:1px solid #d1d5db;border-radius:999px;padding:0 12px;font:inherit;font-size:16px}.cr2-outro button{width:48px;border:0;border-radius:999px;background:#16a34a;color:#fff;font-size:16px;cursor:pointer}
+.pz-v{font-weight:700;color:#6b7280;cursor:pointer;margin-left:4px}.cf-ver{border:1px solid #99f6e4;background:#f0fdfa;border-radius:8px;font-size:13px;padding:0 4px;cursor:pointer}
 .toast-msg{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;background:#1f2937;color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .guard-ic{position:relative}
 .imp-ed{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0}.imp-ed b{font-size:28px;min-width:40px;text-align:center}.imp-ed button{width:52px;height:44px;border-radius:999px;border:1px solid #d1d5db;background:#f9fafb;font-size:20px;cursor:pointer}
@@ -609,7 +610,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.57</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.59</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1384,8 +1385,13 @@ function abrirAbaRel(){
 }
 const PRAZO_REL=7;
 function prazoRel(r){const base=r.voltou||r.data,lim=somaDias(base,PRAZO_REL),h=hoje();return {lim,falta:diasEntre(lim,h),atr:h>lim}}
-function txtPrazoRel(r){const p=prazoRel(r),d=p.lim.slice(8)+"/"+p.lim.slice(5,7);if(p.atr){const n=diasEntre(hoje(),p.lim);return `<span class="pz atr">🔴 releitura atrasada ${n} dia${n>1?"s":""}</span>`}return `<span class="pz">🟠 ${p.falta===0?"vence hoje":"faltam "+p.falta+" dia"+(p.falta>1?"s":"")} (até ${d})</span>`}
+function txtPrazoRel(r){const p=prazoRel(r),d=p.lim.slice(8)+"/"+p.lim.slice(5,7),vb=r.voltou||r.data,vt=` <u class="pz-v" onclick="event.stopPropagation();mudarVoltou('${r.id}')">voltou ${vb.slice(8)}/${vb.slice(5,7)} ✏️</u>`;if(p.atr){const n=diasEntre(hoje(),p.lim);return `<span class="pz atr">🔴 releitura atrasada ${n} dia${n>1?"s":""}${vt}</span>`}return `<span class="pz">🟠 ${p.falta===0?"vence hoje":"faltam "+p.falta+" dia"+(p.falta>1?"s":"")} (até ${d})${vt}</span>`}
+function mudarVoltou(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;const b=r.voltou||r.data;
+  const v=prompt("📅 Que dia esta releitura voltou no PDA? (dd/mm)\nO prazo é de 7 dias a partir desse dia.",b.slice(8)+"/"+b.slice(5,7));if(v===null)return;const m=v.trim().match(/^(\d{1,2})\/(\d{1,2})$/);if(!m)return alert("Use o formato dd/mm, ex.: 20/10");
+  let a=+hoje().slice(0,4);const d=a+"-"+String(m[2]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0");r.voltou=d>hoje()?(a-1)+d.slice(4):d;localStorage.setItem(KEY,JSON.stringify(registros));render();if(rcModo==="lista")abrirListaRel();else desenharConf()}
 function relAtrasada(){const lim=somaDias(hoje(),-45);return registros.some(r=>r.releitura&&r.data>=lim&&confDe(r).some(x=>!x.ok)&&prazoRel(r).atr)}
+// foto da confirmação some do celular quando a confirmação é lançada (✔, 🚩 ou recusada)
+function apagaFotoConf(x){if(x&&x.foto&&x.fid){gDel(x.fid);delete x.foto}}
 function novaRel(){
   const l=prompt("➕ Nova releitura\n\nNúmero do livro:","");if(l===null||!l.trim())return;
   const q=parseInt(prompt("Quantas confirmações (releituras)?","1"),10);if(!(q>0))return;
@@ -1938,7 +1944,7 @@ function desenharConf(){
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
         const rep=Math.max(...g.itens.map(i=>confRepetida(r,c[i]))),repTxt=rep?`<span class="rep-tag">🔴 ${rep>1?"vários meses seguidos":"mês passado também"}</span>`:"";
         if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}${rep?" repete":""}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${repTxt}${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":g.itens.some(i=>c[i].impd)?"🚩 impedimento":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
-        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro||x.impd;return `<div class="reg-lin${x.impd?" impd":x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-impd="${i}" title="Impedimento (002): não deu pra ler" aria-label="Impedimento"><span class="flag-x">🚩</span></button><button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro||x.impd;return `<div class="reg-lin${x.impd?" impd":x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.foto?`<button type="button" class="cf-ver" data-ver="${esc(x.fid)}" title="Ver a foto salva">🖼️</button> `:""}${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-impd="${i}" title="Impedimento (002): não deu pra ler" aria-label="Impedimento"><span class="flag-x">🚩</span></button><button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.impd?`<div class="conf-acoes"><span class="conf-impd"><span class="flag-x">🚩</span> Impedimento (002)${x.motivo?": <b>"+esc(x.motivo)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
         return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}<button type="button" class="conf-mais" data-mais="${g.itens.join(",")}">➕ Mais uma leitura deste medidor</button></div></div>`}).join("")})()+
@@ -1956,7 +1962,7 @@ function desenharConf(){
       const nome=prompt("🙅 Recusada — feita por outro agente de faturamento.\n\nNome do agente (pode deixar em branco):",ult);
       if(nome===null)return;
       if(!nome.trim()&&!confirm("Marcar como recusada mesmo sem o nome do agente?"))return;
-      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();proxPend(+bt.dataset.outro);
+      x.outro=true;x.ok=true;x.quando=hoje();x.agente=nome.trim();apagaFotoConf(x);proxPend(+bt.dataset.outro);
       try{if(x.agente)localStorage.setItem(KEY+"_ultimo_agente",x.agente)}catch(e){}
     }localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // 🗑️ tira a confirmação (ex.: foi cancelada)
@@ -1967,6 +1973,7 @@ function desenharConf(){
     c.splice(i,1);r.qtd=c.length;confAbertas=new Set();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
   // ↩ volta pra pendente (confirmada ou recusada)
+  b.querySelectorAll(".cf-ver").forEach(bt=>bt.onclick=async()=>{const d=await gGet(bt.dataset.ver);if(!d)return alert("A foto não está mais neste celular.");const v=document.createElement("div");v.className="modal-fundo obs-fundo gd-zoom";v.innerHTML=`<img src="${d}" alt="foto">`;v.onclick=()=>v.remove();document.body.appendChild(v)});
   b.querySelectorAll("[data-mais]").forEach(bt=>bt.onclick=()=>{const ids=bt.dataset.mais.split(",").map(Number),x0=c[ids[ids.length-1]];
     const reg=prompt("➕ Mais uma leitura do medidor "+(x0.med||"")+"\n\nRegistro (ex.: GTP-303, ERA-024). Pode deixar em branco:","");if(reg===null)return;
     r.qtd=(r.qtd||c.length)+1;confDe(r);const n=r.conf[r.conf.length-1];Object.assign(n,{med:x0.med||"",end:x0.end||"",uc:x0.uc||"",reg:reg.trim().toUpperCase(),leit:"",ok:false});
@@ -1974,7 +1981,7 @@ function desenharConf(){
     confAbertas=new Set([chaveEnd(it,ids[0])]);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-impd]").forEach(bt=>bt.onclick=()=>{const i=+bt.dataset.impd,x=c[i];
     const m=prompt("🚩 Impedimento (002) — não deu pra ler este medidor.\n\nMotivo (opcional): ex.: portão fechado, cachorro, medidor tampado","");if(m===null)return;
-    x.impd=true;x.ok=true;x.outro=false;x.quando=hoje();x.motivo=m.trim();proxPend(i);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+    x.impd=true;x.ok=true;x.outro=false;x.quando=hoje();x.motivo=m.trim();apagaFotoConf(x);proxPend(i);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-volta]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.volta];x.ok=false;x.outro=false;delete x.impd;delete x.motivo;delete x.agente;delete x.quando;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // depois de resolver uma, já abre a próxima que falta
   // se o endereço ainda tem registro faltando, fica aberto; senão abre o próximo endereço que falta
@@ -1985,7 +1992,7 @@ function desenharConf(){
   b.querySelectorAll("[data-foto]").forEach(bt=>bt.onclick=()=>{fotoLeitAlvo=+bt.dataset.foto;$("leitArq").click()});
   b.querySelectorAll("[data-edita]").forEach(bt=>bt.onclick=()=>{const l=bt.closest(".reg-lin");l.querySelectorAll("input").forEach(x=>{x.readOnly=false;x.classList.add("editando")});const f=l.querySelector("input[data-k='leit']");f.focus();f.select&&f.select()});
   b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(bt.dataset.fecha);desenharConf()});
-  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();apagaFotoConf(x);proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
 // Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
@@ -2646,7 +2653,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.57";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.59";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2689,6 +2696,7 @@ $("leitArq").onchange=async e=>{
   const f=(e.target.files||[])[0];e.target.value="";if(!f||fotoLeitAlvo<0)return;
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;const c=confDe(r),x=c[fotoLeitAlvo];if(!x)return;
   const bt=document.querySelector(`[data-foto="${fotoLeitAlvo}"]`);if(bt){bt.disabled=true;bt.textContent="⏳"}
+  try{if(!x.fid)x.fid="cf"+Date.now()+Math.floor(Math.random()*1e4);await gPut(x.fid,await fotoMini(f,1100,.72));x.foto=1;localStorage.setItem(KEY,JSON.stringify(registros))}catch(e){}
   let achou="",mdLido="";
   try{
     if(iaChave){try{const j=await iaLer(f,IA_MEDIDOR);if(j){if(j.leitura!=null)achou=String(j.leitura).replace(/\D/g,"");if(j.medidor)mdLido=String(j.medidor).toUpperCase().replace(/\s+/g,"");
@@ -2958,6 +2966,7 @@ atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTop
 // ---------- Início: data de hoje e etapa do calendário ----------
 try{if(!localStorage.getItem(KEY+"_fix_015894")){const d=registros.filter(r=>!r.releitura&&r.livro==="015894"&&r.etapa===11&&r.data==="2026-10-20"&&r.qtd<=4&&registros.some(o=>o!==r&&o.livro==="015894"&&o.etapa===11&&o.data.startsWith("2026-10")&&o.qtd>20));
   if(d.length){registros=registros.filter(r=>!d.includes(r));localStorage.setItem(KEY,JSON.stringify(registros))}localStorage.setItem(KEY+"_fix_015894","1")}}catch(e){}
+try{if(!localStorage.getItem(KEY+"_fix_voltou")){registros.forEach(r=>{if(r.releitura&&!r.voltou&&confDe(r).some(x=>!x.ok))r.voltou=hoje()});localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_voltou","1")}}catch(e){}
 // uma vez só: confirmações do livro 005740 (Etapa 11, out/2026) que o Luís mandou por foto — junta releitura repetida e preenche as fichas
 try{if(!localStorage.getItem(KEY+"_fix_005740")){
   const F=[{med:"B07423075",reg:"CON-003",uc:"000206561504500",end:"AV JORN JULIO MESQUITA FILHO, 205, ESCRITORIO, BRO GRANDINO"},
