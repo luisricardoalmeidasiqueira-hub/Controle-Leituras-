@@ -272,6 +272,19 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .obs-fundo{z-index:60}.conf-impd{color:#991b1b;font-weight:700;font-size:12.5px}.reg-lin.impd{background:#fef2f2;border-radius:10px}
 .pda-tira{width:100%;margin:6px 0;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;height:34px;font-weight:800;font-size:13px;cursor:pointer}
 .rel-add{width:100%;height:40px;margin:2px 0 8px;border:1px dashed #d97706;background:#fffbeb;color:#92400e;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer}
+.item:not(.rel-mini) .item-btns button{flex-direction:column;height:46px!important;gap:1px}.ib-e{font-size:16px;line-height:1}.ib-n{font-size:9.5px;font-weight:700;color:#4b5563;line-height:1;white-space:nowrap}
+.conf-mais{width:100%;margin-top:8px;height:36px;border:1px dashed #0f766e;background:#f0fdfa;color:#115e59;border-radius:999px;font-weight:800;font-size:13px;cursor:pointer}
+.pz{display:block;font-size:11.5px;font-weight:800;color:#b45309;margin-top:2px}.pz.atr{color:#b91c1c}.rel-badge.atr{background:#ef4444!important}
+.cr2-card{margin-top:6px;border-radius:12px;padding:6px 8px;border:2px solid #86efac;background:#f0fdf4}.cr2-card.off{border-color:#d1d5db;background:#f3f4f6}
+.cr2-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.cr2-st{font-size:12px;font-weight:900;letter-spacing:.5px;color:#166534}.cr2-card.off .cr2-st{color:#4b5563}
+.cr2-l{font-size:14px}.cr2-t{margin-left:auto;font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}.cr2-sub{font-size:11.5px;color:#6b7280;font-weight:600}
+.cr2-bts{display:flex;gap:4px;margin-top:6px}.cr2{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;height:34px;border:1px solid #d1d5db;background:#fff;border-radius:9px;cursor:pointer;padding:0 1px}
+.cr2-i{font-size:12px;line-height:1.1}.cr2-n{font-size:8.5px;font-weight:800;color:#374151;white-space:nowrap;line-height:1.1;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cr2.pp{background:#1f2937;border-color:#1f2937}.cr2.pp .cr2-i,.cr2.pp .cr2-n{color:#fff}.cr2.go{background:#16a34a;border-color:#16a34a}.cr2.go .cr2-i,.cr2.go .cr2-n{color:#fff}.cr2.fim{background:#dc2626;border-color:#dc2626}.cr2.fim .cr2-i,.cr2.fim .cr2-n{color:#fff}.cr2.iv{border-color:#fca5a5;background:#fef2f2}
+.cr2-par{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px;font-size:12px;font-weight:800;color:#6b7280}.cr2-chip{border:1px solid #d1d5db;background:#fff;border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:800;cursor:pointer}
+.cr2-lst{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto;margin-top:6px}.cr2-lst button{display:grid;grid-template-columns:auto 1fr;gap:0 10px;text-align:left;border:1px solid #e5e7eb;background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
+.cr2-lst button b{font-size:17px;grid-row:span 2}.cr2-lst button span{font-size:12.5px;color:#374151}.cr2-lst button small{font-size:11.5px;color:#166534;font-weight:700}.cr2-lst button:disabled{opacity:.55}
+.cr2-outro{display:flex;gap:6px;margin-top:8px}.cr2-outro input{flex:1;min-width:0;height:38px;border:1px solid #d1d5db;border-radius:999px;padding:0 12px;font:inherit;font-size:16px}.cr2-outro button{width:48px;border:0;border-radius:999px;background:#16a34a;color:#fff;font-size:16px;cursor:pointer}
 .toast-msg{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;background:#1f2937;color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .guard-ic{position:relative}
 .imp-ed{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0}.imp-ed b{font-size:28px;min-width:40px;text-align:center}.imp-ed button{width:52px;height:44px;border-radius:999px;border:1px solid #d1d5db;background:#f9fafb;font-size:20px;cursor:pointer}
@@ -596,7 +609,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.54</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.57</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -854,20 +867,52 @@ function tagHoraLivro(r){const cr=cronoDoRec(r.id);
   let cmp="";if(pa){const pp=porHora(pa.qtd,duracao(pa));cmp=`<br><span class="hr-cmp">📅 ${nomeMes(ant).slice(0,1).toUpperCase()+nomeMes(ant).slice(1,3)}: ${pp}/h em ${fmtDur(duracao(pa))} · ${ph>pp?'<b style="color:#15803d">▲ mais rápido</b>':ph<pp?'<b style="color:#b45309">▼ mais devagar</b>':"= igual"}</span>`}
   if(r.pausa&&r.trechos&&r.trechos.length)t+=`<br><small class="hr-tr">⏸ ${r.trechos.join(" · ")}</small>`;
   return `<br><span class="hr-tag" onclick="horaLivro('${r.id}')">${t}</span>${cmp}`}
-function desenharCrono(){const c=$("cronoLivro");if(!c)return;
-  const rod=cronos.some(x=>x.run);
-  c.innerHTML=cronos.map(x=>`<div class="crono on${x.run?"":" pausa"}"><span class="cr-t">${x.run?"⏱️":"⏸️"} ${x.livro?"Livro <b>"+esc(x.livro)+"</b>":"Livro"} · desde ${hmDe(cronoIni(x))} · <b>${fmtDur(cronoMin(x))}</b> <small>${x.run?"contando":"pausado"}</small></span>${txtMeta(x)}<div class="cr-imp">${x.run?`<button type="button" class="cr-pp" data-cr="pausa" data-id="${x.id}">❚❚ Pausar</button>`:`<button type="button" class="cr-pp v" data-cr="volta" data-id="${x.id}">▶ Continuar</button>`}${x.recId?`<button type="button" class="cr-fim" data-cr="fim" data-id="${x.id}">⏹ Terminei</button>`:""}<button type="button" data-cr="imp" data-id="${x.id}"><span class="flag-x">🚩</span> +1</button><button type="button" data-cr="impf" data-id="${x.id}" aria-label="Foto do impedimento">📷</button>${(x.imp||[]).length?`<button type="button" class="cr-impv" data-cr="impv" data-id="${x.id}">🚫 ${(x.imp||[]).length}</button>`:""}<button type="button" class="cr-s" data-cr="edit" data-id="${x.id}" aria-label="Ajustar">✏️</button><button type="button" class="cr-s" data-cr="x" data-id="${x.id}" aria-label="Cancelar">✕</button></div></div>`).join("")
-    +`<button type="button" class="crono" id="crIni">⏱️ ${rod?"Começar outro livro (pausa o de cima)":cronos.length?"Começar outro livro":"Começar livro agora"}</button>`;
-  $("crIni").onclick=()=>{
-    let l=livroDigitado();
-    if(cronos.length&&!l){const v=prompt("⏱️ Qual o número do livro novo?\n(pra não confundir com o que está pausado — pode deixar em branco)","");if(v===null)return;l=v.trim()}
-    pausarTodos();cronos.push({id:Date.now(),livro:l,segs:[],run:Date.now()});salvarCrono();
+// ⏱️ um lugar só pro tempo: só um livro conta de cada vez; trocar de livro pausa o outro sozinho
+// 🔄 lista dos livros da etapa: toca no livro e o tempo dele começa (ou continua); o que estava contando pausa sozinho
+function escolherLivroCrono(){const m=($("data").value||hoje()).slice(0,7),rs=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura).sort((a,b)=>String(a.livro).localeCompare(String(b.livro)));
+  const fila=(typeof pdaFila!=="undefined"?pdaFila:[]).filter(x=>x.etapa===etapa&&!rs.some(r=>r.livro===x.livro));
+  const soltos=cronos.filter(x=>!x.recId&&x.livro&&!rs.some(r=>r.livro===x.livro)&&!fila.some(f=>f.livro===x.livro));
+  const est=(cr,r)=>cr?(cr.run?"🟢 contando · "+fmtDur(cronoMin(cr)):"⏸️ parado · "+fmtDur(cronoMin(cr))):r&&duracao(r)?"✔ "+fmtDur(duracao(r)):"";
+  const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">🔄 Qual livro agora?<small>Etapa ${p2(etapa)}</small><button type="button" class="hl-x" data-q="x" aria-label="Fechar">✕</button></div>
+   <div class="hint">O que estiver contando para sozinho.</div><div class="cr2-lst">
+   ${rs.map(r=>{const cr=cronoDoRec(r.id)||cronos.find(x=>!x.recId&&x.livro===r.livro);return `<button type="button" data-r="${r.id}"${cr&&cr.run?" disabled":""}><b>${esc(r.livro)}</b><span>${r.qtd} leituras</span><small>${est(cr,r)}</small></button>`}).join("")}
+   ${fila.map(x=>{const cr=cronos.find(y=>!y.recId&&y.livro===x.livro);return `<button type="button" data-l="${esc(x.livro)}"${cr&&cr.run?" disabled":""}><b>${esc(x.livro)}</b><span>${x.qtd} · da foto</span><small>${est(cr)}</small></button>`}).join("")}
+   ${soltos.map(x=>`<button type="button" data-l="${esc(x.livro)}"${x.run?" disabled":""}><b>${esc(x.livro)}</b><span>ainda não lançado</span><small>${est(x)}</small></button>`).join("")}
+   </div><div class="cr2-outro"><input id="cr2Num" inputmode="numeric" placeholder="Outro livro: digite o número" autocomplete="off"><button type="button" data-q="ok">▶</button></div></div>`;
+  document.body.appendChild(f);
+  const ir=(id,l)=>{f.remove();
+    if(id){const r=registros.find(x=>String(x.id)===String(id));const cr=cronoDoRec(id)||cronos.find(x=>!x.recId&&x.livro===r.livro);
+      if(cr){pausarTodos();cr.run=Date.now();if(!cr.recId)cr.recId=String(id);salvarCrono();render();return}
+      if(r.ini&&r.fim&&typeof hr2Ini==="function")hr2Ini(id);else iniciarCronoRec(id);return}
+    l=String(l||"").trim();if(!l)return;const cr=cronos.find(x=>x.livro===l);
+    pausarTodos();if(cr)cr.run=Date.now();else cronos.push({id:Date.now(),livro:l,segs:[],run:Date.now()});salvarCrono();
     const hk=($("data").value||hoje()).slice(0,7)+"|"+etapa;if(!horas[hk]||!horas[hk].ini){horas[hk]={...(horas[hk]||{}),ini:agoraHM()};salvarHoras()}render()};
+  f.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>ir(b.dataset.r));
+  f.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>ir(null,b.dataset.l));
+  f.querySelector('[data-q="x"]').onclick=()=>f.remove();
+  f.querySelector('[data-q="ok"]').onclick=()=>ir(null,$("cr2Num").value);
+}
+function bt2(a,id,ic,nm,cls){return `<button type="button" class="cr2${cls?" "+cls:""}" data-cr="${a}" data-id="${id}"><span class="cr2-i">${ic}</span><span class="cr2-n">${nm}</span></button>`}
+function desenharCrono(){const c=$("cronoLivro");if(!c)return;
+  const ativo=cronos.find(x=>x.run),fimDe=x=>x.segs.length?x.segs[x.segs.length-1][1]:0,parados=cronos.filter(x=>!x.run).sort((a,b)=>fimDe(b)-fimDe(a));
+  const main=ativo||parados[0],outros=parados.filter(x=>x!==main);
+  let h="";
+  if(main){const on=!!main.run,ni=(main.imp||[]).length;
+    h+=`<div class="cr2-card${on?" on":" off"}"><div class="cr2-top"><span class="cr2-st">${on?"🟢 CONTANDO":"⚪ PARADO"}</span><span class="cr2-l">${main.livro?"Livro <b>"+esc(main.livro)+"</b>":"Livro"}</span><span class="cr2-t">${fmtDur(cronoMin(main))}</span></div>
+      <div class="cr2-sub">desde ${hmDe(cronoIni(main))}${main.recId?"":" · fecha no ✔"}</div>${txtMeta(main)}
+      <div class="cr2-bts">${on?bt2("pausa",main.id,"❚❚","Pausar","pp"):bt2("volta",main.id,"▶","Continuar","go")}${bt2("trocar",main.id,"🔄","Trocar")}${main.recId?bt2("fim",main.id,"⏹","Terminei","fim"):""}${bt2("imp",main.id,FLAGX,"+1")}${bt2("impf",main.id,"📷","Foto")}${ni?bt2("impv",main.id,"🚫"+ni,"Imped.","iv"):""}${bt2("edit",main.id,"✏️","Editar")}${bt2("x",main.id,"✕","Sair")}</div></div>`;
+    if(outros.length)h+=`<div class="cr2-par"><span>⏸️ parados:</span>${outros.map(x=>`<button type="button" class="cr2-chip" data-cr="volta" data-id="${x.id}">${x.livro?esc(x.livro):"livro"} · ${fmtDur(cronoMin(x))} ▶</button>`).join("")}</div>`;
+  }else h=`<button type="button" class="crono" id="crIni">⏱️ Começar livro</button>`;
+  c.innerHTML=h;
+  const ci=$("crIni");if(ci)ci.onclick=()=>escolherLivroCrono();
+
   c.querySelectorAll("[data-cr]").forEach(b=>b.onclick=()=>{const x=cronos.find(y=>String(y.id)===b.dataset.id);if(!x)return;const a=b.dataset.cr;
     if(a==="imp"){(x.imp=x.imp||[]).push({h:agoraHM()})}
     else if(a==="impf"){impFoto(x);return}
     else if(a==="fim"){terminarCrono(x);return}
     else if(a==="impv"){editarImp(x);return}
+    else if(a==="trocar"){escolherLivroCrono();return}
     else if(a==="pausa"){pausarTodos()}
     else if(a==="volta"){pausarTodos();x.run=Date.now()}
     else if(a==="x"){if(!confirm("Cancelar o cronômetro"+(x.livro?" do livro "+x.livro:"")+"?"))return;cronos=cronos.filter(y=>y!==x)}
@@ -883,8 +928,9 @@ function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!
   <div class="hl-lb">Terminou</div><div class="hl-p"><span>⏹</span><input type="time" class="hf" value="${r.fim||""}"><button type="button" class="ag" data-a="hf">Agora</button></div>
   <div class="hl-bts">${r.ini||r.fim?'<button type="button" class="d" aria-label="Apagar horas">🗑️</button>':""}<button type="button" class="o">✔ Salvar</button></div></div>`;
   {const cr=cronoDoRec(r.id),box=document.createElement("div");box.className="hl-cr";
+   if(cr){box.innerHTML=`<div class="hint">⏱️ Este livro está no cronômetro lá em cima (${cr.run?"contando":"parado"} · ${fmtDur(cronoMin(cr))}). Use os botões de lá.</div>`;f.querySelector(".hl-tit").after(box);f.querySelectorAll(".hl-lb,.hl-p,.hl-bts").forEach(e=>e.hidden=true);document.body.appendChild(f);f.querySelector(".c").onclick=()=>f.remove();return}
    box.innerHTML=cr?`<div class="hl-crt">${cr.run?"⏱️ Contando":"⏸️ Pausado"} desde ${hmDe(cronoIni(cr))} · <b>${fmtDur(cronoMin(cr))}</b></div><div class="hl-crb">${cr.run?'<button type="button" data-k="pausa">❚❚ Pausar</button>':'<button type="button" data-k="volta" class="v">▶ Continuar</button>'}<button type="button" data-k="fim" class="t">⏹ Terminei</button></div>`
-     :`<button type="button" data-k="ini" class="hl-start">⏱️ Começar agora (com pausa se precisar)</button><div class="hint" style="margin-top:6px">ou coloque as horas na mão:</div>`;
+     :`<div class="hint">Pra contar o tempo, use o ⏱️ lá em cima. Aqui é só pra corrigir as horas na mão:</div>`;
    const tit=f.querySelector(".hl-tit");tit.after(box);
    if(cr)f.querySelectorAll(".hl-lb,.hl-p,.hl-bts,.hint").forEach(e=>e.hidden=true);
    box.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;f.remove();
@@ -898,13 +944,16 @@ function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!
   f.querySelector(".o").onclick=()=>{const a=f.querySelector(".hi").value,b=f.querySelector(".hf").value;if(a!==(r.ini||"")||b!==(r.fim||"")){delete r.min;delete r.pausa;delete r.trechos}if(a)r.ini=a;else delete r.ini;if(b)r.fim=b;else delete r.fim;fim()}}
 // 📅 quanto trabalhou no dia: soma o tempo dos livros com ⏱️ (pausa não conta)
 function diaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura),t=rs.filter(r=>duracao(r));if(!t.length)return "";
-  const min=t.reduce((a,r)=>a+duracao(r),0),q=t.reduce((a,r)=>a+r.qtd,0),sem=rs.some(r=>!duracao(r));
+  const min=minutosUniao(t)||t.reduce((a,r)=>a+duracao(r),0),q=t.reduce((a,r)=>a+r.qtd,0),sem=rs.some(r=>!duracao(r));
   return `<div class="hr-res hr-dia" onclick="verDiaTrab()">📅 ${d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7)}: <b>${fmtDur(min)}</b> trabalhadas · ⚡ ${porHora(q,min)}/h${sem?' <small>· tem livro sem horário</small>':""}</div>`}
 function verDiaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura).sort((a,b)=>(a.ini||"99").localeCompare(b.ini||"99"));const t=rs.filter(r=>duracao(r)),min=t.reduce((a,r)=>a+duracao(r),0);
   alert("📅 "+(d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7))+" · "+fmtDur(min)+" trabalhadas\n\n"+rs.map(r=>"• "+r.livro+" — "+r.qtd+" leituras · "+(duracao(r)?(r.trechos&&r.pausa?r.trechos.join(" + "):r.ini+"–"+r.fim)+" ("+fmtDur(duracao(r))+")":"sem horário")).join("\n")+"\n\nSó entra o tempo dos livros com ⏱️ (pausa não conta). Livro sem horário: toque no ⏱️ dele pra colocar.")}
 // etapa medida pelos livros com ⏱️: começo = 1º livro, fim = último, tempo = soma dos livros (pausa não conta)
+// soma os horários sem contar duas vezes quando dois livros ficaram abertos ao mesmo tempo
+function minutosUniao(rs){const iv=[];rs.forEach(r=>{(r.pausa&&r.trechos&&r.trechos.length?r.trechos:[r.ini+"–"+r.fim]).forEach(tr=>{const[a,b]=String(tr).split("–");if(!a||!b)return;let x=minDe(a),y=minDe(b);if(y<x)y+=1440;if(y>x)iv.push([r.data,x,y])})});
+  iv.sort((p,q)=>p[0].localeCompare(q[0])||p[1]-q[1]);let tot=0,d="",s0=-1,e0=-1;iv.forEach(([dd,x,y])=>{if(dd!==d||x>e0){if(s0>=0)tot+=e0-s0;d=dd;s0=x;e0=y}else e0=Math.max(e0,y)});if(s0>=0)tot+=e0-s0;return tot}
 function etapaLivros(m,e){const t=registros.filter(r=>r.etapa===e&&r.data.startsWith(m)&&!r.releitura&&duracao(r));if(!t.length)return{n:0};
-  return{n:t.length,min:t.reduce((a,r)=>a+duracao(r),0),q:t.reduce((a,r)=>a+r.qtd,0),ini:t.map(r=>r.ini).sort()[0],fim:t.map(r=>r.fim).sort().slice(-1)[0]}}
+  return{n:t.length,min:minutosUniao(t)||t.reduce((a,r)=>a+duracao(r),0),q:t.reduce((a,r)=>a+r.qtd,0),ini:t.map(r=>r.ini).sort()[0],fim:t.map(r=>r.fim).sort().slice(-1)[0]}}
 function baseHoras(){let q=0,d=0,melhor=0,n=0;const ks=new Set(Object.keys(horas));registros.forEach(r=>{if(!r.releitura&&duracao(r))ks.add(r.data.slice(0,7)+"|"+r.etapa)});
   for(const k of ks){const[m,e]=k.split("|"),el=etapaLivros(m,+e);let l,du;if(el.n){l=el.q;du=el.min}else{du=duracao(horas[k]);l=leitEtapa(m,+e)}if(!du||!l)continue;q+=l;d+=du;n++;melhor=Math.max(melhor,porHora(l,du))}return{media:porHora(q,d),melhor,n}}
 // 🎯 quanto o mesmo livro levou no mês passado
@@ -1219,7 +1268,7 @@ $("saveAll").onclick=()=>{
     if(ex)atualizados.push(x.livro);
     if(ex){if(!ex.releitura&&x.releitura&&ex.data!==dataDoLivro(x,et,data))ex=null}
     if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,...(x.pda?{pda:x.pda}:{}),...(x.nl?{nl:x.nl}:{})});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
-    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}if(c.imp&&c.imp.length){novo.nl=(novo.nl||0)+c.imp.length;novo.impLista=c.imp}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
+    const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura){relSalvos.push(novo.id);novo.voltou=hoje()}else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}if(c.imp&&c.imp.length){novo.nl=(novo.nl||0)+c.imp.length;novo.impLista=c.imp}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
   });
   localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);if(nlColado)$("impQtd").value="";
   if(atualizados.length)setTimeout(()=>toast("♻️ Livro "+[...new Set(atualizados)].join(", ")+" já estava lançado neste mês: atualizei, não repeti"),300);
@@ -1333,11 +1382,15 @@ function abrirAbaRel(){
   if(pend.length===1){rcVeioDaLista=false;return abrirConf(String(pend[0].id))}
   abrirListaRel();
 }
+const PRAZO_REL=7;
+function prazoRel(r){const base=r.voltou||r.data,lim=somaDias(base,PRAZO_REL),h=hoje();return {lim,falta:diasEntre(lim,h),atr:h>lim}}
+function txtPrazoRel(r){const p=prazoRel(r),d=p.lim.slice(8)+"/"+p.lim.slice(5,7);if(p.atr){const n=diasEntre(hoje(),p.lim);return `<span class="pz atr">🔴 releitura atrasada ${n} dia${n>1?"s":""}</span>`}return `<span class="pz">🟠 ${p.falta===0?"vence hoje":"faltam "+p.falta+" dia"+(p.falta>1?"s":"")} (até ${d})</span>`}
+function relAtrasada(){const lim=somaDias(hoje(),-45);return registros.some(r=>r.releitura&&r.data>=lim&&confDe(r).some(x=>!x.ok)&&prazoRel(r).atr)}
 function novaRel(){
   const l=prompt("➕ Nova releitura\n\nNúmero do livro:","");if(l===null||!l.trim())return;
   const q=parseInt(prompt("Quantas confirmações (releituras)?","1"),10);if(!(q>0))return;
   const e=parseInt(prompt("Etapa do livro (1 a 18):",String(etapaDoLivroConhecido(l.trim())||etapa)),10);if(!(e>=1&&e<=18))return alert("Etapa inválida.");
-  const r={id:Date.now()+Math.random(),data:$("data").value||hoje(),etapa:e,livro:l.trim(),qtd:q,localidade:$("localidade").value.trim(),prontuario:$("prontuario").value.trim(),releitura:true};
+  const r={id:Date.now()+Math.random(),data:$("data").value||hoje(),voltou:hoje(),etapa:e,livro:l.trim(),qtd:q,localidade:$("localidade").value.trim(),prontuario:$("prontuario").value.trim(),releitura:true};
   registros.push(r);localStorage.setItem(KEY,JSON.stringify(registros));render();rcVeioDaLista=true;abrirConf(String(r.id))}
 function abrirListaRel(){
   const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim)
@@ -1345,7 +1398,7 @@ function abrirListaRel(){
   rcModo="lista";$("rcTit").textContent="📝 Releituras";
   $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div><button type="button" class="rel-add" onclick="novaRel()">➕ Adicionar releitura</button>`+rels.map(r=>{
     const c=confDe(r),f=c.filter(x=>x.ok).length,ok=f===c.length,end=(c.find(x=>x.end)||{}).end||(r.pda&&r.pda.end)||"";
-    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small></span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?"🟢 ✔":"🟠"}</span></button>`}).join("");
+    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small>${ok?"":txtPrazoRel(r)}</span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?"🟢 ✔":"🟠"}</span></button>`}).join("");
   $("rcCorpo").querySelectorAll(".rel-item").forEach(b=>b.onclick=()=>{rcVeioDaLista=true;abrirConf(b.dataset.id)});
   $("rcFundo").hidden=false;
 }
@@ -1360,7 +1413,7 @@ function desenharCidades(m){
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
   const rels=registros.filter(r=>r.releitura&&r.data.startsWith(m)),pend=rels.filter(r=>confDe(r).some(x=>!x.ok)).length;
   if(!rels.length)filtroRel=false;
-  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=false;bd.textContent="";bd.classList.toggle("ok",!pend);rb.title=pend?"Tem releitura pra confirmar":"Releituras: tudo confirmado (toque pra consultar)"}}
+  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=false;bd.textContent="";bd.classList.toggle("ok",!pend);const ra=relAtrasada();bd.classList.toggle("atr",ra);if(ra)bd.classList.remove("ok");rb.title=ra?"Releitura passou da semana":pend?"Tem releitura pra confirmar":"Releituras: tudo confirmado (toque pra consultar)"}}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
   const mostraCid=ks.length>=2;
   if(!mostraCid&&!rels.length){box.hidden=true;return}
@@ -1446,7 +1499,7 @@ function render(){atualizarNomes();
    tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · do prédio só entram as que imprimem":"")+". Toque pra mudar."}
   const nRel=rs.filter(r=>r.releitura).reduce((s,r)=>s+r.qtd,0);$("totRel").hidden=!nRel;$("totRel").textContent=nRel.toLocaleString("pt-BR")+(nRel===1?" releitura":" releituras");
   $("totEtapa").hidden=filtroRel;if(filtroRel){const pend=rs.filter(r=>confDe(r).some(x=>!x.ok)).length;$("nreg").innerHTML=rs.length+" livro"+(rs.length>1?"s":"")+" de releitura"+(pend?` · <span style="color:#b45309;font-weight:700">${pend} pendente${pend>1?"s":""}</span>`:" · tudo confirmado ✔")}
-  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b class="num-livro">${esc(r.livro)}</b>${(()=>{const x=r.releitura?null:nlAnterior(r.livro,r.data);return x?`<span class="nl-ant">🚫 ${rotMesNl(x.data,r.data)}: ${x.nl}</span>`:""})()}${r.releitura?"":`<button type="button" class="nl-livro" onclick="nlDoLivro('${r.id}')" title="Não lidos deste livro pela foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button>`} · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${(!r.releitura&&!predios[r.livro]&&r.qtd>0)?` · <span class="bob-livro" title="${porBobina} leituras por bobina">${txtBob(r.qtd)}</span>`:""}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span> <button type="button" class="imp-pred${imprimir[r.livro]?"":" vazio"}" onclick="impPredio('${r.id}')">🖨️ ${imprimir[r.livro]?qImp(r.livro,r.qtd)+" pra imprimir · "+txtBob(qImp(r.livro,r.qtd)):"quantas imprimem?"}</button><button type="button" class="imp-cam" onclick="impFotoDireto('${r.id}')" aria-label="Foto da Fila de Impressão" title="Foto da Fila de Impressão">📷</button>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${resseqHist[r.livro]&&resseqHist[r.livro].quando.slice(0,7)===r.data.slice(0,7)?`<br><span class="resseq-tag">🗂️ sequenciado ${resseqHist[r.livro].quem==="eu"?"por mim":"por "+esc(resseqHist[r.livro].quem)}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}${r.releitura?"":tagHoraLivro(r)}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}>🏢</button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}>🗂️</button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro">🗺️</button><button onclick="horaLivro('${r.id}')" aria-label="Hora do livro" title="Que horas começou e terminou este livro"${r.ini||r.fim?' class="hr-on"':""}>⏱️</button><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`;
+  const itemHtml=r=>(r.releitura&&!filtroRel)?`<div class="item rel-mini"><div>📝 <b>${esc(r.livro)}</b> · ${r.qtd} releitura${r.qtd>1?"s":""}${chipConf(r).replace("<br>","")}</div><div class="item-btns"><button onclick="editar('${r.id}')" aria-label="Editar">✏️</button><button onclick="del('${r.id}')" aria-label="Excluir">🗑️</button></div></div>`:`<div class="item"><div>${r.ajuda?`<span class="ajuda-tag">🤝 ajuda</span> `:""}${filtroCidade||filtroRel?`<span class="et-tag">Etapa ${p2(r.etapa)}</span> `:""}${r.releitura?'<span class="rel-tag">📝 releitura</span> ':""}<b class="num-livro">${esc(r.livro)}</b>${(()=>{const x=r.releitura?null:nlAnterior(r.livro,r.data);return x?`<span class="nl-ant">🚫 ${rotMesNl(x.data,r.data)}: ${x.nl}</span>`:""})()}${r.releitura?"":`<button type="button" class="nl-livro" onclick="nlDoLivro('${r.id}')" title="Não lidos deste livro pela foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button>`} · ${esc(r.localidade||"Sem localidade")}${r.prontuario?` <span class="pront-tag">· Pront. ${esc(r.prontuario)}</span>`:""}${r.nl?` · <span class="imp-tag">🚫 ${r.nl} não lidos${pctNL(r.nl,r.qtd)?" · "+pctNL(r.nl,r.qtd):""}</span>`:""}<br>${(()=>{const c=r.releitura?null:cicloReal(r.data,r.etapa,normLoc(r.localidade));const dt=`<label class="dt-edit" title="Toque pra trocar a data">${fmt(r.data)}<input type="date" value="${r.data}" onchange="mudarDataLivro('${r.id}',this)"></label>`;return foraDoLimite(c)?`<span class="dt-atraso">${dt} · ${c} dias</span>`:dt+(c!=null?` · <span class="dt-ok">${c} dias</span>`:"")})()}${(()=>{const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d?' · <span class="cal-tag">📅 '+d.slice(8)+'/'+d.slice(5,7)+'</span>':""})()}${livroAtrasoTag(r)} · ${r.particionado?r.de+" até "+r.ate+" · ":""}<b>${r.qtd}</b> ${r.releitura?'<span style="color:#b45309;font-weight:700">releituras</span>':"leituras"}${(!r.releitura&&!predios[r.livro]&&r.qtd>0)?` · <span class="bob-livro" title="${porBobina} leituras por bobina">${txtBob(r.qtd)}</span>`:""}${r.com&&r.com.length?`<br><span class="com-tag">👥 com ${esc(r.com.join(", "))}</span>`:""}${pdaDetalhe(r)}${r.releitura?chipConf(r):""}${predios[r.livro]&&!r.releitura?`<br><span class="predio-tag">🏢 prédio</span> <button type="button" class="imp-pred${imprimir[r.livro]?"":" vazio"}" onclick="impPredio('${r.id}')">🖨️ ${imprimir[r.livro]?qImp(r.livro,r.qtd)+" pra imprimir · "+txtBob(qImp(r.livro,r.qtd)):"quantas imprimem?"}</button><button type="button" class="imp-cam" onclick="impFotoDireto('${r.id}')" aria-label="Foto da Fila de Impressão" title="Foto da Fila de Impressão">📷</button>`:""}${resseq[r.livro]?`<br><span class="resseq-tag">🗂️ ${resseq[r.livro].quando.slice(0,7)<r.data.slice(0,7)?"sequenciar este livro":"marcado pra sequenciar no mês que vem"}${resseq[r.livro].nota?" · "+esc(resseq[r.livro].nota):""}</span>`:""}${resseqHist[r.livro]&&resseqHist[r.livro].quando.slice(0,7)===r.data.slice(0,7)?`<br><span class="resseq-tag">🗂️ sequenciado ${resseqHist[r.livro].quem==="eu"?"por mim":"por "+esc(resseqHist[r.livro].quem)}</span>`:""}${rotas[r.livro]&&rotas[r.livro].ruas.length?`<br><span class="rota-tag">🗺️ rota salva · ${rotas[r.livro].ruas.length} rua(s)</span>`:""}${r.releitura?"":tagHoraLivro(r)}</div><div class="item-btns"><button onclick="marcarPredio('${r.id}')" aria-label="Prédio" title="Prédio: não entra na conta das bobinas"${predios[r.livro]?' class="predio-on"':""}><span class="ib-e">🏢</span><span class="ib-n">Prédio</span></button><button onclick="marcarResseq('${r.id}')" aria-label="Sequenciar livro" title="Sequenciar livro: avisar no mês que vem"${resseq[r.livro]?' class="resseq-on"':""}><span class="ib-e">🗂️</span><span class="ib-n">Seq. livro</span></button><button onclick="abrirRota('${esc(r.livro)}')" aria-label="Rota do livro" title="Rota do livro"><span class="ib-e">🗺️</span><span class="ib-n">Mapa</span></button><button onclick="horaLivro('${r.id}')" aria-label="Hora do livro" title="Que horas começou e terminou este livro"${r.ini||r.fim?' class="hr-on"':""}><span class="ib-e">⏱️</span><span class="ib-n">Tempo</span></button><button onclick="editar('${r.id}')" aria-label="Editar"><span class="ib-e">✏️</span><span class="ib-n">Editar</span></button><button onclick="del('${r.id}')" aria-label="Excluir"><span class="ib-e">🗑️</span><span class="ib-n">Lixeira</span></button></div></div>`;
   const cpL=cidadePrincipal(),cidadesDaLista=[...new Set(rs.map(r=>normLoc(r.localidade)))].sort((x,y)=>(y===cpL)-(x===cpL));
   if(rs.length&&!filtroCidade&&cidadesDaLista.length>1){
     // mesma etapa em mais de uma cidade: separa com o subtotal de cada uma
@@ -1858,10 +1911,10 @@ function qImp(livro,qtd){const v=imprimir[livro];return v?Math.min(+v.q||0,qtd||
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
 // ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
-function diasAtrasoLivro(r){if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);return d&&r.data>d?diasEntre(r.data,d):0}
+function diasAtrasoLivro(r){if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);if(!d||r.data<=d)return 0;const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?diasEntre(r.data,d):0}
 function livroAtrasoTag(r){
   if(r.releitura)return "";const a=diasAtrasoLivro(r);let t="";
-  if(a)t+=` <span class="atr-tag" title="Lido depois do dia do calendário">⏰ atrasado ${a} dia${a>1?"s":""}</span>`;
+
   const ant=somaMes(r.data.slice(0,7),-1),pa=registros.find(x=>x.livro===r.livro&&x.data.startsWith(ant)&&diasAtrasoLivro(x));
   if(pa){const dc=diaDaEtapa(pa.data.slice(0,7),pa.etapa),msg="❓ Mês passado o livro "+r.livro+" foi lido atrasado.\n\nEtapa "+p2(pa.etapa)+(dc?" · dia do calendário: "+dc.slice(8)+"/"+dc.slice(5,7):"")+"\nLido em: "+pa.data.slice(8)+"/"+pa.data.slice(5,7)+" ("+diasAtrasoLivro(pa)+" dia(s) de atraso)";
     t+=` <button type="button" class="atr-q" title="Mês passado este livro foi lido atrasado" onclick='alert(${JSON.stringify(msg).replace(/'/g,"&#39;")})'>❓</button>`}
@@ -1872,8 +1925,8 @@ function abrirConf(id){rcModo="conf";if(rcChave!==String(id))confAbertas=new Set
 function desenharConf(){
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
   const c=confDe(r),cid=r.localidade||"",falta=[...new Set(c.filter(x=>!x.ok&&x.end.trim()).map(x=>comCidade(x.end,cid)))],lk=linkMaps(falta);
-  $("rcTit").textContent="📝 Confirmações · livro "+r.livro;
-  $("rcCorpo").innerHTML=`<div class="rc-sub">Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
+  $("rcTit").textContent="📝 Confirmações · livro "+r.livro;const _pz=c.some(x=>!x.ok)?txtPrazoRel(r):"";
+  $("rcCorpo").innerHTML=`<div class="rc-sub">${_pz?_pz+"<br>":""}Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
     (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo"><span>${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado`}</span>${lk&&falta.length>1?`<a class="bt-mapa todos" href="${lk}" target="_blank" rel="noopener" title="Caminho por todos os endereços que faltam" aria-label="Caminho por todos os endereços que faltam">🗺️</a>`:""}</div>`})()+
     // Mesmo endereço = um cartão só, com os medidores/registros dele dentro (sem numeração)
@@ -1888,7 +1941,7 @@ function desenharConf(){
         const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro||x.impd;return `<div class="reg-lin${x.impd?" impd":x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-impd="${i}" title="Impedimento (002): não deu pra ler" aria-label="Impedimento"><span class="flag-x">🚩</span></button><button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
           ${x.impd?`<div class="conf-acoes"><span class="conf-impd"><span class="flag-x">🚩</span> Impedimento (002)${x.motivo?": <b>"+esc(x.motivo)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
-        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
+        return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}<button type="button" class="conf-mais" data-mais="${g.itens.join(",")}">➕ Mais uma leitura deste medidor</button></div></div>`}).join("")})()+
     "";
   const b=$("rcCorpo");
   ajustarAltura(b);
@@ -1914,6 +1967,11 @@ function desenharConf(){
     c.splice(i,1);r.qtd=c.length;confAbertas=new Set();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
   // ↩ volta pra pendente (confirmada ou recusada)
+  b.querySelectorAll("[data-mais]").forEach(bt=>bt.onclick=()=>{const ids=bt.dataset.mais.split(",").map(Number),x0=c[ids[ids.length-1]];
+    const reg=prompt("➕ Mais uma leitura do medidor "+(x0.med||"")+"\n\nRegistro (ex.: GTP-303, ERA-024). Pode deixar em branco:","");if(reg===null)return;
+    r.qtd=(r.qtd||c.length)+1;confDe(r);const n=r.conf[r.conf.length-1];Object.assign(n,{med:x0.med||"",end:x0.end||"",uc:x0.uc||"",reg:reg.trim().toUpperCase(),leit:"",ok:false});
+    const it=r.conf.splice(r.conf.length-1,1)[0];r.conf.splice(ids[ids.length-1]+1,0,it);
+    confAbertas=new Set([chaveEnd(it,ids[0])]);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-impd]").forEach(bt=>bt.onclick=()=>{const i=+bt.dataset.impd,x=c[i];
     const m=prompt("🚩 Impedimento (002) — não deu pra ler este medidor.\n\nMotivo (opcional): ex.: portão fechado, cachorro, medidor tampado","");if(m===null)return;
     x.impd=true;x.ok=true;x.outro=false;x.quando=hoje();x.motivo=m.trim();proxPend(i);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
@@ -2588,7 +2646,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.54";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.57";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2806,7 +2864,7 @@ function impPredio(id){const r=registros.find(x=>String(x.id)===String(id));if(!
     if(n==null)return alert("Não consegui achar o número na foto.\nTire a foto mostrando o título \"Fila de Impressão - 0/84\" e tente de novo, ou digite o número.");
     iq.value=n;mostra()};
 }
-function desenharIA(){const d=$("iaDot");if(!d)return;d.style.background=iaChave?(iaErro?"#ef4444":"#22c55e"):"#d1d5db";$("iaBtn").title=iaChave?(iaErro?"Leitura com IA: deu problema ("+iaErro+")":"Leitura com IA: ligada"):"Leitura com IA: desligada (toque pra colocar a chave)"}
+function desenharIA(){const d=$("iaDot");if(!d)return;$("iaBtn").hidden=!!iaChave&&!iaErro;const fb=$("iaRod");if(fb)fb.innerHTML="🤖 Leitura com IA "+(iaChave?(iaErro?"🔴":"🟢"):"⚪");d.style.background=iaChave?(iaErro?"#ef4444":"#22c55e"):"#d1d5db";$("iaBtn").title=iaChave?(iaErro?"Leitura com IA: deu problema ("+iaErro+")":"Leitura com IA: ligada"):"Leitura com IA: desligada (toque pra colocar a chave)"}
 async function iaTestar(){try{const j=await iaChamar([{text:'Responda só JSON: {"ok":true}'}]);iaErro="";desenharIA();alert("🟢 Chave funcionando!\n\nAgora o 📷 lê as fotos (Caixa de Entrada, Roteiro e Resumo) com IA.\nSem internet, o app usa o leitor do celular.\n\nModelo: "+iaModelo)}catch(err){iaErro=String(err.message||err);desenharIA();alert("🔴 Não deu certo: "+iaErro+"."+(/sobrecarregado|limite/.test(iaErro)?"":"\n\nConfira se a chave está certa (é a do Google AI Studio)."))}}
 function abrirIA(){
   const v=prompt("🤖 Leitura das fotos com IA (Google Gemini)\n\nCole aqui a sua chave do Google AI Studio.\nEla fica guardada SÓ neste celular (não vai no arquivo nem no backup).\n\nDeixe em branco e toque OK para desligar."+(iaErro?"\n\n🔴 Último problema: "+iaErro:""),iaChave);
@@ -2898,6 +2956,8 @@ $("topoProx").onclick=e=>{e.stopPropagation();const p=proxDaEtapa();if(!p)return
 const _atualizarChip3=atualizarChip;
 atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTopoProx()};
 // ---------- Início: data de hoje e etapa do calendário ----------
+try{if(!localStorage.getItem(KEY+"_fix_015894")){const d=registros.filter(r=>!r.releitura&&r.livro==="015894"&&r.etapa===11&&r.data==="2026-10-20"&&r.qtd<=4&&registros.some(o=>o!==r&&o.livro==="015894"&&o.etapa===11&&o.data.startsWith("2026-10")&&o.qtd>20));
+  if(d.length){registros=registros.filter(r=>!d.includes(r));localStorage.setItem(KEY,JSON.stringify(registros))}localStorage.setItem(KEY+"_fix_015894","1")}}catch(e){}
 // uma vez só: confirmações do livro 005740 (Etapa 11, out/2026) que o Luís mandou por foto — junta releitura repetida e preenche as fichas
 try{if(!localStorage.getItem(KEY+"_fix_005740")){
   const F=[{med:"B07423075",reg:"CON-003",uc:"000206561504500",end:"AV JORN JULIO MESQUITA FILHO, 205, ESCRITORIO, BRO GRANDINO"},
@@ -2969,6 +3029,7 @@ const dia=()=>$("data").value||hoje();
 // 1) Todo livro (sem cronômetro aberto) ganha a MESMA linha de controles do livro que está no cronômetro:
 //    ▶ Começar/Continuar · 🚩 +1 (impedimento) · 📷 (foto do PDA do impedimento)
 function marcar(){
+  return; // o tempo agora fica só no cartão lá em cima
   const L=$("lista");if(!L)return;
   L.querySelectorAll(".item:not(.rel-mini):not([data-hr2])").forEach(it=>{
     it.dataset.hr2="1";
