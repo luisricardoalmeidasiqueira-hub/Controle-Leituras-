@@ -269,7 +269,10 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .eq-l input{flex:1;min-width:0;height:32px;font-size:14px;text-align:right}
 .eq-escolha{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px;margin-bottom:8px;font-size:13px}.eq-escolha div{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:6px}.eq-escolha button{height:36px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}
 .eq-bts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.eq-bts button{height:40px;border:0;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;background:#e5e7eb}.eq-bts #eqComp{background:#2563eb;color:#fff}
-.obs-fundo{z-index:60}.toast-msg{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;background:#1f2937;color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.obs-fundo{z-index:60}.conf-impd{color:#991b1b;font-weight:700;font-size:12.5px}.reg-lin.impd{background:#fef2f2;border-radius:10px}
+.pda-tira{width:100%;margin:6px 0;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;height:34px;font-weight:800;font-size:13px;cursor:pointer}
+.rel-add{width:100%;height:40px;margin:2px 0 8px;border:1px dashed #d97706;background:#fffbeb;color:#92400e;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer}
+.toast-msg{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;background:#1f2937;color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .guard-ic{position:relative}
 .imp-ed{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0}.imp-ed b{font-size:28px;min-width:40px;text-align:center}.imp-ed button{width:52px;height:44px;border-radius:999px;border:1px solid #d1d5db;background:#f9fafb;font-size:20px;cursor:pointer}
 .imp-lst{max-height:34vh;overflow:auto;font-size:13px}.imp-lst>div{display:flex;align-items:center;gap:6px;border-top:1px solid #eee;padding:5px 0}.imp-lst button{margin-left:auto;border:0;background:none;font-size:16px;cursor:pointer}
@@ -593,7 +596,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.48</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.54</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1205,14 +1208,21 @@ $("saveAll").onclick=()=>{
   // Releitura digitada (sem foto): o livro já foi lançado antes? usa a etapa dele
   const relOutra=r.saida.filter(x=>x.releitura&&!x.etapa).map(x=>({x,e:etapaDoLivroConhecido(x.livro)})).filter(o=>o.e&&o.e!==etapa);
   if(relOutra.length&&confirm("📝 Releitura:\n\n"+relOutra.map(o=>"• Livro "+o.x.livro+" é da Etapa "+p2(o.e)).join("\n")+"\n\nLançar na etapa do livro? (Cancelar = fica na Etapa "+p2(etapa)+")"))relOutra.forEach(o=>o.x.etapa=o.e);
-  const relSalvos=[];
+  const relSalvos=[],atualizados=[];
   r.saida.forEach(x=>{
     // livro da foto que já foi salvo nesta data e etapa: atualiza o que já existe, não duplica
-    const et=x.etapa||etapa,ex=x.pda?registros.find(g=>g.data===dataDoLivro(x,et,data)&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
-    if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,pda:x.pda,...(x.nl?{nl:x.nl}:{})});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
+    const et=x.etapa||etapa,mesL=dataDoLivro(x,et,data).slice(0,7);
+    // mesmo livro já lançado neste mês e nesta etapa (ex.: foto do PDA lida de novo): atualiza, não duplica
+    let ex=x.pda?registros.find(g=>g.data===dataDoLivro(x,et,data)&&g.etapa===et&&g.livro===x.livro&&normLoc(g.localidade)===normLoc(localidade)):null;
+    if(!ex)ex=registros.find(g=>g.releitura&&g.etapa===et&&g.livro===x.livro&&g.data.startsWith(mesL)&&(x.releitura||(x.pda&&x.qtd<=20))&&normLoc(g.localidade)===normLoc(localidade));
+    if(ex&&ex.releitura&&!x.releitura)x.releitura=true;
+    if(ex)atualizados.push(x.livro);
+    if(ex){if(!ex.releitura&&x.releitura&&ex.data!==dataDoLivro(x,et,data))ex=null}
+    if(ex){Object.assign(ex,{qtd:x.qtd,prontuario,...(x.pda?{pda:x.pda}:{}),...(x.nl?{nl:x.nl}:{})});if(x.releitura){ex.releitura=true;relSalvos.push(ex.id)}return}
     const novo={id:Date.now()+Math.random(),data:dataDoLivro(x,et,data),etapa,localidade,prontuario,...x,etapa:et,...(ehAjuda?{ajuda:true}:{})};registros.push(novo);if(x.releitura)relSalvos.push(novo.id);else if(!novo.ini&&cronoDoLivro(novo.livro)){const c=cronoDoLivro(novo.livro);novo.ini=hmDe(cronoIni(c));novo.fim=c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]);if(c.segs.length){novo.min=Math.max(1,cronoMin(c));novo.pausa=true;novo.trechos=c.segs.concat(c.run?[[c.run,Date.now()]]:[]).map(([a,b])=>hmDe(a)+"–"+hmDe(b))}if(c.imp&&c.imp.length){novo.nl=(novo.nl||0)+c.imp.length;novo.impLista=c.imp}cronos=cronos.filter(y=>y!==c);salvarCrono();const hk=novo.data.slice(0,7)+"|"+novo.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini||novo.ini,fim:novo.fim};salvarHoras()}
   });
   localStorage.setItem(KEY,JSON.stringify(registros));guardarDesfazer([]);if(nlColado)$("impQtd").value="";
+  if(atualizados.length)setTimeout(()=>toast("♻️ Livro "+[...new Set(atualizados)].join(", ")+" já estava lançado neste mês: atualizei, não repeti"),300);
   mesVer=data.slice(0,7);pdaConcluir();limparLancamentos();render();const pdaAviso=pdaProxima();
   if(ehAjuda)setTimeout(sairAjuda,60); // ajuda salva: volta pra sua cidade
   if(esqueci)setTimeout(sairDoEsqueci,50); // lançou a esquecida: volta pra data de hoje
@@ -1318,16 +1328,22 @@ let filtroRel=false;
 let rcVeioDaLista=false;
 function abrirAbaRel(){
   const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim);
-  if(!rels.length)return alert("🟢 Nenhuma releitura pendente.\n\n📝 Nenhuma releitura nos últimos dias.\n\nPra lançar: digite o livro e a quantidade, marque REL. e toque no ✔.");
+  if(!rels.length)return abrirListaRel();
   const pend=rels.filter(r=>confDe(r).some(x=>!x.ok));
   if(pend.length===1){rcVeioDaLista=false;return abrirConf(String(pend[0].id))}
   abrirListaRel();
 }
+function novaRel(){
+  const l=prompt("➕ Nova releitura\n\nNúmero do livro:","");if(l===null||!l.trim())return;
+  const q=parseInt(prompt("Quantas confirmações (releituras)?","1"),10);if(!(q>0))return;
+  const e=parseInt(prompt("Etapa do livro (1 a 18):",String(etapaDoLivroConhecido(l.trim())||etapa)),10);if(!(e>=1&&e<=18))return alert("Etapa inválida.");
+  const r={id:Date.now()+Math.random(),data:$("data").value||hoje(),etapa:e,livro:l.trim(),qtd:q,localidade:$("localidade").value.trim(),prontuario:$("prontuario").value.trim(),releitura:true};
+  registros.push(r);localStorage.setItem(KEY,JSON.stringify(registros));render();rcVeioDaLista=true;abrirConf(String(r.id))}
 function abrirListaRel(){
   const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim)
     .sort((a,b)=>(confDe(a).every(x=>x.ok)-confDe(b).every(x=>x.ok))||b.data.localeCompare(a.data));
   rcModo="lista";$("rcTit").textContent="📝 Releituras";
-  $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div>`+rels.map(r=>{
+  $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div><button type="button" class="rel-add" onclick="novaRel()">➕ Adicionar releitura</button>`+rels.map(r=>{
     const c=confDe(r),f=c.filter(x=>x.ok).length,ok=f===c.length,end=(c.find(x=>x.end)||{}).end||(r.pda&&r.pda.end)||"";
     return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small></span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?"🟢 ✔":"🟠"}</span></button>`}).join("");
   $("rcCorpo").querySelectorAll(".rel-item").forEach(b=>b.onclick=()=>{rcVeioDaLista=true;abrirConf(b.dataset.id)});
@@ -1868,10 +1884,10 @@ function desenharConf(){
         const st=falt?"⏳":todosOutro?"👥":"✔",cls=falt?" pend":todosOutro?" outro":"";
         const meds=[...new Set(g.itens.map(i=>c[i].med).filter(Boolean))].join(", "),regs=g.itens.map(i=>c[i].reg).filter(Boolean).join(", ");
         const rep=Math.max(...g.itens.map(i=>confRepetida(r,c[i]))),repTxt=rep?`<span class="rep-tag">🔴 ${rep>1?"vários meses seguidos":"mês passado também"}</span>`:"";
-        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}${rep?" repete":""}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${repTxt}${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
-        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro;return `<div class="reg-lin${x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
+        if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}${rep?" repete":""}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${repTxt}${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":g.itens.some(i=>c[i].impd)?"🚩 impedimento":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
+        const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro||x.impd;return `<div class="reg-lin${x.impd?" impd":x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-impd="${i}" title="Impedimento (002): não deu pra ler" aria-label="Impedimento"><span class="flag-x">🚩</span></button><button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
-          ${x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
+          ${x.impd?`<div class="conf-acoes"><span class="conf-impd"><span class="flag-x">🚩</span> Impedimento (002)${x.motivo?": <b>"+esc(x.motivo)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
         return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}</div></div>`}).join("")})()+
     "";
   const b=$("rcCorpo");
@@ -1898,7 +1914,10 @@ function desenharConf(){
     c.splice(i,1);r.qtd=c.length;confAbertas=new Set();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   b.querySelectorAll("[data-abre]").forEach(bt=>bt.onclick=()=>{confAbertas=new Set([bt.dataset.abre]);desenharConf();const t=b.querySelector(".conf");if(t)t.scrollIntoView({block:"nearest",behavior:"smooth"})});
   // ↩ volta pra pendente (confirmada ou recusada)
-  b.querySelectorAll("[data-volta]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.volta];x.ok=false;x.outro=false;delete x.agente;delete x.quando;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-impd]").forEach(bt=>bt.onclick=()=>{const i=+bt.dataset.impd,x=c[i];
+    const m=prompt("🚩 Impedimento (002) — não deu pra ler este medidor.\n\nMotivo (opcional): ex.: portão fechado, cachorro, medidor tampado","");if(m===null)return;
+    x.impd=true;x.ok=true;x.outro=false;x.quando=hoje();x.motivo=m.trim();proxPend(i);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-volta]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.volta];x.ok=false;x.outro=false;delete x.impd;delete x.motivo;delete x.agente;delete x.quando;localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
   // depois de resolver uma, já abre a próxima que falta
   // se o endereço ainda tem registro faltando, fica aberto; senão abre o próximo endereço que falta
   const proxPend=j=>{const kj=chaveEnd(c[j],j);if(c.some((y,n)=>n!==j&&!y.ok&&chaveEnd(y,n)===kj)){confAbertas=new Set([kj]);return}
@@ -1916,7 +1935,7 @@ function desenharConf(){
 function numeroCasa(e){const m=String(e||"").match(/,\s*(?:N[º°O]?\.?\s*)?(\d+[A-Z]?)\b/i)||String(e||"").match(/\s(\d{1,5}[A-Z]?)\b(?!.*\d)/);return m?m[1]:""}
 // Caixa do endereço cresce pra mostrar tudo, sem cortar o número
 function ajustarAltura(box){box.querySelectorAll("textarea.end-txt").forEach(t=>{const f=()=>{t.style.height="auto";t.style.height=Math.max(38,t.scrollHeight+2)+"px"};f();requestAnimationFrame(f);setTimeout(f,60);t.addEventListener("input",f)})}
-const IA_CONFIRMA='Esta é uma foto da tela de leitura de um PDA de energia (confirmação de leitura). Leia: UC (número depois de "UC:"), o endereço (rua, número e bairro), o(s) código(s) de registro no formato de 3 letras e 3 números (ex.: "CON-003", "CON-103"; pode ter mais de um no mesmo medidor) e o MEDIDOR (depois de "MD:", ex.: "B18670249"). Não confunda o número da casa com o medidor. Responda só JSON: {"uc":"000307981404503","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","registros":["CON-003"],"md":"B18670249"}. Use null no que não conseguir ler.';
+const IA_CONFIRMA='Esta é uma foto da tela de leitura de um PDA de energia (confirmação de leitura). Leia: UC (número depois de "UC:"), o endereço (rua, número e bairro), os códigos de registro: são as ABAS no meio da tela, no formato de 3 letras e 3 números (ex.: "CON-003" e "ERA-024"); liste TODAS as abas que aparecem, mesmo a que não está selecionada e o MEDIDOR (depois de "MD:", ex.: "B18670249"). Não confunda o número da casa com o medidor. Responda só JSON: {"uc":"000307981404503","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","registros":["CON-003"],"md":"B18670249"}. Use null no que não conseguir ler.';
 function lerConfirmacaoPDA(t){
   const L=t.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   const uc=((t.match(/UC\s*[:;]?\s*((?:\d\s?){15})/)||[])[1]||"").replace(/\D/g,"");
@@ -1956,7 +1975,11 @@ $("confArq").onchange=async e=>{
     const c=confDe(r);
     if(fichas.length>c.length&&confirm("Li "+fichas.length+" confirmação(ões), mas o livro está com "+c.length+".\nAumentar o livro pra "+fichas.length+"?")){r.qtd=fichas.length;confDe(r)}
     // preenche as fichas vazias primeiro, sem apagar a leitura que você já digitou
-    let k=0;r.conf.forEach(x=>{if(k>=fichas.length||x.med)return;const f=fichas[k++];x.uc=f.uc;x.reg=f.reg;x.med=f.med;if(f.end)x.end=f.end});
+    // 1º) ficha que já tem o mesmo medidor: atualiza (endereço, UC, registro) sem apagar a leitura; 2º) fichas vazias
+    const usadas=new Set(),resto=[];
+    fichas.forEach(f=>{const m=f.med&&r.conf.find(x=>!usadas.has(x)&&x.med===f.med&&(!x.reg||!f.reg||x.reg===f.reg));
+      if(m){usadas.add(m);if(f.reg)m.reg=f.reg;if(f.uc)m.uc=f.uc;if(f.end)m.end=f.end}else resto.push(f)});
+    resto.forEach(f=>{const x=r.conf.find(y=>!usadas.has(y)&&!y.med&&!y.ok);if(!x)return;usadas.add(x);x.uc=f.uc;x.reg=f.reg;x.med=f.med;if(f.end)x.end=f.end});
     localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();
     alert("📷 Li "+fichas.length+" confirmação(ões):\n\n"+fichas.map(f=>"• "+(f.med||"?")+(f.reg?" · "+f.reg:"")+"\n   "+(f.end||"")).join("\n")+"\n\nAgora é só digitar a leitura de cada uma.");
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
@@ -2565,7 +2588,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.48";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.54";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2594,22 +2617,31 @@ function pdaPin(r,e){
   const q=encodeURIComponent(e.end),w=document.createElement("div");w.className="pda-end";
   w.innerHTML='<button type="button" class="pda-pin"><span>📍'+(e.etapa?" Et. "+p2(e.etapa):"")+'</span><span class="pda-seta">▾</span></button>'+
     '<div class="pda-box" hidden><b>'+esc(e.end||"")+'</b><div class="pda-tags">'+(e.etapa?'<span>Etapa '+p2(e.etapa)+'</span>':'')+(e.lim?'<span>Limite '+esc(e.lim)+'</span>':'')+(e.km?'<span>'+esc(e.km)+' km</span>':'')+'</div>'+
-    '<a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q+'" target="_blank" rel="noopener">🗺️ Abrir no mapa</a><button type="button" class="pda-copiar" data-end="'+esc(e.end||"")+'">📋 Copiar endereço</button></div>';
+    '<button type="button" class="pda-tira">🗑️ Tirar este livro da foto</button><a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q+'" target="_blank" rel="noopener">🗺️ Abrir no mapa</a><button type="button" class="pda-copiar" data-end="'+esc(e.end||"")+'">📋 Copiar endereço</button></div>';
   const bt=w.querySelector(".pda-pin"),bx=w.querySelector(".pda-box");
   bt.onclick=()=>{bx.hidden=!bx.hidden;bt.classList.toggle("open",!bx.hidden)};
+  w.querySelector(".pda-tira").onclick=()=>{pdaFila=pdaFila.filter(i=>i!==r._it);pdaSalvarFila();r.remove();if(!$("livroRows").children.length)iniciarLinhas();pdaFaixa();if(typeof atualizarPctNL==="function")atualizarPctNL()};
   r.appendChild(w);
 }
 // Preparo da foto do PDA: pega o menor valor de cor de cada ponto, assim as letras laranja (Limite) e azul (km) ficam escuras como as pretas
 // ---------- 📷 Leitura pela foto do visor do medidor ----------
 let fotoLeitAlvo=-1;
-const IA_MEDIDOR='Esta é uma foto de um medidor de energia (ou da tela do PDA com o medidor). Leia o NÚMERO DO MEDIDOR (número de série do aparelho, geralmente com letra e números, ex.: "B18670249"; NÃO é o número da casa) e a LEITURA mostrada no visor/mostrador (só os dígitos). Responda só JSON: {"medidor":"B18670249","leitura":"13030"}. Use null no que não conseguir ler.';
+const IA_MEDIDOR='Esta foto é de um medidor de energia OU da tela de leitura do PDA. Leia: o NÚMERO DO MEDIDOR (série, com letras e números, ex.: "AR0253716" ou "B18670249"; no PDA vem depois de "MD:"; NÃO é o número da casa); a LEITURA do visor do medidor (só dígitos; se for a tela do PDA, use null); o endereço e a UC se aparecerem; e os códigos de registro, que no PDA são as ABAS no meio da tela no formato 3 letras e 3 números (ex.: "CON-003" e "ERA-024") — liste TODAS. Responda só JSON: {"medidor":"AR0253716","leitura":null,"end":"AV JORN JULIO MESQUITA FILHO, 205, BRO GRANDINO","uc":"000107479404502","registros":["CON-003","ERA-024"]}. Use null no que não conseguir ler.';
 $("leitArq").onchange=async e=>{
   const f=(e.target.files||[])[0];e.target.value="";if(!f||fotoLeitAlvo<0)return;
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;const c=confDe(r),x=c[fotoLeitAlvo];if(!x)return;
   const bt=document.querySelector(`[data-foto="${fotoLeitAlvo}"]`);if(bt){bt.disabled=true;bt.textContent="⏳"}
   let achou="",mdLido="";
   try{
-    if(iaChave){try{const j=await iaLer(f,IA_MEDIDOR);if(j){if(j.leitura!=null)achou=String(j.leitura).replace(/\D/g,"");if(j.medidor)mdLido=String(j.medidor).toUpperCase().replace(/\s+/g,"")}}catch(err){iaFalhou(err)}}
+    if(iaChave){try{const j=await iaLer(f,IA_MEDIDOR);if(j){if(j.leitura!=null)achou=String(j.leitura).replace(/\D/g,"");if(j.medidor)mdLido=String(j.medidor).toUpperCase().replace(/\s+/g,"");
+      const regs=(Array.isArray(j.registros)?j.registros:[]).map(v=>String(v||"").toUpperCase().replace(/\s+/g,"")).filter(Boolean),end=j.end?String(j.end).toUpperCase().replace(/\s+/g," ").trim():"",uc=j.uc?String(j.uc).replace(/\D/g,""):"";
+      if(regs.length||end){ // foto da tela do PDA: preenche esta ficha e, se tiver mais abas, as próximas fichas vazias
+        const alvo=[x];for(let k=1;k<regs.length;k++){let o=c.find(y=>y!==x&&!alvo.includes(y)&&!y.ok&&!y.outro&&(!y.med||y.med===mdLido)&&(!y.reg||y.reg===regs[k]));
+          if(!o&&confirm("Este medidor tem "+regs.length+" registros ("+regs.join(", ")+"), mas não sobrou ficha vazia.\nAumentar o livro pra mais uma confirmação?")){r.qtd=(r.qtd||c.length)+1;confDe(r);o=r.conf[r.conf.length-1]}
+          if(o)alvo.push(o)}
+        alvo.forEach((y,k)=>{if(mdLido)y.med=mdLido;if(regs[k])y.reg=regs[k];if(end)y.end=end;if(uc)y.uc=uc});
+        if(!achou){localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();if(bt){bt.disabled=false;bt.textContent="📷"}
+          alert("📷 Li na tela do PDA:\n\n🔢 Medidor: "+(mdLido||"?")+"\n📍 "+(end||"sem endereço")+"\n🧾 "+(regs.join(" + ")||"registro não lido")+(alvo.length>1?"\n\nPreenchi "+alvo.length+" confirmações (uma pra cada registro).":"")+"\n\nAgora é só digitar a leitura.");return}}}}catch(err){iaFalhou(err)}}
     if(!achou&&!mdLido){
     await carregarOCR();
     const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
@@ -2866,6 +2898,19 @@ $("topoProx").onclick=e=>{e.stopPropagation();const p=proxDaEtapa();if(!p)return
 const _atualizarChip3=atualizarChip;
 atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTopoProx()};
 // ---------- Início: data de hoje e etapa do calendário ----------
+// uma vez só: confirmações do livro 005740 (Etapa 11, out/2026) que o Luís mandou por foto — junta releitura repetida e preenche as fichas
+try{if(!localStorage.getItem(KEY+"_fix_005740")){
+  const F=[{med:"B07423075",reg:"CON-003",uc:"000206561504500",end:"AV JORN JULIO MESQUITA FILHO, 205, ESCRITORIO, BRO GRANDINO"},
+    {med:"AR0253716",reg:"CON-003",uc:"000107479404502",end:"AV JORN JULIO MESQUITA FILHO, 205, BRO GRANDINO"},
+    {med:"AR0253716",reg:"ERA-024",uc:"000107479404502",end:"AV JORN JULIO MESQUITA FILHO, 205, BRO GRANDINO"},
+    {med:"3T5756103",reg:"CON-003",uc:"000372160404515",end:"R ALFONSO GRANDINO, 117, VL DR LAURINDO"}];
+  const rs=registros.filter(r=>r.releitura&&r.livro==="005740"&&r.etapa===11&&r.data.startsWith("2026-10")).sort((a,b)=>a.data.localeCompare(b.data));
+  let r=rs[0];const velhas=rs.flatMap(x=>x.conf||[]);
+  if(!r){r={id:Date.now()+Math.random(),data:"2026-10-16",etapa:11,livro:"005740",qtd:4,localidade:"Tatui",releitura:true};registros.push(r)}
+  rs.slice(1).forEach(x=>{registros=registros.filter(y=>y!==x)});
+  r.qtd=4;const usad=new Set();r.conf=F.map(f=>{const v=velhas.find(c=>!usad.has(c)&&c.med===f.med&&(!c.reg||c.reg===f.reg)&&(c.leit||c.ok))||{};usad.add(v);return {...f,leit:v.leit||"",ok:!!v.ok,...(v.quando?{quando:v.quando}:{}),...(v.impd?{impd:true,motivo:v.motivo||""}:{}),...(v.outro?{outro:true,agente:v.agente||""}:{})}});
+  localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_005740","1");
+  setTimeout(()=>toast("📝 Releitura do livro 005740 preenchida: 4 confirmações com medidor e endereço"),1200)}}catch(e){}
 $("data").value=hoje();
 try{const h=hoje(),ab=registros.filter(r=>r.data===h&&r.ini&&!r.fim&&!cronoDoRec(r.id)).sort((a,b)=>a.ini.localeCompare(b.ini));
   if(ab.length){const ts=hm=>{const[a,b]=hm.split(":").map(Number),d=new Date();d.setHours(a,b,0,0);return d.getTime()};
