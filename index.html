@@ -269,7 +269,19 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .eq-l input{flex:1;min-width:0;height:32px;font-size:14px;text-align:right}
 .eq-escolha{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px;margin-bottom:8px;font-size:13px}.eq-escolha div{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:6px}.eq-escolha button{height:36px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}
 .eq-bts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.eq-bts button{height:40px;border:0;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;background:#e5e7eb}.eq-bts #eqComp{background:#2563eb;color:#fff}
-.obs-fundo{z-index:60}.obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
+.obs-fundo{z-index:60}.toast-msg{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90;background:#1f2937;color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.guard-ic{position:relative}
+.imp-ed{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0}.imp-ed b{font-size:28px;min-width:40px;text-align:center}.imp-ed button{width:52px;height:44px;border-radius:999px;border:1px solid #d1d5db;background:#f9fafb;font-size:20px;cursor:pointer}
+.imp-lst{max-height:34vh;overflow:auto;font-size:13px}.imp-lst>div{display:flex;align-items:center;gap:6px;border-top:1px solid #eee;padding:5px 0}.imp-lst button{margin-left:auto;border:0;background:none;font-size:16px;cursor:pointer}
+.gd-modal{max-height:86vh;overflow:auto}.gd-nova{display:flex;gap:8px;align-items:end;margin:8px 0}.gd-nova label{font-size:11.5px;font-weight:800;color:#6b7280;display:flex;flex-direction:column;gap:2px}.gd-nova select{height:38px;border:1px solid #d1d5db;border-radius:999px;padding:0 10px;font:inherit;font-size:16px;background:#fff}
+.gd-foto{flex:1;height:40px;border:0;border-radius:999px;background:#0f766e;color:#fff;font-weight:800;font-size:14px;cursor:pointer}
+.gd-et{margin-top:10px;font-size:12px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:.4px}
+.gd-item{display:flex;gap:8px;align-items:center;border:1px solid #e5e7eb;border-radius:12px;padding:6px;margin-top:6px}.gd-item img{width:64px;height:64px;object-fit:cover;border-radius:8px;background:#f3f4f6;flex:none;cursor:pointer}
+.gd-cp{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.gd-cp input{height:32px;border:1px solid #d1d5db;border-radius:8px;padding:0 8px;font:inherit;font-size:15px;min-width:0}.gd-cp small{font-size:11px;color:#6b7280}
+.gd-bt{display:flex;flex-direction:column;gap:4px;flex:none}.gd-bt button{height:32px;border-radius:999px;border:1px solid #d1d5db;background:#fff;font-size:12px;font-weight:800;padding:0 8px;cursor:pointer}.gd-bt button:first-child{background:#16a34a;color:#fff;border-color:#16a34a}
+.gd-zoom{display:flex;align-items:center;justify-content:center;padding:10px}.gd-zoom img{max-width:100%;max-height:90vh;border-radius:10px}
+.gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
+.obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
 .obs-bts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.obs-bts button{height:42px;border:0;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;background:#e5e7eb}.obs-bts .o{background:#16a34a;color:#fff}
 .nf-rap small{white-space:pre-wrap}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
@@ -543,7 +555,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
+<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
 <div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
@@ -581,7 +593,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.44</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.48</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -780,6 +792,53 @@ function impFoto(x){const inp=document.createElement("input");inp.type="file";in
     if(j&&j.cod&&!/002/.test(String(j.cod))&&!confirm("A foto parece ter o código "+j.cod+" (não 002).\nContar como impedimento mesmo assim?"))return;
     (x.imp=x.imp||[]).push(it);salvarCrono();desenharCrono()};
   inp.click()}
+// 🚫 editar os impedimentos do livro que está contando (lançou um a mais? tira aqui)
+// ---------- 📸 Leituras guardadas: tira a foto agora (de qualquer etapa) e lança no PDA depois ----------
+let guard=[];try{guard=JSON.parse(localStorage.getItem(KEY+"_guard")||"[]")||[]}catch(e){}
+function salvarGuard(){try{localStorage.setItem(KEY+"_guard",JSON.stringify(guard))}catch(e){}desenharGuardDot()}
+function desenharGuardDot(){const d=$("guardDot");if(d)d.hidden=!guard.length}
+let _gdb=null;function gdb(){return _gdb||(_gdb=new Promise((ok,er)=>{const q=indexedDB.open(KEY+"_fotos",1);q.onupgradeneeded=()=>q.result.createObjectStore("f");q.onsuccess=()=>ok(q.result);q.onerror=()=>er(q.error)}))}
+async function gPut(k,v){const d=await gdb();return new Promise((ok,er)=>{const t=d.transaction("f","readwrite");t.objectStore("f").put(v,k);t.oncomplete=ok;t.onerror=()=>er(t.error)})}
+async function gGet(k){const d=await gdb();return new Promise(ok=>{const q=d.transaction("f").objectStore("f").get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null)})}
+async function gDel(k){try{const d=await gdb();d.transaction("f","readwrite").objectStore("f").delete(k)}catch(e){}}
+function fotoMini(file,M,qual){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>{const k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL("image/jpeg",qual))};im.onerror=er;im.src=URL.createObjectURL(file)})}
+const IA_GUARDA='Foto tirada na rua por um agente de leitura de energia: pode ser o medidor ou a tela do PDA. Leia o NÚMERO DO MEDIDOR (série, ex.: "B18670249"; não é o número da casa), a LEITURA do visor (só dígitos) e, se aparecer, o endereço e a UC. Responda só JSON: {"medidor":"B18670249","leitura":"13030","end":"R ...","uc":"..."}. Use null no que não conseguir ler.';
+let guardEt=0;
+function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div");f.id="guardFundo";f.className="modal-fundo obs-fundo";document.body.appendChild(f)}
+  if(!guardEt)guardEt=etapa;
+  const ets=[...new Set(guard.map(g=>g.etapa))].sort((a,b)=>a-b);
+  f.innerHTML=`<div class="modal obs-modal hl-modal gd-modal"><div class="hl-tit">🎞️ Leituras arquivadas<small></small><button type="button" class="hl-x" data-g="x" aria-label="Fechar">✕</button></div>
+   <div class="hint">Passou por uma leitura de outra etapa? Tire a foto aqui. Ela fica arquivada até você lançar no PDA.</div>
+   <div class="gd-nova"><label>Etapa<select id="gdEt">${Array.from({length:18},(_,i)=>`<option value="${i+1}"${i+1===guardEt?" selected":""}>${p2(i+1)}</option>`).join("")}</select></label><button type="button" data-g="foto" class="gd-foto">📷 Tirar foto da leitura</button></div>
+   <div class="gd-lst">${ets.length?ets.map(e=>`<div class="gd-et">Etapa ${p2(e)}${e===etapa?" · <b>é a de agora</b>":""}</div>`+guard.filter(g=>g.etapa===e).map(g=>`<div class="gd-item" data-id="${g.id}"><img alt="foto" data-ver="${g.id}"><div class="gd-cp"><input data-k="med" data-id="${g.id}" value="${esc(g.med||"")}" placeholder="Medidor" autocomplete="off"><input data-k="leit" data-id="${g.id}" value="${esc(g.leit||"")}" placeholder="Leitura" inputmode="numeric" autocomplete="off"><small>${fmt(g.quando)} ${g.h||""}${g.end?" · "+esc(g.end):""}</small></div><div class="gd-bt"><button type="button" data-g="ok" data-id="${g.id}" title="Já lancei no PDA">✔ Lancei</button><button type="button" data-g="del" data-id="${g.id}" aria-label="Apagar">🗑️</button></div></div>`).join("")).join(""):'<div class="hint" style="margin-top:8px">Nenhuma leitura arquivada.</div>'}</div></div>`;
+  $("gdEt").onchange=e=>guardEt=+e.target.value;
+  f.querySelectorAll("img[data-ver]").forEach(async im=>{const d=await gGet(im.dataset.ver);if(d)im.src=d;im.onclick=()=>{if(d){const v=document.createElement("div");v.className="modal-fundo obs-fundo gd-zoom";v.innerHTML=`<img src="${d}" alt="foto">`;v.onclick=()=>v.remove();document.body.appendChild(v)}}});
+  f.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{const g=guard.find(x=>String(x.id)===i.dataset.id);if(g){g[i.dataset.k]=i.value.trim();salvarGuard()}});
+  f.querySelectorAll("[data-g]").forEach(b=>b.onclick=async()=>{const q=b.dataset.g,g=guard.find(x=>String(x.id)===b.dataset.id);
+    if(q==="x"){f.remove();render();return}
+    if(q==="foto"){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.setAttribute("capture","environment");
+      inp.onchange=async()=>{const file=(inp.files||[])[0];if(!file)return;b.disabled=true;b.textContent="⏳ Guardando...";
+        const it={id:Date.now(),etapa:guardEt||etapa,quando:hoje(),h:agoraHM(),med:"",leit:""};
+        try{await gPut(String(it.id),await fotoMini(file,1100,.72))}catch(e){alert("Não consegui guardar a foto neste celular.");b.disabled=false;b.textContent="📷 Tirar foto da leitura";return}
+        if(iaChave){b.textContent="🤖 Lendo...";try{const j=await iaLer(file,IA_GUARDA);if(j){if(j.medidor)it.med=String(j.medidor).toUpperCase().replace(/\s+/g,"");if(j.leitura!=null)it.leit=String(j.leitura).replace(/\D/g,"");if(j.end)it.end=String(j.end).toUpperCase();if(j.uc)it.uc=String(j.uc)}}catch(err){iaFalhou(err)}}
+        guard.push(it);salvarGuard();abrirGuard()};
+      inp.click();return}
+    if(!g)return;
+    if(q==="ok"&&!confirm("Já lançou no PDA a leitura"+(g.med?" do medidor "+g.med:"")+"?\nA foto sai da lista."))return;
+    if(q==="del"&&!confirm("Apagar esta foto arquivada?"))return;
+    guard=guard.filter(x=>x!==g);gDel(String(g.id));salvarGuard();abrirGuard()});
+}
+function toast(t){let d=$("toastMsg");if(!d){d=document.createElement("div");d.id="toastMsg";d.className="toast-msg";document.body.appendChild(d)}d.textContent=t;d.hidden=false;clearTimeout(d._t);d._t=setTimeout(()=>d.hidden=true,4500);d.onclick=()=>d.hidden=true}
+function editarImp(x){const f=document.createElement("div");f.className="modal-fundo obs-fundo";
+  const des=()=>{const l=x.imp||[];f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">🚫 Impedimentos${x.livro?" · livro "+esc(x.livro):""}<small></small><button type="button" class="hl-x" data-q="x" aria-label="Fechar">✕</button></div>
+    <div class="imp-ed"><button type="button" data-q="menos" aria-label="Tirar um">➖</button><b>${l.length}</b><button type="button" data-q="mais" aria-label="Pôr mais um">➕</button></div>
+    <div class="imp-lst">${l.map((i,k)=>`<div>${FLAGX} ${i.h}${i.md?" · MD "+esc(i.md):""}${i.end?"<br><small>"+esc(i.end)+"</small>":""}<button type="button" data-tira="${k}" aria-label="Tirar este">🗑️</button></div>`).join("")||'<div class="hint">Nenhum impedimento neste livro.</div>'}</div>
+    <div class="hl-bts"><button type="button" class="o" data-q="x">✔ Pronto</button></div></div>`;
+    f.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const q=b.dataset.q;if(q==="x"){f.remove();salvarCrono();desenharCrono();return}
+      if(q==="menos")(x.imp||[]).pop();if(q==="mais")(x.imp=x.imp||[]).push({h:agoraHM()});salvarCrono();des()});
+    f.querySelectorAll("[data-tira]").forEach(b=>b.onclick=()=>{(x.imp||[]).splice(+b.dataset.tira,1);salvarCrono();des()})};
+  document.body.appendChild(f);des()}
+const FLAGX='<span class="flag-x">🚩</span>';
 function livroDigitado(){const i=document.querySelector("#livroRows .r-livro");return i?i.value.trim():""}
 function agoraHM(){const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function baseLivros(){let q=0,d=0,n=0,melhor=0;registros.forEach(r=>{const du=duracao(r);if(!du||r.releitura||!r.qtd)return;q+=r.qtd;d+=du;n++;melhor=Math.max(melhor,porHora(r.qtd,du))});return{media:porHora(q,d),n,melhor}}
@@ -805,7 +864,7 @@ function desenharCrono(){const c=$("cronoLivro");if(!c)return;
     if(a==="imp"){(x.imp=x.imp||[]).push({h:agoraHM()})}
     else if(a==="impf"){impFoto(x);return}
     else if(a==="fim"){terminarCrono(x);return}
-    else if(a==="impv"){const l=x.imp||[];if(confirm("🚫 Impedimentos neste livro:\n\n"+l.map(i=>"• "+i.h+(i.md?" · MD "+i.md:"")+(i.uc?" · UC "+i.uc:"")+(i.end?"\n   "+i.end:"")).join("\n")+"\n\nOK = tirar o último (lançou sem querer) · Cancelar = fechar")){l.pop()}else return}
+    else if(a==="impv"){editarImp(x);return}
     else if(a==="pausa"){pausarTodos()}
     else if(a==="volta"){pausarTodos();x.run=Date.now()}
     else if(a==="x"){if(!confirm("Cancelar o cronômetro"+(x.livro?" do livro "+x.livro:"")+"?"))return;cronos=cronos.filter(y=>y!==x)}
@@ -1381,8 +1440,9 @@ function render(){atualizarNomes();
   {const av=$("resseqAviso"),lst=(filtroRel||filtroCidade)?[]:resseqDoMes(m,etapa);
    // 🖨️ prédio que imprimiu no mês passado e ainda não foi lançado neste mês
    const pi=(filtroRel||filtroCidade)?[]:Object.entries(imprimir).filter(([l,v])=>predios[l]&&v.quando<m&&registros.some(r=>r.livro===l&&r.etapa===etapa&&r.data.startsWith(v.quando))&&!registros.some(r=>r.livro===l&&r.data.startsWith(m)));
-   av.hidden=!lst.length&&!pi.length;
-   av.innerHTML=pi.map(([l,v])=>`<div class="imp-aviso">🖨️ Prédio · livro <b>${esc(l)}</b>: em ${nomeMes(v.quando)} saíram <b>${v.q}</b> pra imprimir → ${txtBob(v.q)||"🧾 0"}<small>quando lançar, a conta já usa esse número · 📷 no livro pra atualizar</small></div>`).join("")+lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
+   const gq=(filtroRel||filtroCidade)?[]:guard.filter(g=>g.etapa===etapa);
+   av.hidden=!lst.length&&!pi.length&&!gq.length;
+   av.innerHTML=(gq.length?`<button type="button" class="imp-aviso gd-aviso" onclick="guardEt=${etapa};abrirGuard()">🎞️ Tem leitura arquivada desta etapa pra lançar no PDA<small>toque pra ver a foto</small></button>`:"")+pi.map(([l,v])=>`<div class="imp-aviso">🖨️ Prédio · livro <b>${esc(l)}</b>: em ${nomeMes(v.quando)} saíram <b>${v.q}</b> pra imprimir → ${txtBob(v.q)||"🧾 0"}<small>quando lançar, a conta já usa esse número · 📷 no livro pra atualizar</small></div>`).join("")+lst.map(([l,v])=>`<button type="button" class="resseq-aviso" data-l="${esc(l)}">🗂️ Sequenciar o livro <b>${esc(l)}</b>${v.nota?" · "+esc(v.nota):""}<small>marcado em ${fmt(v.quando)} · toque: foi sequenciado? sim ou não</small></button>`).join("");
    av.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>perguntaSeq(b.dataset.l))}
   // ⚫ atalho: etapa do dia (ou que já passou) sem nenhum livro → marcar "não fiz" sem ir no calendário
   {const nb=$("nfRapido"),dE=diaDaEtapa(m,etapa),h0=hoje(),sem=!registros.some(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura);
@@ -1422,7 +1482,7 @@ function render(){atualizarNomes();
      const ag=$("hrAgora");if(ag)ag.onclick=()=>{const d=new Date(),h=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");if(!$("hrIni").value)$("hrIni").value=h;else $("hrFim").value=h;grava()};
      const lp=$("hrLimpa");if(lp)lp.onclick=()=>{if(confirm("Apagar a hora de começo e fim da Etapa "+p2(etapa)+"?")){delete horas[k];salvarHoras();render()}};
    }}}
-  desenharCrono();pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
+  desenharCrono();desenharGuardDot();pintarEtapas();atualizarChip();atualizarPendentes();atualizarBannerCal();
   {const cp=[];/* faixa "Voltar pra confirmar" desligada: o aviso fica só na bolinha laranja do 📝 */$("confFaixa").innerHTML=cp.slice(0,4).map(x=>`<button type="button" class="voltar-lista" onclick="abrirConf('${x.r.id}')">📍 Voltar pra confirmar: livro ${esc(x.r.livro)} · Etapa ${p2(x.r.etapa)}</button>`).join("")}
 }
 function atualizarChip(){
@@ -1856,6 +1916,7 @@ function desenharConf(){
 function numeroCasa(e){const m=String(e||"").match(/,\s*(?:N[º°O]?\.?\s*)?(\d+[A-Z]?)\b/i)||String(e||"").match(/\s(\d{1,5}[A-Z]?)\b(?!.*\d)/);return m?m[1]:""}
 // Caixa do endereço cresce pra mostrar tudo, sem cortar o número
 function ajustarAltura(box){box.querySelectorAll("textarea.end-txt").forEach(t=>{const f=()=>{t.style.height="auto";t.style.height=Math.max(38,t.scrollHeight+2)+"px"};f();requestAnimationFrame(f);setTimeout(f,60);t.addEventListener("input",f)})}
+const IA_CONFIRMA='Esta é uma foto da tela de leitura de um PDA de energia (confirmação de leitura). Leia: UC (número depois de "UC:"), o endereço (rua, número e bairro), o(s) código(s) de registro no formato de 3 letras e 3 números (ex.: "CON-003", "CON-103"; pode ter mais de um no mesmo medidor) e o MEDIDOR (depois de "MD:", ex.: "B18670249"). Não confunda o número da casa com o medidor. Responda só JSON: {"uc":"000307981404503","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","registros":["CON-003"],"md":"B18670249"}. Use null no que não conseguir ler.';
 function lerConfirmacaoPDA(t){
   const L=t.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   const uc=((t.match(/UC\s*[:;]?\s*((?:\d\s?){15})/)||[])[1]||"").replace(/\D/g,"");
@@ -1875,11 +1936,14 @@ $("confArq").onchange=async e=>{
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;
   const b=$("confFotoBtn"),txt=b.textContent;b.disabled=true;
   try{
-    b.textContent="⏳ Preparando leitor...";await carregarOCR();
-    const w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});
-    await w.setParameters({tessedit_pageseg_mode:"6"});
-    let fichas=[];
-    for(const f of files){
+    let w=null;const leitor=async()=>{if(!w){b.textContent="⏳ Preparando leitor...";await carregarOCR();w=await Tesseract.createWorker("eng",1,{logger:l=>{if(l.status==="recognizing text")b.textContent="⏳ Lendo... "+Math.round(l.progress*100)+"%"}});await w.setParameters({tessedit_pageseg_mode:"6"})}return w};
+    let fichas=[],fi=0;
+    for(const f of files){fi++;
+      if(iaChave){b.textContent="🤖 "+(files.length>1?"Foto "+fi+"/"+files.length+" · ":"")+"Lendo com IA...";let fs=[];
+        try{const j=await iaLer(f,IA_CONFIRMA);if(j&&(j.md||j.end||j.uc)){const regs=(Array.isArray(j.registros)&&j.registros.length?j.registros:[""]).map(x=>String(x||"").toUpperCase().replace(/\s+/g,""));
+          fs=regs.map(reg=>({uc:String(j.uc||"").replace(/\D/g,""),med:String(j.md||"").toUpperCase().replace(/\s+/g,""),reg,end:String(j.end||"").toUpperCase().replace(/\s+/g," ").trim()}))}}catch(err){iaFalhou(err)}
+        if(fs.length){fichas=fichas.concat(fs);continue}}
+      await leitor();
       const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
       const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
       const res=await w.recognize(prepararPDA(img,Math.min(2200,maxL)));
@@ -1887,7 +1951,7 @@ $("confArq").onchange=async e=>{
       if(!fs.length){const r2=await w.recognize(prepararClara(img,Math.min(2200,maxL)));fs=lerConfirmacaoPDA(r2.data.text).filter(x=>x.med||x.end||x.uc)}
       URL.revokeObjectURL(img.src);fichas=fichas.concat(fs);
     }
-    await w.terminate();
+    if(w)await w.terminate();
     if(!fichas.length)return alert("Não consegui ler as confirmações desta(s) foto(s).\nTente uma foto reta, com boa luz, mostrando a tela do PDA.");
     const c=confDe(r);
     if(fichas.length>c.length&&confirm("Li "+fichas.length+" confirmação(ões), mas o livro está com "+c.length+".\nAumentar o livro pra "+fichas.length+"?")){r.qtd=fichas.length;confDe(r)}
@@ -1958,8 +2022,8 @@ $("nlArq").onchange=async e=>{
     if(!itens.length)return alert("Não consegui ler o Resumo por Mensagem nesta foto.\nTente sem reflexo (faça sombra na tela).");
     const nl=itens.filter(x=>/IMPEDIMENTO/.test(x.nome)||x.cod==="002").reduce((t,x)=>t+x.q,0);
     const feitas=itens.filter(x=>["000","011","012"].includes(x.cod)||/^LEITURA/.test(x.nome)).reduce((t,x)=>t+x.q,0),recF=nlAlvo.startsWith("rec:")?registros.find(x=>String(x.id)===nlAlvo.slice(4)):null,txtFeitas=feitas?"\n\n✅ Leituras feitas (normal + acima + abaixo): "+feitas+(recF&&recF.qtd?" · livro: "+recF.qtd:""):"";
-    const v=prompt((nlAlvo.startsWith("rec:")?"🚩 Livro "+((registros.find(x=>String(x.id)===nlAlvo.slice(4))||{}).livro||"")+"\n\n":"")+"🚩 Li no resumo do PDA:\n\n"+itens.map(x=>"• "+(x.cod?x.cod+" - ":"")+x.nome.slice(0,28)+": "+x.q).join("\n")+txtFeitas+"\n\n🚫 Não lidos (impedimentos) — confira:",nl);
-    if(v===null)return;const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{
+    // preenche sozinho com o 002 (impedimento); dá pra corrigir no campo depois
+    const v=String(nl);toast("🚩 Resumo lido: "+nl+" impedimento(s) (002) preenchido"+(nl===1?"":"s")+(feitas?" · "+feitas+" leituras feitas":"")+(recF?" · livro "+recF.livro:""));const n=Math.max(0,parseInt(v,10)||0);if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{
       // Bandeirinha da tela principal usada DEPOIS de salvar o livro: oferece colar no último livro salvo
       const vazias=![...$("livroRows").children].some(linhaPreenchida),ult=registros[registros.length-1];
       if(n>0&&nlAlvo==="impQtd"&&vazias&&ult&&!ult.releitura&&n<=ult.qtd&&Number.isFinite(+ult.id)&&Date.now()-Math.floor(+ult.id)<4*36e5&&confirm("🚫 Colocar "+n+" não lido"+(n>1?"s":"")+" dentro do livro "+ult.livro+" (o último que você salvou)?\n\nOK = no livro (o app avisa no mês que vem)\nCancelar = só no dia")){ult.nl=n;localStorage.setItem(KEY,JSON.stringify(registros));render();return}
@@ -2501,7 +2565,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.44";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.48";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2538,12 +2602,15 @@ function pdaPin(r,e){
 // Preparo da foto do PDA: pega o menor valor de cor de cada ponto, assim as letras laranja (Limite) e azul (km) ficam escuras como as pretas
 // ---------- 📷 Leitura pela foto do visor do medidor ----------
 let fotoLeitAlvo=-1;
+const IA_MEDIDOR='Esta é uma foto de um medidor de energia (ou da tela do PDA com o medidor). Leia o NÚMERO DO MEDIDOR (número de série do aparelho, geralmente com letra e números, ex.: "B18670249"; NÃO é o número da casa) e a LEITURA mostrada no visor/mostrador (só os dígitos). Responda só JSON: {"medidor":"B18670249","leitura":"13030"}. Use null no que não conseguir ler.';
 $("leitArq").onchange=async e=>{
   const f=(e.target.files||[])[0];e.target.value="";if(!f||fotoLeitAlvo<0)return;
   const r=registros.find(x=>String(x.id)===rcChave);if(!r)return;const c=confDe(r),x=c[fotoLeitAlvo];if(!x)return;
   const bt=document.querySelector(`[data-foto="${fotoLeitAlvo}"]`);if(bt){bt.disabled=true;bt.textContent="⏳"}
-  let achou="";
+  let achou="",mdLido="";
   try{
+    if(iaChave){try{const j=await iaLer(f,IA_MEDIDOR);if(j){if(j.leitura!=null)achou=String(j.leitura).replace(/\D/g,"");if(j.medidor)mdLido=String(j.medidor).toUpperCase().replace(/\s+/g,"")}}catch(err){iaFalhou(err)}}
+    if(!achou&&!mdLido){
     await carregarOCR();
     const img=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=er;i.src=URL.createObjectURL(f)});
     const maxL=Math.floor(Math.sqrt(15e6*img.width/img.height));
@@ -2554,10 +2621,12 @@ $("leitArq").onchange=async e=>{
     const medNum=String(x.med||"").replace(/\D/g,"");
     const cand=(res.data.words||[]).map(wd=>({t:(wd.text||"").replace(/\D/g,""),h:wd.bbox?wd.bbox.y1-wd.bbox.y0:0})).filter(c=>c.t.length>=3&&c.t.length<=8&&!(medNum&&medNum.includes(c.t)));
     cand.sort((a,b)=>b.h-a.h||b.t.length-a.t.length);achou=cand.length?cand[0].t:"";
+    }
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.");achou=null}
   finally{if(bt){bt.disabled=false;bt.textContent="📷"}}
   if(achou===null)return;
-  const v=prompt(achou?"📷 Li no visor: "+achou+"\n\nConfira com o medidor e corrija se precisar:":"📷 Não consegui ler o número nesta foto.\nDigite a leitura:",achou||x.leit||"");
+  if(mdLido&&mdLido!==x.med){if(!x.med||confirm("📷 Medidor da foto: "+mdLido+"\nNa ficha está: "+x.med+"\n\nOK = trocar pelo da foto")){x.med=mdLido}}
+  const v=prompt((mdLido?"🔢 Medidor: "+mdLido+"\n":"")+(achou?"📷 Li no visor: "+achou+"\n\nConfira com o medidor e corrija se precisar:":"📷 Não consegui ler o número nesta foto.\nDigite a leitura:"),achou||x.leit||"");
   if(v===null)return;
   x.leit=v.replace(/\s+/g,"").trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render();
 };
