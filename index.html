@@ -581,7 +581,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.37</span></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.38</span></footer>
 </div>
 
 <!-- Editar registro -->
@@ -2473,7 +2473,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.37";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.38";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2807,7 +2807,7 @@ $("fotoArq").onchange=e=>{const f=e.target.files[0];if(!f)return;
 mostrar();
 })();
 </script>
-<!-- ===== ACRÉSCIMO v15.37: todo livro com a mesma linha de horário + total do dia ===== -->
+<!-- ===== ACRÉSCIMO v15.38: todo livro com a mesma linha de horário + total do dia ===== -->
 <style>
 .hr2-sem{background:#fff7ed;color:#9a3412}
 .hr2-sem b{color:#15803d;cursor:pointer;text-decoration:underline}
@@ -2880,15 +2880,16 @@ function resumo(){
   const ini=com.map(r=>r.ini).filter(Boolean).sort()[0],fim=com.map(r=>r.fim).filter(Boolean).sort().slice(-1)[0];
   let span=0;if(ini&&fim){span=minDe(fim)-minDe(ini);if(span<0)span+=1440}
   const it=interv[d]||0,total=span?Math.max(0,span-it):minLiv;
+  const todas=rs.reduce((t,r)=>t+r.qtd,0),vel=total?porHora(todas,total):0,velTxt=vel?` · ⚡ <b>${vel}</b> leituras/hora`:"";
   const aberto=cronos.length,dl=d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7);
   const btInt=`<button type="button" class="hr2-b" data-a="int" aria-label="Intervalo">☕${it?" "+fmtDur(it):""}</button>`;
   barra.hidden=false;
   if(fechado[d]===rs.length&&!aberto&&com.length){
     barra.className="hr2-dia ok";
-    barra.innerHTML=`<span class="hr2-txt">🏁 ${dl} encerrado: <b>${fmtDur(total)}</b> trabalhadas<small>${ini||"--:--"} → ${fim||"--:--"}${it?" · intervalo "+fmtDur(it):""} · nos livros ${fmtDur(minLiv)} · ${rs.length} livro(s) · ${rs.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras</small></span>${btInt}<button type="button" class="hr2-b" data-a="reabrir">↩</button>`;
+    barra.innerHTML=`<span class="hr2-txt">🏁 ${dl} encerrado: <b>${fmtDur(total)}</b> trabalhadas${velTxt}<small>${ini||"--:--"} → ${fim||"--:--"}${it?" · intervalo "+fmtDur(it):""} · nos livros ${fmtDur(minLiv)} · ${rs.length} livro(s) · ${rs.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras</small></span>${btInt}<button type="button" class="hr2-b" data-a="reabrir">↩</button>`;
   }else{
     barra.className="hr2-dia";
-    barra.innerHTML=`<span class="hr2-txt">⏱️ ${dl}: <b>${fmtDur(total)}</b> trabalhadas até agora<small>${ini?"desde "+ini+" até o último livro"+(it?" · intervalo "+fmtDur(it):"")+" · ":""}${sem.length?sem.length+" livro(s) sem horário · ":""}${aberto?"cronômetro aberto ("+aberto+") · ":""}toque em Encerrar quando acabar</small></span>${btInt}<button type="button" class="hr2-b hr2-go" data-a="fechar">🏁 Encerrar</button>`;
+    barra.innerHTML=`<span class="hr2-txt">⏱️ ${dl}: <b>${fmtDur(total)}</b> trabalhadas até agora${velTxt}<small>${ini?"desde "+ini+" até o último livro"+(it?" · intervalo "+fmtDur(it):"")+" · ":""}${sem.length?sem.length+" livro(s) sem horário · ":""}${aberto?"cronômetro aberto ("+aberto+") · ":""}toque em Encerrar quando acabar</small></span>${btInt}<button type="button" class="hr2-b hr2-go" data-a="fechar">🏁 Encerrar</button>`;
   }
 }
 const atualizar=()=>{marcar();resumo()};
