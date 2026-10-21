@@ -611,7 +611,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.63</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.65</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1947,14 +1947,14 @@ function desenharConf(){
         if(!confAbertas.has(g.k))return `<button type="button" class="conf-linha${cls}${rep?" repete":""}" data-abre="${esc(g.k)}"><span class="cl-n">${st}</span><span class="cl-tx">${repTxt}${nc?`<b>Nº ${esc(nc)}</b> · `:""}${esc(x0.end||"sem endereço")}<small>${meds?esc(meds)+" · ":""}${regs?esc(regs)+" · ":""}${falt?"a confirmar":todosOutro?"recusada":g.itens.some(i=>c[i].impd)?"🚩 impedimento":"tudo confirmado"}</small></span><span class="cl-ab">▾</span></button>`;
         const linhas=g.itens.map(i=>{const x=c[i],done=x.ok||x.outro||x.impd;return `<div class="reg-lin${x.impd?" impd":x.outro?" outro-fez":x.ok?" feito":""}"><div class="reg-top"><span class="conf-info">${x.foto?`<button type="button" class="cf-ver" data-ver="${esc(x.fid)}" title="Ver a foto salva">🖼️</button> `:""}${x.reg?`<b>${esc(x.reg)}</b>`:"Registro"}${x.uc?` · UC ${esc(x.uc)}`:""}</span><span class="conf-btns">${!x.outro?`<button type="button" data-foto="${i}" title="Foto do visor: lê a leitura" aria-label="Foto do visor do medidor">📷</button><button type="button" data-edita="${i}" title="Corrigir medidor/leitura" aria-label="Corrigir">✏️</button>`:""}${done?`<button type="button" class="bt-fecha" data-volta="${i}">↩ Pendente</button>`:`<button type="button" data-impd="${i}" title="Impedimento (002): não deu pra ler" aria-label="Impedimento"><span class="flag-x">🚩</span></button><button type="button" data-outro="${i}" title="Recusada (outro agente fez)">🙅</button>`}<button type="button" data-tira="${i}" aria-label="Tirar esta">🗑️</button></span></div>
           <div class="reg-campos"><input data-i="${i}" data-k="med" type="text" inputmode="numeric" value="${esc(x.med)}" placeholder="Medidor" aria-label="Medidor" autocomplete="off"${x.ok&&!x.outro?" readonly":""}><input data-i="${i}" data-k="leit"${x.ok&&!x.outro?" readonly":""} type="text" inputmode="numeric" value="${esc(x.leit)}" placeholder="Leitura" aria-label="Leitura" autocomplete="off"><button type="button" class="ok" data-ok="${i}" aria-label="Confirmada">✔</button></div>
-          ${x.impd?`<div class="conf-acoes"><span class="conf-impd"><span class="flag-x">🚩</span> Impedimento (002)${x.motivo?": <b>"+esc(x.motivo)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ Confirmada em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
+          ${x.impd?`<div class="conf-acoes"><span class="conf-impd"><span class="flag-x">🚩</span> Impedimento (002)${x.motivo?": <b>"+esc(x.motivo)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.outro?`<div class="conf-acoes"><span class="conf-outro">👥 Feita por outro agente de faturamento${x.agente?": <b>"+esc(x.agente)+"</b>":""}${x.quando?" · "+fmt(x.quando):""}</span></div>`:x.ok&&x.quando?`<div class="conf-acoes"><span class="conf-feita">✔ ${x.noPDA?"Lançada no PDA (sem leitura aqui)":"Confirmada"} em ${fmt(x.quando)}</span></div>`:""}</div>`}).join("");
         return `<div class="conf grupo"><div class="full conf-top"><span class="conf-info">${falt?"⏳ a confirmar":"✔ feito"}</span>${nc?`<span class="num-casa">🏠 Nº ${esc(nc)}</span>`:""}<span class="conf-btns">${x0.end.trim()?`<a class="bt-mapa" href="${linkMaps([comCidade(x0.end,cid)])}" target="_blank" rel="noopener" title="Abrir no mapa" aria-label="Abrir no mapa">🗺️</a>`:""}<button type="button" class="bt-fecha" data-fecha="${esc(g.k)}" aria-label="Fechar">▲</button></span></div>${rep?`<div class="full rep-aviso">🔴 Atenção: ${rep>1?"já são "+(rep+1)+" meses seguidos":"o mês passado também teve"} confirmação de leitura neste ${g.itens.some(i=>c[i].med)?"medidor":"endereço"}.</div>`:""}<div class="full"><textarea data-g="${g.itens.join(",")}" rows="1" class="end-txt" placeholder="Rua e número" autocomplete="off">${esc(x0.end)}</textarea></div><div class="full">${linhas}<button type="button" class="conf-mais" data-mais="${g.itens.join(",")}" title="Mais uma leitura deste medidor">➕ Leitura</button></div></div>`}).join("")})()+
     "";
   const b=$("rcCorpo");
   ajustarAltura(b);
   // endereço do cartão vale pra todos os registros dele
   b.querySelectorAll("textarea[data-g]").forEach(t=>t.onchange=()=>{const v=t.value.replace(/\s+/g," ").trim(),ids=t.dataset.g.split(",").map(Number);const eraAberto=[...confAbertas].length;ids.forEach(i=>c[i].end=v);confAbertas=new Set([chaveEnd(c[ids[0]],ids[0])]);localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
-  b.querySelectorAll("input[data-i],textarea[data-i]").forEach(inp=>inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.replace(/\s+/g," ").trim();localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("input[data-i],textarea[data-i]").forEach(inp=>{inp.oninput=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.replace(/\s+/g," ").trim()};inp.onchange=()=>{c[+inp.dataset.i][inp.dataset.k]=inp.value.replace(/\s+/g," ").trim();localStorage.setItem(KEY,JSON.stringify(registros));render()}});
   $("confFotoBtn").onclick=()=>$("confArq").click();
   // 👥 Repassada: sai das pendentes sem precisar da leitura (fica anotado)
   b.querySelectorAll("[data-outro]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.outro];if(x.outro){x.outro=false;x.ok=false;delete x.agente}else{
@@ -1993,7 +1993,7 @@ function desenharConf(){
   b.querySelectorAll("[data-foto]").forEach(bt=>bt.onclick=()=>{fotoLeitAlvo=+bt.dataset.foto;$("leitArq").click()});
   b.querySelectorAll("[data-edita]").forEach(bt=>bt.onclick=()=>{const l=bt.closest(".reg-lin");l.querySelectorAll("input").forEach(x=>{x.readOnly=false;x.classList.add("editando")});const f=l.querySelector("input[data-k='leit']");f.focus();f.select&&f.select()});
   b.querySelectorAll("[data-fecha]").forEach(bt=>bt.onclick=()=>{confAbertas.delete(bt.dataset.fecha);desenharConf()});
-  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];x.ok=!x.ok;x.outro=false;if(x.ok){x.quando=hoje();apagaFotoConf(x);proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
+  b.querySelectorAll("[data-ok]").forEach(bt=>bt.onclick=()=>{const x=c[+bt.dataset.ok];const li=bt.closest(".reg-lin"),vl=li&&li.querySelector("input[data-k=leit]");if(vl&&vl.value.trim()&&!x.leit)x.leit=vl.value.replace(/\s+/g,"").trim();if(!x.ok&&!String(x.leit||"").trim()){if(!confirm("Não tem leitura digitada aqui.\n\nJá lançou essa leitura no PDA?\n\nOK = Sim, já lancei no PDA (confirma assim mesmo)\nCancelar = voltar e digitar a leitura\n\n(Se não deu pra ler: 🚩 impedimento ou 🙅 recusada. Aberta sem querer: 🗑️)"))return;x.noPDA=true}else if(!x.ok)delete x.noPDA;x.ok=!x.ok;if(!x.ok)delete x.noPDA;x.outro=false;if(x.ok){x.quando=hoje();apagaFotoConf(x);proxPend(+bt.dataset.ok)}localStorage.setItem(KEY,JSON.stringify(registros));desenharConf();render()});
 }
 // Foto da tela de confirmação do PDA: UC, endereço, medidor (MD) e os registros (CON-003, GTP-303...)
 // Cada registro vira uma ficha: medidor com 2 registros = 2 confirmações
@@ -2654,7 +2654,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.63";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.65";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
