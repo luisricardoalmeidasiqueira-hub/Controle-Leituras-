@@ -297,6 +297,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .gd-item{display:flex;gap:8px;align-items:center;border:1px solid #e5e7eb;border-radius:12px;padding:6px;margin-top:6px}.gd-item img{width:64px;height:64px;object-fit:cover;border-radius:8px;background:#f3f4f6;flex:none;cursor:pointer}
 .gd-cp{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.gd-cp input{height:32px;border:1px solid #d1d5db;border-radius:8px;padding:0 8px;font:inherit;font-size:15px;min-width:0}.gd-cp small{font-size:11px;color:#6b7280}
 .gd-bt{display:flex;flex-direction:column;gap:4px;flex:none}.gd-bt button{height:32px;border-radius:999px;border:1px solid #d1d5db;background:#fff;font-size:12px;font-weight:800;padding:0 8px;cursor:pointer}.gd-bt button:first-child{background:#16a34a;color:#fff;border-color:#16a34a}
+.gd-l{display:flex;gap:4px;align-items:center}.gd-l input{flex:1;min-width:0}.gd-l .gd-reg{flex:0 0 78px;font-size:13px!important}.gd-xt{border:0;background:none;font-size:14px;color:#9ca3af;cursor:pointer;padding:0 2px}
+.gd-mais{align-self:flex-end;height:24px;padding:0 9px;border:1px dashed #0f766e;background:#f0fdfa;color:#115e59;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer}
 .gd-zoom{display:flex;align-items:center;justify-content:center;padding:10px}.gd-zoom img{max-width:100%;max-height:90vh;border-radius:10px}
 .gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
 .obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
@@ -510,7 +512,7 @@ div:has(>#localidade)>.label,div:has(>#prontuario)>.label{display:none!important
 .rel-chk{grid-area:rel}.livro-row.part .rel-chk{background:#fff;border-color:#c4c9d0}.rel-chk input{accent-color:#d97706}
 .part-chk.rel-chk:has(input:checked),.livro-row.part .part-chk.rel-chk:has(input:checked){background:#fef3c7;border-color:#f59e0b}
 details.pda-item{margin-top:6px}details.pda-item summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;padding:6px 12px;font-size:12px;font-weight:800;color:#374151}
-details.pda-item summary::-webkit-details-marker{display:none}details.pda-item summary::after{content:"▾";flex:none;color:#6b7280}details.pda-item[open] summary::after{content:"▴"}details.pda-item[open] summary{background:#eff6ff;border-color:#93c5fd}
+details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;color:#374151}details.pda-item summary::-webkit-details-marker{display:none}details.pda-item summary::after{content:"▾";flex:none;color:#6b7280}details.pda-item[open] summary::after{content:"▴"}details.pda-item[open] summary{background:#eff6ff;border-color:#93c5fd}
 .pda-pin{width:auto;display:inline-flex;align-items:center;gap:10px;border:1px solid #c4c9d0;border-radius:9px;background:#fff;color:#374151;font-size:12px;font-weight:800;padding:7px 9px;cursor:pointer;text-align:left}
 .pda-pin span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pda-seta{flex:none;color:#6b7280;transition:transform .2s}.pda-pin.open .pda-seta{transform:rotate(180deg)}.pda-pin.open{background:#eff6ff;border-color:#93c5fd}
@@ -611,7 +613,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.68</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.72</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -826,12 +828,13 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
   if(!guardEt)guardEt=etapa;
   const ets=[...new Set(guard.map(g=>g.etapa))].sort((a,b)=>a-b);
   f.innerHTML=`<div class="modal obs-modal hl-modal gd-modal"><div class="hl-tit">🎞️ Leituras arquivadas<small></small><button type="button" class="hl-x" data-g="x" aria-label="Fechar">✕</button></div>
-   <div class="hint">Passou por uma leitura de outra etapa? Tire a foto aqui. Ela fica arquivada até você lançar no PDA.</div>
-   <div class="gd-nova"><label>Etapa<select id="gdEt">${Array.from({length:18},(_,i)=>`<option value="${i+1}"${i+1===guardEt?" selected":""}>${p2(i+1)}</option>`).join("")}</select></label><button type="button" data-g="foto" data-gal="1" class="gd-foto">📷 Foto</button></div>
-   <div class="gd-lst">${ets.length?ets.map(e=>`<div class="gd-et">Etapa ${p2(e)}${e===etapa?" · <b>é a de agora</b>":""}</div>`+guard.filter(g=>g.etapa===e).map(g=>`<div class="gd-item" data-id="${g.id}"><img alt="foto" data-ver="${g.id}"><div class="gd-cp"><input data-k="med" data-id="${g.id}" value="${esc(g.med||"")}" placeholder="Medidor" autocomplete="off"><input data-k="leit" data-id="${g.id}" value="${esc(g.leit||"")}" placeholder="Leitura" inputmode="numeric" autocomplete="off"><small>${fmt(g.quando)} ${g.h||""}${g.end?" · "+esc(g.end):""}</small></div><div class="gd-bt"><button type="button" data-g="ok" data-id="${g.id}" title="Já lancei no PDA">✔ Lancei</button><button type="button" data-g="del" data-id="${g.id}" aria-label="Apagar">🗑️</button></div></div>`).join("")).join(""):'<div class="hint" style="margin-top:8px">Nenhuma leitura arquivada.</div>'}</div></div>`;
+   <div class="hint">Passou por uma leitura de outra etapa? Tire a foto ou digite o medidor. Fica arquivada até você lançar no PDA.</div>
+   <div class="gd-nova"><label>Etapa<select id="gdEt">${Array.from({length:18},(_,i)=>`<option value="${i+1}"${i+1===guardEt?" selected":""}>${p2(i+1)}</option>`).join("")}</select></label><button type="button" data-g="foto" data-gal="1" class="gd-foto">📷 Foto</button><button type="button" data-g="dig" class="gd-foto">✏️ Digitar</button></div>
+   <div class="gd-lst">${ets.length?ets.map(e=>`<div class="gd-et">Etapa ${p2(e)}${e===etapa?" · <b>é a de agora</b>":""}</div>`+guard.filter(g=>g.etapa===e).map(g=>`<div class="gd-item" data-id="${g.id}">${g.semFoto?"":`<img alt="foto" data-ver="${g.id}">`}<div class="gd-cp"><input data-k="med" data-id="${g.id}" value="${esc(g.med||"")}" placeholder="Medidor" autocomplete="off"><div class="gd-l"><input class="gd-reg" data-k="reg" data-id="${g.id}" value="${esc(g.reg||"")}" placeholder="Registro" autocomplete="off"><input data-k="leit" data-id="${g.id}" value="${esc(g.leit||"")}" placeholder="Leitura" inputmode="numeric" autocomplete="off"></div>${(g.extra||[]).map((x,k)=>`<div class="gd-l"><input class="gd-reg" data-x="${k}" data-xk="reg" data-id="${g.id}" value="${esc(x.reg||"")}" placeholder="Registro" autocomplete="off"><input data-x="${k}" data-xk="leit" data-id="${g.id}" value="${esc(x.leit||"")}" placeholder="Leitura" inputmode="numeric" autocomplete="off"><button type="button" class="gd-xt" data-g="xtira" data-k="${k}" data-id="${g.id}" aria-label="Tirar esta leitura">✕</button></div>`).join("")}<button type="button" class="gd-mais" data-g="mais" data-id="${g.id}">➕ Leitura</button><small>${fmt(g.quando)} ${g.h||""}${g.end?" · "+esc(g.end):""}</small></div><div class="gd-bt"><button type="button" data-g="ok" data-id="${g.id}" title="Já lancei no PDA">✔ Lancei</button><button type="button" data-g="del" data-id="${g.id}" aria-label="Apagar">🗑️</button></div></div>`).join("")).join(""):'<div class="hint" style="margin-top:8px">Nenhuma leitura arquivada.</div>'}</div></div>`;
   $("gdEt").onchange=e=>guardEt=+e.target.value;
   f.querySelectorAll("img[data-ver]").forEach(async im=>{const d=await gGet(im.dataset.ver);if(d)im.src=d;im.onclick=()=>{if(d){const v=document.createElement("div");v.className="modal-fundo obs-fundo gd-zoom";v.innerHTML=`<img src="${d}" alt="foto">`;v.onclick=()=>v.remove();document.body.appendChild(v)}}});
-  f.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{const g=guard.find(x=>String(x.id)===i.dataset.id);if(g){g[i.dataset.k]=i.value.trim();salvarGuard()}});
+  f.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{const g=guard.find(x=>String(x.id)===i.dataset.id);if(g){g[i.dataset.k]=i.dataset.k==="leit"?i.value.trim():i.value.trim().toUpperCase();salvarGuard()}});
+  f.querySelectorAll("input[data-x]").forEach(i=>i.onchange=()=>{const g=guard.find(x=>String(x.id)===i.dataset.id);if(g&&g.extra&&g.extra[+i.dataset.x]){g.extra[+i.dataset.x][i.dataset.xk]=i.dataset.xk==="leit"?i.value.trim():i.value.trim().toUpperCase();salvarGuard()}});
   f.querySelectorAll("[data-g]").forEach(b=>b.onclick=async()=>{const q=b.dataset.g,g=guard.find(x=>String(x.id)===b.dataset.id);
     if(q==="x"){f.remove();render();return}
     if(q==="foto"){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";if(!b.dataset.gal)inp.setAttribute("capture","environment");
@@ -841,7 +844,10 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
         if(iaChave){b.textContent="🤖 Lendo...";try{const j=await iaLer(file,IA_GUARDA);if(j){if(j.medidor)it.med=String(j.medidor).toUpperCase().replace(/\s+/g,"");if(j.leitura!=null)it.leit=String(j.leitura).replace(/\D/g,"");if(j.end)it.end=String(j.end).toUpperCase();if(j.uc)it.uc=String(j.uc)}}catch(err){iaFalhou(err)}}
         guard.push(it);salvarGuard();abrirGuard()};
       inp.click();return}
+    if(q==="dig"){const it={id:Date.now(),etapa:guardEt||etapa,quando:hoje(),h:agoraHM(),med:"",leit:"",semFoto:true};guard.push(it);salvarGuard();abrirGuard();setTimeout(()=>{const i=document.querySelector(`#guardFundo input[data-k="med"][data-id="${it.id}"]`);if(i)i.focus()},80);return}
     if(!g)return;
+    if(q==="mais"){(g.extra=g.extra||[]).push({reg:"",leit:""});salvarGuard();abrirGuard();return}
+    if(q==="xtira"){(g.extra||[]).splice(+b.dataset.k,1);salvarGuard();abrirGuard();return}
     if(q==="ok"&&!confirm("Já lançou no PDA a leitura"+(g.med?" do medidor "+g.med:"")+"?\nA foto sai da lista."))return;
     if(q==="del"&&!confirm("Apagar esta foto arquivada?"))return;
     guard=guard.filter(x=>x!==g);gDel(String(g.id));salvarGuard();abrirGuard()});
@@ -954,7 +960,7 @@ function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!
 function diaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura),t=rs.filter(r=>duracao(r));if(!t.length)return "";
   const min=minutosUniao(t)||t.reduce((a,r)=>a+duracao(r),0),q=t.reduce((a,r)=>a+r.qtd,0),sem=rs.some(r=>!duracao(r));
   return `<div class="hr-res hr-dia" onclick="verDiaTrab()">📅 ${d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7)}: <b>${fmtDur(min)}</b> trabalhadas · ⚡ ${porHora(q,min)}/h${sem?' <small>· tem livro sem horário</small>':""}</div>`}
-function verDiaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura).sort((a,b)=>(a.ini||"99").localeCompare(b.ini||"99"));const t=rs.filter(r=>duracao(r)),min=t.reduce((a,r)=>a+duracao(r),0);
+function verDiaTrab(){const d=$("data").value||hoje(),rs=registros.filter(r=>r.data===d&&!r.releitura).sort((a,b)=>(a.ini||"99").localeCompare(b.ini||"99"));const t=rs.filter(r=>duracao(r)),min=minutosUniao(t)||t.reduce((a,r)=>a+duracao(r),0);
   alert("📅 "+(d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7))+" · "+fmtDur(min)+" trabalhadas\n\n"+rs.map(r=>"• "+r.livro+" — "+r.qtd+" leituras · "+(duracao(r)?(r.trechos&&r.pausa?r.trechos.join(" + "):r.ini+"–"+r.fim)+" ("+fmtDur(duracao(r))+")":"sem horário")).join("\n")+"\n\nSó entra o tempo dos livros com ⏱️ (pausa não conta). Livro sem horário: toque no ⏱️ dele pra colocar.")}
 // etapa medida pelos livros com ⏱️: começo = 1º livro, fim = último, tempo = soma dos livros (pausa não conta)
 // soma os horários sem contar duas vezes quando dois livros ficaram abertos ao mesmo tempo
@@ -2660,7 +2666,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.68";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.72";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2811,7 +2817,8 @@ function pdaProxima(){
 function pdaDetalhe(r){
   if(!r.pda||!r.pda.end)return "";
   const q=encodeURIComponent(r.pda.end);
-  return '<details class="pda-item"><summary>📍</summary><div class="pda-box"><b>'+esc(r.pda.end)+'</b><div class="pda-tags">'+(r.pda.lim&&!r.releitura?'<span>Limite '+esc(r.pda.lim)+'</span>':'')+(r.pda.km?'<span>'+esc(r.pda.km)+' km</span>':'')+'</div>'+
+  const rua=String(r.pda.end).split(",")[0].trim();
+  return '<details class="pda-item"><summary>📍 <span class="pda-rua">'+esc(rua)+'</span></summary><div class="pda-box"><b>'+esc(r.pda.end)+'</b><div class="pda-tags">'+(r.pda.lim&&!r.releitura?'<span>Limite '+esc(r.pda.lim)+'</span>':'')+(r.pda.km?'<span>'+esc(r.pda.km)+' km</span>':'')+'</div>'+
     '<a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q+'" target="_blank" rel="noopener">🗺️ Abrir no mapa</a><button type="button" class="pda-copiar" data-end="'+esc(r.pda.end)+'">📋 Copiar endereço</button></div></details>';
 }
 function preencherDoPDA(itens,et){
@@ -2888,6 +2895,7 @@ function abrirIA(){
 let pdaAcum=[],pdaFotos=0;
 function lerImg(file){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=er;im.src=URL.createObjectURL(file)})}
 function pdaResumo(){
+  if(!pdaAcum.length){pdaFotos=0;return alert("Não achei nenhum livro na foto. Tente outra foto.")}
   const itens=pdaAcum,ets=[...new Set(itens.map(x=>x.etapa))],et=ets.length===1?ets[0]:0;
   const q=itens.reduce((t,x)=>t+(predios[x.livro]?qImp(x.livro,+x.qtd):(+x.qtd||0)),0),qp=itens.filter(x=>predios[x.livro]).reduce((t,x)=>t+(+x.qtd||0),0);
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
@@ -3095,15 +3103,19 @@ barra.addEventListener("click",e=>{
 function resumo(){
   const d=dia(),rs=registros.filter(r=>r.data===d&&!r.releitura);
   if(!rs.length){barra.hidden=true;return}
-  const com=rs.filter(r=>duracao(r)),sem=rs.filter(r=>!duracao(r)),minLiv=com.reduce((t,r)=>t+duracao(r),0),q=com.reduce((t,r)=>t+r.qtd,0);
-  const ini=com.map(r=>r.ini).filter(Boolean).sort()[0],fim=com.map(r=>r.fim).filter(Boolean).sort().slice(-1)[0];
+  // cronômetros abertos de hoje também contam (tempo até agora + leituras do livro dele)
+  const crs=d===hoje()?cronos.filter(c=>c.segs.length||c.run).map(c=>{const r=c.recId?registros.find(x=>String(x.id)===c.recId):(c.livro?rs.find(x=>x.livro===c.livro&&!duracao(x)):null);const tr=c.segs.map(g=>hmDe(g[0])+"–"+hmDe(g[1]));if(c.run)tr.push(hmDe(c.run)+"–"+agoraHM());return{data:d,ini:hmDe(cronoIni(c)),fim:c.run?agoraHM():hmDe(c.segs[c.segs.length-1][1]),pausa:true,trechos:tr,min:cronoMin(c),qtd:r&&!duracao(r)?r.qtd:0,rid:r&&r.id}}):[];
+  const noCr=new Set(crs.map(c=>c.rid).filter(Boolean));
+  const com=rs.filter(r=>duracao(r)),sem=rs.filter(r=>!duracao(r)&&!noCr.has(r.id)),itens=com.concat(crs),minLiv=minutosUniao(itens)||itens.reduce((t,r)=>t+(r.min||duracao(r)),0);
+  const cq=itens.filter(r=>r.qtd),q=cq.reduce((t,r)=>t+r.qtd,0),minQ=minutosUniao(cq)||cq.reduce((t,r)=>t+(r.min||duracao(r)),0);
+  const ini=itens.map(r=>r.ini).filter(Boolean).sort()[0],fim=itens.map(r=>r.fim).filter(Boolean).sort().slice(-1)[0];
   let span=0;if(ini&&fim){span=minDe(fim)-minDe(ini);if(span<0)span+=1440}
   const it=interv[d]||0,total=span?Math.max(0,span-it):minLiv;
-  const todas=rs.reduce((t,r)=>t+r.qtd,0),vel=total?porHora(todas,total):0,velTxt=vel?` · ⚡ <b>${vel}</b> leituras/hora`:"";
+  const todas=rs.reduce((t,r)=>t+r.qtd,0),vel=minQ&&q?porHora(q,minQ):0,velTxt=vel?` · ⚡ <b>${vel}</b> leituras/hora`:"";
   const aberto=cronos.length,dl=d===hoje()?"Hoje":d.slice(8)+"/"+d.slice(5,7);
   const btInt=`<button type="button" class="hr2-b" data-a="int" aria-label="Intervalo">☕${it?" "+fmtDur(it):""}</button>`;
   barra.hidden=false;
-  if(fechado[d]===rs.length&&!aberto&&com.length){
+  if(fechado[d]===rs.length&&!aberto&&itens.length){
     barra.className="hr2-dia ok";
     barra.innerHTML=`<span class="hr2-txt">🏁 ${dl} encerrado: <b>${fmtDur(total)}</b> trabalhadas${velTxt}<small>${ini||"--:--"} → ${fim||"--:--"}${it?" · intervalo "+fmtDur(it):""} · nos livros ${fmtDur(minLiv)} · ${rs.length} livro(s) · ${rs.reduce((t,r)=>t+r.qtd,0).toLocaleString("pt-BR")} leituras</small></span>${btInt}<button type="button" class="hr2-b" data-a="reabrir">↩</button>`;
   }else{
