@@ -613,7 +613,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.76</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.77</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -822,7 +822,7 @@ async function gPut(k,v){const d=await gdb();return new Promise((ok,er)=>{const 
 async function gGet(k){const d=await gdb();return new Promise(ok=>{const q=d.transaction("f").objectStore("f").get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null)})}
 async function gDel(k){try{const d=await gdb();d.transaction("f","readwrite").objectStore("f").delete(k)}catch(e){}}
 function fotoMini(file,M,qual){return new Promise((ok,er)=>{const im=new Image();im.onload=()=>{const k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL("image/jpeg",qual))};im.onerror=er;im.src=URL.createObjectURL(file)})}
-const IA_GUARDA='Imagem de um agente de leitura de energia. Pode ser: (1) foto do medidor, (2) tela do PDA, ou (3) PRINT DE CONVERSA DO WHATSAPP em que o cliente mandou a foto do medidor. Leia o NÚMERO DO MEDIDOR (série; os prefixos usados são M, B, 3T, 3G, AR, BG, AG, ex.: "B18670249", "B10969040"; costuma estar no código de barras; não é o número da casa nem o número pequeno de fabricação), a LEITURA do visor kWh (só dígitos, da esquerda pra direita; se um rolete estiver virando, use o número menor) e, se aparecer, o endereço, a UC e a etapa. NO PRINT DO WHATSAPP: o NOME DO CONTATO lá em cima é o endereço que o agente salvou (ex.: "Simeao Sobral 32 Eta 13" = endereço "RUA SIMEAO SOBRAL, 32" e etapa 13; "Eta" ou "Et" = etapa; se o nome estiver cortado, use só o que aparece); IGNORE os textos das mensagens, horários e o resto da conversa; leia medidor e leitura da FOTO do medidor que está na conversa. Responda só JSON: {"medidor":"B18670249","leitura":"13030","end":"RUA ..., 32","uc":"...","etapa":13}. Use null no que não conseguir ler.';
+const IA_GUARDA='Imagem de um agente de leitura de energia. Pode ser: (1) foto do medidor, (2) tela do PDA, ou (3) PRINT DE CONVERSA DO WHATSAPP em que o cliente mandou a foto do medidor. Leia o NÚMERO DO MEDIDOR (série; os prefixos usados são M, B, 3T, 3G, AR, BG, AG, ex.: "B18670249", "B10969040"; costuma estar no código de barras; não é o número da casa nem o número pequeno de fabricação), a LEITURA do visor kWh (só dígitos, da esquerda pra direita; se um rolete estiver virando, use o número menor) e, se aparecer, o endereço, a UC e a etapa. NO PRINT DO WHATSAPP: o NOME DO CONTATO lá em cima é o endereço que o agente salvou (ex.: "Simeao Sobral 32 Eta 13" = endereço "RUA SIMEAO SOBRAL, 32" e etapa 13; "Eta" ou "Et" = etapa; se o nome estiver cortado, use só o que aparece); IGNORE os textos das mensagens, horários e o resto da conversa; leia medidor e leitura da FOTO do medidor que está na conversa. Diga também o tipo da imagem: "whatsapp" (print de conversa), "pda" (tela do PDA) ou "medidor" (foto do medidor tirada na hora). Responda só JSON: {"tipo":"whatsapp","medidor":"B18670249","leitura":"13030","end":"RUA ..., 32","uc":"...","etapa":13}. Use null no que não conseguir ler.';
 let guardEt=0;
 // 📍 pega onde o agente está e acha o nome da rua (OpenStreetMap)
 function endAqui(){return new Promise((ok,no)=>{if(!navigator.geolocation)return no(new Error("sem GPS"));
@@ -830,7 +830,10 @@ function endAqui(){return new Promise((ok,no)=>{if(!navigator.geolocation)return
     try{const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=pt-BR&lat="+lat+"&lon="+lon),j=await r.json(),a=(j&&j.address)||{};
       const rua=a.road||a.pedestrian||a.residential||a.footway||"";if(rua)end=(rua+", "+(a.house_number||"")).toUpperCase().replace(/\s+/g," ").trim()}catch(e){}
     ok({end,lat:+lat.toFixed(6),lon:+lon.toFixed(6)})},e=>no(e),{enableHighAccuracy:true,timeout:15000,maximumAge:30000})})}
-async function pedirEndGuard(it,msg){toast("📍 Pegando onde você está...");let a=null;try{a=await endAqui()}catch(e){}
+async function pedirEndGuard(it,msg){
+  // print do WhatsApp ou foto antiga: o cliente pode estar em qualquer lugar, então não usa a localização
+  if(it.wpp||it.semGps){const v=prompt(msg,it.end||"");if(v===null)return false;it.end=v.trim().toUpperCase().replace(/\s+/g," ");return true}
+  toast("📍 Pegando onde você está...");let a=null;try{a=await endAqui()}catch(e){}
   const v=prompt(msg+(a&&a.end?"\n\n📍 Achei pela sua localização. Confira e coloque o número da casa.":a?"\n\n📍 Peguei a sua localização, mas não achei o nome da rua.":"\n\n(Não consegui pegar a localização.)"),a&&a.end?a.end:(it.end||""));
   const d=$("toastMsg");if(d)d.hidden=true;
   if(v===null)return false;it.end=v.trim().toUpperCase().replace(/\s+/g," ").replace(/,\s*$/,"");if(a){it.lat=a.lat;it.lon=a.lon}return true}
@@ -851,8 +854,9 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
       inp.onchange=async()=>{const file=(inp.files||[])[0];if(!file)return;b.disabled=true;b.textContent="⏳ Guardando...";
         const it={id:Date.now(),etapa:guardEt||etapa,quando:hoje(),h:agoraHM(),med:"",leit:""};
         try{await gPut(String(it.id),await fotoMini(file,1100,.72))}catch(e){alert("Não consegui guardar a foto neste celular.");b.disabled=false;b.textContent="📷 Foto";return}
-        if(iaChave){b.textContent="🤖 Lendo...";try{const j=await iaLer(file,IA_GUARDA);if(j){if(j.medidor)it.med=String(j.medidor).toUpperCase().replace(/[^A-Z0-9]/g,"");if(j.leitura!=null)it.leit=String(j.leitura).replace(/\D/g,"");if(j.end)it.end=String(j.end).toUpperCase().replace(/\s+/g," ").trim();if(j.uc)it.uc=String(j.uc);const je=parseInt(j.etapa,10);if(je>=1&&je<=18)it.etapa=je}}catch(err){iaFalhou(err)}}
-        if(!it.end)await pedirEndGuard(it,"📍 Não achei o endereço"+(iaChave?" no print":"")+".\nRua e número pra você lembrar depois (pode deixar em branco):");
+        if(iaChave){b.textContent="🤖 Lendo...";try{const j=await iaLer(file,IA_GUARDA);if(j){if(j.medidor)it.med=String(j.medidor).toUpperCase().replace(/[^A-Z0-9]/g,"");if(j.leitura!=null)it.leit=String(j.leitura).replace(/\D/g,"");if(j.end)it.end=String(j.end).toUpperCase().replace(/\s+/g," ").trim();if(j.uc)it.uc=String(j.uc);const je=parseInt(j.etapa,10);if(je>=1&&je<=18)it.etapa=je;if(/whats/i.test(String(j.tipo||"")))it.wpp=true}}catch(err){iaFalhou(err)}}
+        const naHora=!it.wpp&&file.lastModified&&Date.now()-file.lastModified<5*60*1000;if(!naHora)it.semGps=true;
+        if(!it.end)await pedirEndGuard(it,"📍 Não achei o endereço"+(it.wpp?" no print":"")+".\nRua e número pra você lembrar depois (pode deixar em branco):");
         guard.push(it);salvarGuard();abrirGuard()};
       inp.click();return}
     if(q==="dig"){const it={id:Date.now(),etapa:guardEt||etapa,quando:hoje(),h:agoraHM(),med:"",leit:"",semFoto:true,end:""};if(!await pedirEndGuard(it,"📍 Endereço da leitura (rua e número):\nPode deixar em branco."))return;guard.push(it);salvarGuard();abrirGuard();setTimeout(()=>{const i=document.querySelector(`#guardFundo input[data-k="med"][data-id="${it.id}"]`);if(i)i.focus()},80);return}
@@ -863,8 +867,8 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
       try{if(fl&&navigator.canShare&&navigator.canShare({files:[fl]})){await navigator.share({files:[fl],text:txt});return}if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==="AbortError")return}
       location.href="https://wa.me/?text="+encodeURIComponent(txt);return}
     if(q==="end"){if(!g.end){if(await pedirEndGuard(g,"📍 Endereço desta leitura (rua e número):")){salvarGuard();abrirGuard()}return}
-      const v=prompt("📍 Endereço desta leitura (rua e número):\n\nApague tudo e toque OK pra pegar pela sua localização.",g.end);if(v===null)return;
-      if(!v.trim()){if(await pedirEndGuard(g,"📍 Endereço desta leitura (rua e número):")){salvarGuard();abrirGuard()}return}
+      const v=prompt("📍 Endereço desta leitura (rua e número):"+(g.wpp||g.semGps?"":"\n\nApague tudo e toque OK pra pegar pela sua localização."),g.end);if(v===null)return;
+      if(!v.trim()&&!g.wpp&&!g.semGps){if(await pedirEndGuard(g,"📍 Endereço desta leitura (rua e número):")){salvarGuard();abrirGuard()}return}
       g.end=v.trim().toUpperCase().replace(/\s+/g," ");salvarGuard();abrirGuard();return}
     if(q==="mais"){(g.extra=g.extra||[]).push({reg:"",leit:""});salvarGuard();abrirGuard();return}
     if(q==="xtira"){(g.extra||[]).splice(+b.dataset.k,1);salvarGuard();abrirGuard();return}
@@ -2686,7 +2690,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.76";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.77";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
