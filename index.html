@@ -611,7 +611,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.67</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.68</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -923,7 +923,9 @@ function desenharCrono(){const c=$("cronoLivro");if(!c)return;
       const v=prompt("Número do livro:",x.livro);if(v===null)return;x.livro=v.trim();
       if(!x.segs.length&&x.run){const h=prompt("Que horas começou? (ex.: 08:00)",hmDe(x.run));if(h&&/^\d{1,2}:\d{2}$/.test(h.trim())){const[hh,mm]=h.trim().split(":").map(Number),d=new Date();d.setHours(hh,mm,0,0);if(d>Date.now())d.setDate(d.getDate()-1);x.run=d.getTime()}}}
     salvarCrono();desenharCrono()})}
-setInterval(()=>{if(!document.hidden&&cronos.some(x=>x.run))desenharCrono()},30000);
+setInterval(()=>{if(!document.hidden&&cronos.some(x=>x.run))desenharCrono()},20000);
+// voltou pro app (estava em outro app / tela apagada): atualiza o tempo na hora
+["visibilitychange","focus","pageshow"].forEach(ev=>(ev==="visibilitychange"?document:window).addEventListener(ev,()=>{if(!document.hidden&&cronos.length){try{desenharCrono();render()}catch(e){}}}));
 function horaLivro(id){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
   const f=document.createElement("div");f.className="modal-fundo obs-fundo";
   f.innerHTML=`<div class="modal obs-modal hl-modal"><div class="hl-tit">⏱️ Livro ${esc(r.livro)} <small>· ${r.qtd} leituras</small><button type="button" class="c hl-x" aria-label="Fechar">✕</button></div>
@@ -2658,7 +2660,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.67";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.68";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
