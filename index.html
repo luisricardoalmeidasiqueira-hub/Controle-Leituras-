@@ -306,7 +306,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .nf-rap small{white-space:pre-wrap}
 .imp-pct{font-style:normal;color:#b91c1c;margin-left:3px}.imp-box{flex:none;display:flex;flex-direction:column;align-items:center;width:66px}
 .imp-box span{font-size:9px;font-weight:800;color:#991b1b;margin-bottom:2px;white-space:nowrap}
-.imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}
+.imp-box input{height:34px;text-align:center;padding:0 4px;border-color:#fecaca}#impQtd.do-cr::placeholder{color:#b91c1c;font-weight:800;opacity:1}#impQtd.do-cr{border-color:#f87171}.imp-cr{font-size:9px;font-weight:800;color:#b91c1c;line-height:1.1;margin-top:1px}
 .imp-item{border-top:1px solid #d1d5db;padding:7px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#991b1b;font-weight:700}
 .imp-item:first-child{border-top:0}.imp-item button{border:0;background:transparent;font-size:16px}
 .imp-tag{color:#b91c1c;font-weight:800}
@@ -613,7 +613,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.77</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.78</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -927,7 +927,11 @@ function escolherLivroCrono(){const m=($("data").value||hoje()).slice(0,7),rs=re
   f.querySelector('[data-q="ok"]').onclick=()=>ir(null,$("cr2Num").value);
 }
 function bt2(a,id,ic,nm,cls){return `<button type="button" class="cr2${cls?" "+cls:""}" data-cr="${a}" data-id="${id}"><span class="cr2-i">${ic}</span><span class="cr2-n">${nm}</span></button>`}
-function desenharCrono(){const c=$("cronoLivro");if(!c)return;
+// 🚫 os impedimentos marcados no cronômetro aparecem também no campo Não lidos (só mostra; entram no livro quando aperta Terminei)
+function atualizarImpCr(){const i=$("impQtd");if(!i)return;const x=cronos.find(c=>c.run)||cronos[0],n=x&&x.imp?x.imp.length:0;
+  i.placeholder=n?String(n):"0";i.classList.toggle("do-cr",!!n);i.title=n?n+" não lido(s) marcado(s) no cronômetro"+(x.livro?" do livro "+x.livro:"")+". Já entram no livro quando apertar Terminei.":"";
+  let t=$("impCr");if(!t){t=document.createElement("small");t.id="impCr";t.className="imp-cr";i.insertAdjacentElement("afterend",t)}t.textContent=n?"no ⏱️":"";t.hidden=!n}
+function desenharCrono(){atualizarImpCr();const c=$("cronoLivro");if(!c)return;
   const ativo=cronos.find(x=>x.run),fimDe=x=>x.segs.length?x.segs[x.segs.length-1][1]:0,parados=cronos.filter(x=>!x.run).sort((a,b)=>fimDe(b)-fimDe(a));
   const main=ativo||parados[0],outros=parados.filter(x=>x!==main);
   let h="";
@@ -2690,7 +2694,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.77";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.78";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
