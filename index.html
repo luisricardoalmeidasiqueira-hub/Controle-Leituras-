@@ -611,7 +611,7 @@ details.pda-item summary::-webkit-details-marker{display:none}details.pda-item s
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.62</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.63</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -827,7 +827,7 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
   const ets=[...new Set(guard.map(g=>g.etapa))].sort((a,b)=>a-b);
   f.innerHTML=`<div class="modal obs-modal hl-modal gd-modal"><div class="hl-tit">🎞️ Leituras arquivadas<small></small><button type="button" class="hl-x" data-g="x" aria-label="Fechar">✕</button></div>
    <div class="hint">Passou por uma leitura de outra etapa? Tire a foto aqui. Ela fica arquivada até você lançar no PDA.</div>
-   <div class="gd-nova"><label>Etapa<select id="gdEt">${Array.from({length:18},(_,i)=>`<option value="${i+1}"${i+1===guardEt?" selected":""}>${p2(i+1)}</option>`).join("")}</select></label><button type="button" data-g="foto" class="gd-foto">📷 Tirar foto</button><button type="button" data-g="foto" data-gal="1" class="gd-foto">🖼️ Galeria</button></div>
+   <div class="gd-nova"><label>Etapa<select id="gdEt">${Array.from({length:18},(_,i)=>`<option value="${i+1}"${i+1===guardEt?" selected":""}>${p2(i+1)}</option>`).join("")}</select></label><button type="button" data-g="foto" data-gal="1" class="gd-foto">📷 Foto</button></div>
    <div class="gd-lst">${ets.length?ets.map(e=>`<div class="gd-et">Etapa ${p2(e)}${e===etapa?" · <b>é a de agora</b>":""}</div>`+guard.filter(g=>g.etapa===e).map(g=>`<div class="gd-item" data-id="${g.id}"><img alt="foto" data-ver="${g.id}"><div class="gd-cp"><input data-k="med" data-id="${g.id}" value="${esc(g.med||"")}" placeholder="Medidor" autocomplete="off"><input data-k="leit" data-id="${g.id}" value="${esc(g.leit||"")}" placeholder="Leitura" inputmode="numeric" autocomplete="off"><small>${fmt(g.quando)} ${g.h||""}${g.end?" · "+esc(g.end):""}</small></div><div class="gd-bt"><button type="button" data-g="ok" data-id="${g.id}" title="Já lancei no PDA">✔ Lancei</button><button type="button" data-g="del" data-id="${g.id}" aria-label="Apagar">🗑️</button></div></div>`).join("")).join(""):'<div class="hint" style="margin-top:8px">Nenhuma leitura arquivada.</div>'}</div></div>`;
   $("gdEt").onchange=e=>guardEt=+e.target.value;
   f.querySelectorAll("img[data-ver]").forEach(async im=>{const d=await gGet(im.dataset.ver);if(d)im.src=d;im.onclick=()=>{if(d){const v=document.createElement("div");v.className="modal-fundo obs-fundo gd-zoom";v.innerHTML=`<img src="${d}" alt="foto">`;v.onclick=()=>v.remove();document.body.appendChild(v)}}});
@@ -837,7 +837,7 @@ function abrirGuard(){let f=$("guardFundo");if(!f){f=document.createElement("div
     if(q==="foto"){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";if(!b.dataset.gal)inp.setAttribute("capture","environment");
       inp.onchange=async()=>{const file=(inp.files||[])[0];if(!file)return;b.disabled=true;b.textContent="⏳ Guardando...";
         const it={id:Date.now(),etapa:guardEt||etapa,quando:hoje(),h:agoraHM(),med:"",leit:""};
-        try{await gPut(String(it.id),await fotoMini(file,1100,.72))}catch(e){alert("Não consegui guardar a foto neste celular.");b.disabled=false;b.textContent=b.dataset.gal?"🖼️ Galeria":"📷 Tirar foto";return}
+        try{await gPut(String(it.id),await fotoMini(file,1100,.72))}catch(e){alert("Não consegui guardar a foto neste celular.");b.disabled=false;b.textContent="📷 Foto";return}
         if(iaChave){b.textContent="🤖 Lendo...";try{const j=await iaLer(file,IA_GUARDA);if(j){if(j.medidor)it.med=String(j.medidor).toUpperCase().replace(/\s+/g,"");if(j.leitura!=null)it.leit=String(j.leitura).replace(/\D/g,"");if(j.end)it.end=String(j.end).toUpperCase();if(j.uc)it.uc=String(j.uc)}}catch(err){iaFalhou(err)}}
         guard.push(it);salvarGuard();abrirGuard()};
       inp.click();return}
@@ -2654,7 +2654,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.62";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.63";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
