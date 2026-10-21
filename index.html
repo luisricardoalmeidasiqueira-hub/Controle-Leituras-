@@ -394,6 +394,9 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .rota-topo button{height:38px;border:1px solid #d1d5db;background:#fff;border-radius:10px;font-size:16px;cursor:pointer}.rota-topo button:disabled{opacity:.4}
 .rota-baixo{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.rota-baixo .rc-add{margin:0;height:36px;font-size:13px}
 .rota-baixo #rotaFotoBtn{height:36px;border:0;border-radius:9px;background:#0f766e;color:#fff;font-weight:800;font-size:13px;cursor:pointer}
+.rel-lanc-bt{display:block;width:100%;height:44px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-size:15px;font-weight:800;margin:0 0 8px;cursor:pointer}
+.rel-lanc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#ecfdf5;border:1px solid #86efac;border-radius:10px;padding:7px 10px;font-size:12.5px;font-weight:700;color:#166534;margin:0 0 8px}.rel-lanc button{margin-left:auto;border:1px solid #d1d5db;background:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer}
+.rel-item.lan{border-color:#93c5fd;background:#eff6ff}.pz.lan{color:#1d4ed8}.pz.ok{color:#15803d}.rel-ver{display:block;margin:10px auto 0;border:1px dashed #9ca3af;background:#fff;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:700;color:#4b5563;cursor:pointer}
 .conf-resumo{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#92400e;margin:0 0 6px}
 .conf-linha{display:flex;align-items:center;gap:7px;width:100%;text-align:left;border:1px solid #86efac;background:#f0fdf4;border-radius:9px;padding:5px 8px;margin-bottom:5px;font:inherit;color:#1f2937;cursor:pointer}
 .conf-linha.pend{border-color:#fcd34d;background:#fffbeb}.conf-linha.pend .cl-n{color:#b45309}
@@ -613,7 +616,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.80</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.81</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1466,14 +1469,23 @@ function novaRel(){
   const e=parseInt(prompt("Etapa do livro (1 a 18):",String(etapaDoLivroConhecido(l.trim())||etapa)),10);if(!(e>=1&&e<=18))return alert("Etapa inválida.");
   const r={id:Date.now()+Math.random(),data:$("data").value||hoje(),voltou:hoje(),etapa:e,livro:l.trim(),qtd:q,localidade:$("localidade").value.trim(),prontuario:$("prontuario").value.trim(),releitura:true};
   registros.push(r);localStorage.setItem(KEY,JSON.stringify(registros));render();rcVeioDaLista=true;abrirConf(String(r.id))}
+function relFaltaLancar(r){return r.releitura&&!r.lancPDA&&confDe(r).every(x=>x.ok)}
+function lancarRel(id,sim){const r=registros.find(x=>String(x.id)===String(id));if(!r)return;
+  if(sim)r.lancPDA=hoje();else delete r.lancPDA;localStorage.setItem(KEY,JSON.stringify(registros));render();
+  if(sim){toast("📲 Lançada no PDA · foi pro livro "+r.livro+" da Etapa "+p2(r.etapa));if(rcVeioDaLista)return abrirListaRel()}desenharConf()}
+let relVerLanc=false;
 function abrirListaRel(){
-  const lim=somaDias(hoje(),-45),rels=registros.filter(r=>r.releitura&&r.data>=lim)
-    .sort((a,b)=>(confDe(a).every(x=>x.ok)-confDe(b).every(x=>x.ok))||b.data.localeCompare(a.data));
+  // ordem: pra confirmar · confirmada mas falta lançar no PDA · (lançadas só tocando em "ver")
+  const lim=somaDias(hoje(),-45),todas=registros.filter(r=>r.releitura&&r.data>=lim),ord=r=>confDe(r).some(x=>!x.ok)?0:r.lancPDA?2:1,
+    feitas=todas.filter(r=>ord(r)===2),rels=todas.filter(r=>relVerLanc||ord(r)<2).sort((a,b)=>(ord(a)-ord(b))||b.data.localeCompare(a.data));
   rcModo="lista";$("rcTit").textContent="📝 Releituras";
   $("rcCorpo").innerHTML=`<div class="rc-sub">Toque numa releitura pra abrir as confirmações.</div><button type="button" class="rel-add" onclick="novaRel()">➕ Releitura</button>`+rels.map(r=>{
     const c=confDe(r),f=c.filter(x=>x.ok).length,ok=f===c.length,end=(c.find(x=>x.end)||{}).end||(r.pda&&r.pda.end)||"";
-    return `<button type="button" class="rel-item${ok?" ok":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small>${ok?"":txtPrazoRel(r)}</span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?"🟢 ✔":"🟠"}</span></button>`}).join("");
+    const lan=ok&&!r.lancPDA;
+    return `<button type="button" class="rel-item${ok&&!lan?" ok":""}${lan?" lan":""}" data-id="${r.id}"><span class="et">Et. ${p2(r.etapa)}</span><span class="tx"><b>Livro ${esc(r.livro)}</b> · ${fmt(r.data).slice(0,5)}<small>${esc(end||esc(r.localidade||""))}</small>${ok?(lan?'<span class="pz lan">📲 confirmada · falta lançar no PDA</span>':'<span class="pz ok">📲 lançada no PDA '+fmt(r.lancPDA).slice(0,5)+'</span>'):txtPrazoRel(r)}</span><span class="st">${c.some(x=>confRepetida(r,x))?"🔴 ":""}${ok?(lan?"🔵":"🟢 ✔"):"🟠"}</span></button>`}).join("")+
+    (feitas.length?`<button type="button" class="rel-ver" id="relVerLanc">${relVerLanc?"▴ Esconder as lançadas no PDA":"🗂️ Ver as já lançadas no PDA"}</button>`:"")+(!rels.length?'<div class="hint" style="margin-top:8px">Nada pra confirmar nem pra lançar. 👍</div>':"");
   $("rcCorpo").querySelectorAll(".rel-item").forEach(b=>b.onclick=()=>{rcVeioDaLista=true;abrirConf(b.dataset.id)});
+  {const v=$("relVerLanc");if(v)v.onclick=()=>{relVerLanc=!relVerLanc;abrirListaRel()}}
   $("rcFundo").hidden=false;
 }
 function abrirAbaRelAntiga(){
@@ -1487,7 +1499,7 @@ function desenharCidades(m){
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),box=$("cidades");
   const rels=registros.filter(r=>r.releitura&&r.data.startsWith(m)),pend=rels.filter(r=>confDe(r).some(x=>!x.ok)).length;
   if(!rels.length)filtroRel=false;
-  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=false;bd.textContent="";bd.classList.toggle("ok",!pend);const ra=relAtrasada();bd.classList.toggle("atr",ra);if(ra)bd.classList.remove("ok");rb.title=ra?"Releitura passou da semana":pend?"Tem releitura pra confirmar":"Releituras: tudo confirmado (toque pra consultar)"}}
+  {const rb=$("relBtn"),bd=$("relBadge");if(rb){rb.classList.toggle("ativa",filtroRel);bd.hidden=false;bd.textContent="";const lanc=registros.some(r=>r.data>=somaDias(hoje(),-45)&&relFaltaLancar(r));bd.classList.toggle("ok",!pend&&!lanc);const ra=relAtrasada();bd.classList.toggle("atr",ra);if(ra)bd.classList.remove("ok");rb.title=ra?"Releitura passou da semana":pend?"Tem releitura pra confirmar":lanc?"Tem releitura confirmada pra lançar no PDA":"Releituras: tudo confirmado (toque pra consultar)"}}
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
   const mostraCid=ks.length>=2;
   if(!mostraCid&&!rels.length){box.hidden=true;return}
@@ -2002,7 +2014,7 @@ function desenharConf(){
   $("rcTit").textContent="📝 Confirmações · livro "+r.livro;const _pz=c.some(x=>!x.ok)?txtPrazoRel(r):"";
   $("rcCorpo").innerHTML=`<div class="rc-sub">${_pz?_pz+"<br>":""}Etapa ${p2(r.etapa)} · ${fmt(r.data)} · anote a leitura que você digitou no PDA e toque no ✔ quando confirmar.</div>`+
     `<button type="button" id="confFotoBtn" class="rc-maps" style="background:#0f766e;margin-bottom:10px;border:0;width:100%;font-size:14px;cursor:pointer">📷 Ler foto(s) das confirmações do PDA</button>`+
-    (()=>{const nf=c.filter(x=>!x.ok).length;return `<div class="conf-resumo"><span>${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado`}</span>${lk&&falta.length>1?`<a class="bt-mapa todos" href="${lk}" target="_blank" rel="noopener" title="Caminho por todos os endereços que faltam" aria-label="Caminho por todos os endereços que faltam">🗺️</a>`:""}</div>`})()+
+    (()=>{const nf=c.filter(x=>!x.ok).length;return (nf?"":r.lancPDA?`<div class="rel-lanc ok">📲 Lançada no PDA em ${fmt(r.lancPDA).slice(0,5)} · está no livro ${esc(r.livro)} da Etapa ${p2(r.etapa)}<button type="button" onclick="lancarRel('${r.id}',false)">↩ desfazer</button></div>`:`<button type="button" class="rel-lanc-bt" onclick="lancarRel('${r.id}',true)">📲 Lancei no PDA</button>`)+`<div class="conf-resumo"><span>${nf?`⏳ Tem confirmação pra fazer`:`✔ Tudo confirmado${r.lancPDA?"":" · falta lançar no PDA"}`}</span>${lk&&falta.length>1?`<a class="bt-mapa todos" href="${lk}" target="_blank" rel="noopener" title="Caminho por todos os endereços que faltam" aria-label="Caminho por todos os endereços que faltam">🗺️</a>`:""}</div>`})()+
     // Mesmo endereço = um cartão só, com os medidores/registros dele dentro (sem numeração)
     (()=>{const gs=[],por={};c.forEach((x,i)=>{const k=chaveEnd(x,i);if(!por[k]){por[k]={k,itens:[]};gs.push(por[k])}por[k].itens.push(i)});
       gs.forEach(g=>g.pend=g.itens.some(i=>!c[i].ok));gs.sort((a,b)=>(b.pend-a.pend)||a.itens[0]-b.itens[0]);
@@ -2721,7 +2733,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.80";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.81";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -3036,6 +3048,7 @@ atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTop
 // ---------- Início: data de hoje e etapa do calendário ----------
 try{if(!localStorage.getItem(KEY+"_fix_015894")){const d=registros.filter(r=>!r.releitura&&r.livro==="015894"&&r.etapa===11&&r.data==="2026-10-20"&&r.qtd<=4&&registros.some(o=>o!==r&&o.livro==="015894"&&o.etapa===11&&o.data.startsWith("2026-10")&&o.qtd>20));
   if(d.length){registros=registros.filter(r=>!d.includes(r));localStorage.setItem(KEY,JSON.stringify(registros))}localStorage.setItem(KEY+"_fix_015894","1")}}catch(e){}
+try{if(!localStorage.getItem(KEY+"_fix_lanc")){registros.forEach(r=>{if(r.releitura&&!r.lancPDA&&confDe(r).every(x=>x.ok))r.lancPDA=confDe(r).map(x=>x.quando||"").sort().slice(-1)[0]||r.data});localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_lanc","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_voltou")){registros.forEach(r=>{if(r.releitura&&!r.voltou&&confDe(r).some(x=>!x.ok))r.voltou=hoje()});localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_voltou","1")}}catch(e){}
 // uma vez só: confirmações do livro 005740 (Etapa 11, out/2026) que o Luís mandou por foto — junta releitura repetida e preenche as fichas
 try{if(!localStorage.getItem(KEY+"_fix_005740")){
