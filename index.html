@@ -300,7 +300,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .gd-l{display:flex;gap:4px;align-items:center}.gd-l input{flex:1;min-width:0}.gd-l .gd-reg{flex:0 0 78px;font-size:13px!important}.gd-xt{border:0;background:none;font-size:14px;color:#9ca3af;cursor:pointer;padding:0 2px}
 .gd-mais{align-self:flex-end;height:24px;padding:0 9px;border:1px dashed #0f766e;background:#f0fdfa;color:#115e59;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer}
 .gd-zoom{display:flex;align-items:center;justify-content:center;padding:10px}.gd-zoom img{max-width:100%;max-height:90vh;border-radius:10px}
-.gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
+.irr-aviso[hidden]{display:none!important}.irr-aviso{display:block;width:100%;text-align:left;cursor:pointer;border-color:#fca5a5;background:#fef2f2;color:#991b1b}.irr-aviso small{display:block;font-weight:600;font-size:11px}.irr-cp b{font-size:13px}.irr-cp small{display:block}.gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
 .obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
 .obs-bts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.obs-bts button{height:42px;border:0;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;background:#e5e7eb}.obs-bts .o{background:#16a34a;color:#fff}
 .nf-rap small{white-space:pre-wrap}
@@ -616,7 +616,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.92</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.96</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -807,14 +807,45 @@ function terminarCrono(x){const r=registros.find(y=>String(y.id)===x.recId);cron
   const hk=r.data.slice(0,7)+"|"+r.etapa,hv=horas[hk]||{};horas[hk]={ini:hv.ini&&hv.ini<r.ini?hv.ini:r.ini,fim:hv.fim&&hv.fim>r.fim?hv.fim:r.fim};salvarHoras();
   localStorage.setItem(KEY,JSON.stringify(registros));render()}
 // 📷 foto da tela do PDA com 002: a IA lê UC, medidor e endereço e soma +1 impedimento no livro
-const IA_IMPED='Esta é uma foto da tela de leitura de um PDA de energia, de um cliente lançado com impedimento (código 002). Leia: UC (número depois de "UC:"), MD (medidor, depois de "MD:"), o endereço e o código da mensagem/ocorrência digitado (ex.: "002"). Responda só JSON: {"uc":"000307981404503","md":"B18670249","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","cod":"002"}. Use null no que não conseguir ler.';
+const IA_IMPED='Esta é uma foto da tela de leitura de um PDA de energia, de um cliente lançado com impedimento (código 002). Leia: UC (número depois de "UC:"), MD (medidor, depois de "MD:"), o endereço e TODOS os códigos de mensagem/ocorrência digitados (campos "MSG 1", "MSG 2"..., ex.: "002", "029"). Responda só JSON: {"uc":"000307981404503","md":"B18670249","end":"R JOAO ANTONIO FONSECA, 132, PQ SANTA MARIA","cod":"002","cods":["002"]}. Use null no que não conseguir ler.';
 function impFoto(x){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
   inp.onchange=async()=>{const f=(inp.files||[])[0];if(!f)return;let j=null;
     if(iaChave){try{j=await iaLer(f,IA_IMPED)}catch(err){iaFalhou(err)}}
     const it={h:agoraHM()};if(j){if(j.uc)it.uc=String(j.uc);if(j.md)it.md=String(j.md);if(j.end)it.end=String(j.end).toUpperCase()}
-    if(j&&j.cod&&!/002/.test(String(j.cod))&&!confirm("A foto parece ter o código "+j.cod+" (não 002).\nContar como impedimento mesmo assim?"))return;
+    // ⚠️ código 029 (vestígio de procedimento irregular): separa na lista do 029; só conta impedimento se também tiver 002
+    const cods=[].concat(j&&Array.isArray(j.cods)?j.cods:[],j&&j.cod?[j.cod]:[]).map(c=>String(c).replace(/\D/g,"").padStart(3,"0"));
+    if(cods.includes("029")){await addIrr(f,j,x);if(!cods.includes("002"))return}
+    if(j&&j.cod&&!/002/.test(String(j.cod))&&!cods.includes("002")&&!confirm("A foto parece ter o código "+j.cod+" (não 002).\nContar como impedimento mesmo assim?"))return;
     (x.imp=x.imp||[]).push(it);salvarCrono();desenharCrono()};
   inp.click()}
+// ⚠️ lista do código 029 (vestígio de procedimento irregular) pra lançar na outra planilha
+let irr=[];try{irr=JSON.parse(localStorage.getItem(KEY+"_irr")||"[]")||[]}catch(e){}
+function salvarIrr(){try{localStorage.setItem(KEY+"_irr",JSON.stringify(irr))}catch(e){}desenharIrrFaixa()}
+function desenharIrrFaixa(){const c=$("cronoLivro");if(!c)return;let d=$("irrFaixa");if(!d){d=document.createElement("button");d.type="button";d.id="irrFaixa";d.className="imp-aviso irr-aviso";d.onclick=abrirIrr;c.insertAdjacentElement("afterend",d)}
+  d.hidden=!irr.length;d.innerHTML="⚠️ Código 029 pra lançar na planilha<small>vestígio de procedimento irregular · toque pra ver</small>"}
+async function addIrr(f,j,x){const c=x||cronos.find(y=>y.run)||cronos[0];
+  const it={id:Date.now(),data:hoje(),h:agoraHM(),livro:c&&c.livro||"",etapa,cod:"029",uc:j&&j.uc?String(j.uc):"",md:j&&j.md?String(j.md).toUpperCase():"",end:j&&j.end?String(j.end).toUpperCase():""};
+  try{await gPut("irr"+it.id,await fotoMini(f,1100,.72));it.foto=true}catch(e){}
+  irr.push(it);salvarIrr();toast("⚠️ Código 029 separado"+(it.end?" · "+it.end.split(",").slice(0,2).join(","):"")+(it.livro?" · livro "+it.livro:""))}
+function txtIrr(g){return [fmt(g.data).slice(0,5)+" "+(g.h||""),g.livro?"Livro "+g.livro:"",g.uc?"UC "+g.uc:"",g.md?"MD "+g.md:"",g.end||"","029"].filter(Boolean).join(" · ")}
+function copiarTxt(t){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast("📋 Copiado"),()=>prompt("Copie:",t));return}}catch(e){}prompt("Copie:",t)}
+function abrirIrr(){let f=$("irrFundo");if(!f){f=document.createElement("div");f.id="irrFundo";f.className="modal-fundo obs-fundo";document.body.appendChild(f)}
+  f.innerHTML=`<div class="modal obs-modal hl-modal gd-modal"><div class="hl-tit">⚠️ Código 029<small></small><button type="button" class="hl-x" data-i="x" aria-label="Fechar">✕</button></div>
+   <div class="hint">Vestígio de procedimento irregular. O app separa sozinho quando a foto do PDA (📷 Foto do cronômetro) tem o código 029. Lance na sua planilha e toque em ✔ Lancei.</div>
+   <div class="gd-nova"><button type="button" data-i="foto" class="gd-foto">📷 Foto</button>${irr.length>1?'<button type="button" data-i="todos" class="gd-foto">📋 Copiar todos</button>':""}</div>
+   <div class="gd-lst">${irr.map(g=>`<div class="gd-item">${g.foto?`<img alt="foto" data-ver="${g.id}">`:""}<div class="gd-cp irr-cp"><b>${esc(g.end||"sem endereço")}</b><small>${esc([g.livro?"Livro "+g.livro:"",g.md?"MD "+g.md:"",g.uc?"UC "+g.uc:""].filter(Boolean).join(" · "))}</small><small>${fmt(g.data).slice(0,5)} ${g.h||""} · 029</small></div><div class="gd-bt"><button type="button" data-i="ok" data-id="${g.id}">✔ Lancei</button><div class="gd-bt2"><button type="button" data-i="cp" data-id="${g.id}" aria-label="Copiar">📋</button><button type="button" data-i="del" data-id="${g.id}" aria-label="Apagar">🗑️</button></div></div></div>`).join("")||'<div class="hint" style="margin-top:8px">Nada separado. 👍</div>'}</div></div>`;
+  f.querySelectorAll("img[data-ver]").forEach(async im=>{const d=await gGet("irr"+im.dataset.ver);if(d)im.src=d;im.onclick=()=>{if(d){const v=document.createElement("div");v.className="modal-fundo obs-fundo gd-zoom";v.innerHTML=`<img src="${d}" alt="foto">`;v.onclick=()=>v.remove();document.body.appendChild(v)}}});
+  f.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const q=b.dataset.i,g=irr.find(x=>String(x.id)===b.dataset.id);
+    if(q==="x"){f.remove();return}
+    if(q==="todos")return copiarTxt(irr.map(txtIrr).join("\n"));
+    if(q==="foto"){const inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.onchange=async()=>{const fl=(inp.files||[])[0];if(!fl)return;b.disabled=true;b.textContent="🤖 Lendo...";let j=null;if(iaChave){try{j=await iaLer(fl,IA_IMPED)}catch(err){iaFalhou(err)}}
+      const cs=[].concat(j&&Array.isArray(j.cods)?j.cods:[],j&&j.cod?[j.cod]:[]).map(c=>String(c).replace(/\D/g,"").padStart(3,"0"));if(!cs.includes("029")&&!confirm("Não achei o código 029 nesta foto.\nGuardar na lista do 029 mesmo assim?")){abrirIrr();return}
+      await addIrr(fl,j,null);abrirIrr()};inp.click();return}
+    if(!g)return;
+    if(q==="cp")return copiarTxt(txtIrr(g));
+    if(q==="ok"&&!confirm("Já lançou na planilha"+(g.end?" ("+g.end.split(",")[0]+")":"")+"?\nSai da lista e a foto é apagada."))return;
+    if(q==="del"&&!confirm("Apagar este 029?"))return;
+    irr=irr.filter(x=>x!==g);gDel("irr"+g.id);salvarIrr();abrirIrr()})}
 // 🚫 editar os impedimentos do livro que está contando (lançou um a mais? tira aqui)
 // ---------- 📸 Leituras guardadas: tira a foto agora (de qualquer etapa) e lança no PDA depois ----------
 let guard=[];try{guard=JSON.parse(localStorage.getItem(KEY+"_guard")||"[]")||[]}catch(e){}
@@ -961,7 +992,7 @@ function bt2(a,id,ic,nm,cls){return `<button type="button" class="cr2${cls?" "+c
 function atualizarImpCr(){const i=$("impQtd");if(!i)return;const x=cronos.find(c=>c.run)||cronos[0],n=x&&x.imp?x.imp.length:0;
   i.placeholder=n?String(n):"0";i.classList.toggle("do-cr",!!n);i.title=n?n+" não lido(s) marcado(s) no cronômetro"+(x.livro?" do livro "+x.livro:"")+". Já entram no livro quando apertar Terminei.":"";
   let t=$("impCr");if(!t){t=document.createElement("small");t.id="impCr";t.className="imp-cr";i.insertAdjacentElement("afterend",t)}t.textContent=n?"no ⏱️":"";t.hidden=!n}
-function desenharCrono(){atualizarImpCr();const c=$("cronoLivro");if(!c)return;
+function desenharCrono(){atualizarImpCr();desenharIrrFaixa();const c=$("cronoLivro");if(!c)return;
   const ativo=cronos.find(x=>x.run),fimDe=x=>x.segs.length?x.segs[x.segs.length-1][1]:0,parados=cronos.filter(x=>!x.run).sort((a,b)=>fimDe(b)-fimDe(a));
   const main=ativo||parados[0],outros=parados.filter(x=>x!==main);
   let h="";
@@ -2221,7 +2252,7 @@ $("nlArq").onchange=async e=>{
       if(lv&&lv.trim())aguardarRel(lv.trim(),e999,rr||registros.filter(x=>x.livro===lv.trim()&&!x.releitura).slice(-1)[0])}
     resFeitas=feitas;if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r){r.nl=n||undefined;if(feitas)r.feitas=feitas;localStorage.setItem(KEY,JSON.stringify(registros));render()}}else{
       // Bandeirinha da tela principal usada DEPOIS de salvar o livro: oferece colar no último livro salvo
-      const vazias=![...$("livroRows").children].some(linhaPreenchida),ult=registros[registros.length-1];
+      const vazias=![...$("livroRows").children].some(linhaPreenchida),ult=registros.filter(x=>!x.releitura).slice(-1)[0];
       if(n>0&&nlAlvo==="impQtd"&&vazias&&ult&&!ult.releitura&&n<=ult.qtd&&Number.isFinite(+ult.id)&&Date.now()-Math.floor(+ult.id)<4*36e5&&confirm("🚫 Colocar "+n+" não lido"+(n>1?"s":"")+" dentro do livro "+ult.livro+" (o último que você salvou)?\n\nOK = no livro (o app avisa no mês que vem)\nCancelar = só no dia")){ult.nl=n;if(feitas)ult.feitas=feitas;localStorage.setItem(KEY,JSON.stringify(registros));render();return}
       $(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}))}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
@@ -2761,7 +2792,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.92";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="15.96";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -3085,6 +3116,9 @@ atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTop
 // ---------- Início: data de hoje e etapa do calendário ----------
 try{if(!localStorage.getItem(KEY+"_fix_015894")){const d=registros.filter(r=>!r.releitura&&r.livro==="015894"&&r.etapa===11&&r.data==="2026-10-20"&&r.qtd<=4&&registros.some(o=>o!==r&&o.livro==="015894"&&o.etapa===11&&o.data.startsWith("2026-10")&&o.qtd>20));
   if(d.length){registros=registros.filter(r=>!d.includes(r));localStorage.setItem(KEY,JSON.stringify(registros))}localStorage.setItem(KEY+"_fix_015894","1")}}catch(e){}
+try{if(!localStorage.getItem(KEY+"_fix_012041nl")){const r=registros.find(x=>x.livro==="012041"&&x.data==="2026-10-22"&&!x.releitura);if(r&&!r.nl){r.nl=8;r.feitas=r.feitas||451;localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_012041nl","1")}}catch(e){}
+// a de cima procurava "1241"; o livro certo é 012041 (MED incompleto lido como 999)
+try{if(!localStorage.getItem(KEY+"_fix_med999b")){const a=registros.length;registros=registros.filter(r=>!(r.releitura&&r.livro==="012041"&&r.data==="2026-10-22"&&(r.aguarda||r.origem==="999"||(r.qtd===1&&!confDe(r).some(x=>x.ok)))));if(registros.length!==a){localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_med999b","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_med999")){const a=registros.length;registros=registros.filter(r=>!(r.releitura&&r.aguarda&&r.origem==="999"&&/1241/.test(r.livro)&&!confDe(r).some(x=>x.ok)));if(registros.length!==a){localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_med999","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_lanc")){registros.forEach(r=>{if(r.releitura&&!r.lancPDA&&confDe(r).every(x=>x.ok))r.lancPDA=confDe(r).map(x=>x.quando||"").sort().slice(-1)[0]||r.data});localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_lanc","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_voltou")){registros.forEach(r=>{if(r.releitura&&!r.voltou&&confDe(r).some(x=>!x.ok))r.voltou=hoje()});localStorage.setItem(KEY,JSON.stringify(registros));localStorage.setItem(KEY+"_fix_voltou","1")}}catch(e){}
