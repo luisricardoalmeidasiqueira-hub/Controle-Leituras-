@@ -300,7 +300,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .gd-l{display:flex;gap:4px;align-items:center}.gd-l input{flex:1;min-width:0}.gd-l .gd-reg{flex:0 0 78px;font-size:13px!important}.gd-xt{border:0;background:none;font-size:14px;color:#9ca3af;cursor:pointer;padding:0 2px}
 .gd-mais{align-self:flex-end;height:24px;padding:0 9px;border:1px dashed #0f766e;background:#f0fdfa;color:#115e59;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer}
 .gd-zoom{display:flex;align-items:center;justify-content:center;padding:10px}.gd-zoom img{max-width:100%;max-height:90vh;border-radius:10px}
-.irr-aviso[hidden]{display:none!important}.irr-aviso{display:block;width:100%;text-align:left;cursor:pointer;border-color:#fca5a5;background:#fef2f2;color:#991b1b}.irr-aviso small{display:block;font-weight:600;font-size:11px}.irr-cp b{font-size:13px}.irr-cp small{display:block}.eq-chip{display:flex;align-items:center;gap:8px;margin-top:6px}.eq-chip img{width:64px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer}.eq-chip-bt{border:1px dashed #9ca3af;background:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700;color:#374151;cursor:pointer}.gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
+.irr-aviso[hidden]{display:none!important}.irr-aviso{display:block;width:100%;text-align:left;cursor:pointer;border-color:#fca5a5;background:#fef2f2;color:#991b1b}.irr-aviso small{display:block;font-weight:600;font-size:11px}.irr-cp b{font-size:13px}.irr-cp small{display:block}.eq-chip{display:flex;align-items:center;gap:8px;margin-top:6px}.eq-chip img{width:64px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer}.eq-chip-bt{border:1px dashed #9ca3af;background:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700;color:#374151;cursor:pointer}.atr-prev{display:inline-block;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:999px;padding:0 8px;font-size:.8em;font-weight:800;cursor:pointer;white-space:nowrap}.gd-aviso{width:100%;text-align:left;cursor:pointer;border-color:#5eead4;background:#f0fdfa;color:#115e59}
 .obs-modal{padding:14px}.obs-modal h3{margin:0 0 6px}.obs-modal textarea{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit;font-size:16px;min-height:120px;resize:vertical;margin-top:8px}
 .obs-bts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.obs-bts button{height:42px;border:0;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;background:#e5e7eb}.obs-bts .o{background:#16a34a;color:#fff}
 .nf-rap small{white-space:pre-wrap}
@@ -616,7 +616,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 15.99</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.01</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -633,7 +633,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
-<div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
+<div class="full"><div class="label">⏰ DIA PREVISTO DA ETAPA <small style="font-weight:600">(ajuda / outra cidade, opcional · se leu depois, conta o atraso)</small></div><input id="edPrev" type="date"></div><div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
@@ -2074,9 +2074,10 @@ function qBob(livro,qtd,r){if(predios[livro])return qImp(livro,qtd);if(r&&r.impr
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
 // ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
-function diasAtrasoLivro(r){if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);if(!d||r.data<=d)return 0;const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?diasEntre(r.data,d):0}
+function diasAtrasoLivro(r){if(r&&!r.releitura&&r.diaPrev)return r.data>r.diaPrev?diasEntre(r.data,r.diaPrev):0;if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);if(!d||r.data<=d)return 0;const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?diasEntre(r.data,d):0}
 function livroAtrasoTag(r){
   if(r.releitura)return "";const a=diasAtrasoLivro(r);let t="";
+  if(r.diaPrev&&a)t+=` <span class="atr-prev" onclick="editar('${r.id}')" title="Dia previsto da etapa: ${fmt(r.diaPrev).slice(0,5)} · lido em ${fmt(r.data).slice(0,5)}">⏰ ${a} dia${a>1?"s":""} de atraso · previsto ${fmt(r.diaPrev).slice(0,5)}</span>`;
 
   const ant=somaMes(r.data.slice(0,7),-1),pa=registros.find(x=>x.livro===r.livro&&x.data.startsWith(ant)&&diasAtrasoLivro(x));
   if(pa){const dc=diaDaEtapa(pa.data.slice(0,7),pa.etapa),msg="❓ Mês passado o livro "+r.livro+" foi lido atrasado.\n\nEtapa "+p2(pa.etapa)+(dc?" · dia do calendário: "+dc.slice(8)+"/"+dc.slice(5,7):"")+"\nLido em: "+pa.data.slice(8)+"/"+pa.data.slice(5,7)+" ("+diasAtrasoLivro(pa)+" dia(s) de atraso)";
@@ -2367,7 +2368,7 @@ function confPendentes(){const out=[],lim=somaDias(hoje(),-40);registros.forEach
 function editar(id){
   const r=registros.find(x=>String(x.id)===String(id));if(!r)return;editId=String(id);
   $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";$("edPront").value=r.prontuario||"";$("edLivro").value=r.livro;
-  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edNl").value=r.nl||"";$("edCom").value=(r.com||[]).join(", ");
+  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edNl").value=r.nl||"";$("edPrev").value=r.diaPrev||"";$("edCom").value=(r.com||[]).join(", ");
   edMostrarPart();$("editFundo").hidden=false;
 }
 function fecharEdicao(){$("editFundo").hidden=true;editId=null}
@@ -2380,6 +2381,7 @@ $("edSalvar").onclick=()=>{
   if(part){if($("edDe").value===""||$("edAte").value==="")return alert("Preencha DE e ATÉ.");de=Number($("edDe").value);ate=Number($("edAte").value);if(ate<de)return alert("O ATÉ não pode ser menor que o DE.")}
   if(!(q>0))return alert("Informe uma quantidade válida.");
   const nl=Math.max(0,Math.round(Number($("edNl").value)||0));if(nl>q)return alert("Os não lidos não podem passar da quantidade do livro.");
+  {const dp=$("edPrev").value;if(dp)r.diaPrev=dp;else delete r.diaPrev}
   Object.assign(r,{nl:nl||undefined,data,etapa:Number($("edEtapa").value),localidade:$("edLocal").value.trim(),prontuario:$("edPront").value.trim(),livro,particionado:part,de,ate,qtd:q,com:part?$("edCom").value.split(",").map(x=>x.trim()).filter(Boolean):[],releitura:$("edRel").checked});
   localStorage.setItem(KEY,JSON.stringify(registros));fecharEdicao();render();
 };
@@ -2823,7 +2825,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="15.99";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.01";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -3148,6 +3150,8 @@ atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTop
 try{if(!localStorage.getItem(KEY+"_fix_015894")){const d=registros.filter(r=>!r.releitura&&r.livro==="015894"&&r.etapa===11&&r.data==="2026-10-20"&&r.qtd<=4&&registros.some(o=>o!==r&&o.livro==="015894"&&o.etapa===11&&o.data.startsWith("2026-10")&&o.qtd>20));
   if(d.length){registros=registros.filter(r=>!d.includes(r));localStorage.setItem(KEY,JSON.stringify(registros))}localStorage.setItem(KEY+"_fix_015894","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_012041nl")){const r=registros.find(x=>x.livro==="012041"&&x.data==="2026-10-22"&&!x.releitura);if(r&&!r.nl){r.nl=8;r.feitas=r.feitas||451;localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_012041nl","1")}}catch(e){}
+// uma vez: livro 003278 (Cerquilho, ajuda, Etapa 15): feito hoje 23/10, o dia previsto era 22/10 → 1 dia de atraso (horas ficam no dia 23)
+try{if(!localStorage.getItem(KEY+"_fix_003278b")){const r=registros.find(x=>x.livro==="003278"&&x.etapa===15&&/cerquilho/i.test(x.localidade||"")&&(x.data==="2026-10-23"||x.data==="2026-10-22")&&!x.releitura);if(r){r.data="2026-10-23";r.diaPrev="2026-10-22";localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_003278b","1")}}catch(e){}
 // a de cima procurava "1241"; o livro certo é 012041 (MED incompleto lido como 999)
 try{if(!localStorage.getItem(KEY+"_fix_med999b")){const a=registros.length;registros=registros.filter(r=>!(r.releitura&&r.livro==="012041"&&r.data==="2026-10-22"&&(r.aguarda||r.origem==="999"||(r.qtd===1&&!confDe(r).some(x=>x.ok)))));if(registros.length!==a){localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_med999b","1")}}catch(e){}
 try{if(!localStorage.getItem(KEY+"_fix_med999")){const a=registros.length;registros=registros.filter(r=>!(r.releitura&&r.aguarda&&r.origem==="999"&&/1241/.test(r.livro)&&!confDe(r).some(x=>x.ok)));if(registros.length!==a){localStorage.setItem(KEY,JSON.stringify(registros));try{render()}catch(e){}}localStorage.setItem(KEY+"_fix_med999","1")}}catch(e){}
