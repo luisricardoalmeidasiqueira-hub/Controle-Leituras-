@@ -616,7 +616,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.01</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.02</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -633,7 +633,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <div class="ed-part"><div class="label">DE</div><input id="edDe" type="number" inputmode="numeric"></div>
 <div class="ed-part"><div class="label">ATÉ</div><input id="edAte" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
-<div class="full"><div class="label">⏰ DIA PREVISTO DA ETAPA <small style="font-weight:600">(ajuda / outra cidade, opcional · se leu depois, conta o atraso)</small></div><input id="edPrev" type="date"></div><div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
+<div class="full"><div class="label">⏰ DIA PREVISTO DA ETAPA <small style="font-weight:600">(opcional · na ajuda o app já usa o calendário; só mude se for outro dia)</small></div><input id="edPrev" type="date"></div><div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
 <div class="modal-btns"><button id="edCancelar" class="action sec" type="button">Cancelar</button><button id="edSalvar" class="action" type="button">💾 Salvar</button></div>
@@ -2074,10 +2074,12 @@ function qBob(livro,qtd,r){if(predios[livro])return qImp(livro,qtd);if(r&&r.impr
 function bobinas(q){return q>0?Math.ceil(q/porBobina):0}
 function txtBob(q){const b=bobinas(q);return b?"🧾 "+b+" bobina"+(b>1?"s":""):""}
 // ⏰ livro lançado depois do dia da etapa no calendário (e aviso no mês seguinte)
-function diasAtrasoLivro(r){if(r&&!r.releitura&&r.diaPrev)return r.data>r.diaPrev?diasEntre(r.data,r.diaPrev):0;if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);if(!d||r.data<=d)return 0;const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?diasEntre(r.data,d):0}
+// o calendário da ANEEL é o mesmo em todas as cidades: na ajuda, leu depois do dia da etapa = atraso
+function diaPrevLivro(r){return r.diaPrev||(r.ajuda?diaDaEtapa(r.data.slice(0,7),r.etapa):"")}
+function diasAtrasoLivro(r){if(r&&!r.releitura&&(r.diaPrev||r.ajuda)){const d=diaPrevLivro(r);return d&&r.data>d?diasEntre(r.data,d):0}if(!r||r.releitura||r.ajuda)return 0;const d=diaDaEtapa(r.data.slice(0,7),r.etapa);if(!d||r.data<=d)return 0;const c=cicloReal(r.data,r.etapa,normLoc(r.localidade));return foraDoLimite(c)?diasEntre(r.data,d):0}
 function livroAtrasoTag(r){
   if(r.releitura)return "";const a=diasAtrasoLivro(r);let t="";
-  if(r.diaPrev&&a)t+=` <span class="atr-prev" onclick="editar('${r.id}')" title="Dia previsto da etapa: ${fmt(r.diaPrev).slice(0,5)} · lido em ${fmt(r.data).slice(0,5)}">⏰ ${a} dia${a>1?"s":""} de atraso · previsto ${fmt(r.diaPrev).slice(0,5)}</span>`;
+  if((r.diaPrev||r.ajuda)&&a){const dp=diaPrevLivro(r);t+=` <span class="atr-prev" onclick="editar('${r.id}')" title="Dia da etapa no calendário: ${fmt(dp).slice(0,5)} · lido em ${fmt(r.data).slice(0,5)}">⏰ ${a} dia${a>1?"s":""} de atraso · previsto ${fmt(dp).slice(0,5)}</span>`}
 
   const ant=somaMes(r.data.slice(0,7),-1),pa=registros.find(x=>x.livro===r.livro&&x.data.startsWith(ant)&&diasAtrasoLivro(x));
   if(pa){const dc=diaDaEtapa(pa.data.slice(0,7),pa.etapa),msg="❓ Mês passado o livro "+r.livro+" foi lido atrasado.\n\nEtapa "+p2(pa.etapa)+(dc?" · dia do calendário: "+dc.slice(8)+"/"+dc.slice(5,7):"")+"\nLido em: "+pa.data.slice(8)+"/"+pa.data.slice(5,7)+" ("+diasAtrasoLivro(pa)+" dia(s) de atraso)";
@@ -2825,7 +2827,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.01";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.02";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
