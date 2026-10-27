@@ -192,7 +192,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .pront-tag{color:#6b7280;font-weight:600}
 .grupo-cid{margin-top:8px;padding:5px 8px;border-radius:8px;background:#f3f4f6;font-size:12px;font-weight:800;color:#374151;display:flex;justify-content:space-between;gap:6px}.grupo-cid span{font-weight:700;color:#6b7280}
 .tot-toque{cursor:pointer}
-.nl-mes{display:flex;width:100%;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:8px;min-height:34px;padding:5px 10px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;line-height:1.25}.nl-mes small{font-size:11px;font-weight:700;color:#7f1d1d}.nl-mes .nlm-dif{font-size:11px;font-weight:800}
+.nl-mes{display:flex;width:auto;align-items:center;gap:4px;margin:6px 0 0 auto;height:28px;padding:0 11px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+.cc-x{position:sticky;top:0;display:flex;align-items:center;justify-content:center;margin:0 0 -32px auto;width:32px;height:32px;border:0;border-radius:999px;background:#f3f4f6;color:#374151;font-size:15px;font-weight:800;cursor:pointer;z-index:5;box-shadow:0 1px 4px #0002}#cartaoComp .comp-tit{padding-right:40px}.cartao-atraso>button.cc-x,#cartaoComp>button.cc-x{display:flex!important;width:32px!important;height:32px!important;margin:0 0 -32px auto!important;padding:0!important;background:#f3f4f6!important;color:#374151!important;border-radius:999px!important;font-size:15px!important;position:sticky!important;top:0!important}
  .ajuda-linha{display:flex;justify-content:flex-end;margin:-2px 0 6px}
 .ajuda-btn{border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;height:28px;padding:0 11px;font-size:12px;font-weight:800;cursor:pointer}
 #cardLancar.em-ajuda{border:2px solid #fb923c;background:#fffaf5}
@@ -1600,6 +1601,8 @@ function abrirTotalCidades(){
   box.hidden=false;
 }
 // ---------- 🚫 Lista de todos os não lidos do mês ----------
+(function(){const box=$("cartaoComp");if(!box)return;const pX=()=>{if(box.hidden||box.querySelector(":scope>.cc-x"))return;const x=document.createElement("button");x.type="button";x.className="cc-x";x.textContent="✕";x.setAttribute("aria-label","Fechar");x.onclick=()=>{box.hidden=true};box.prepend(x)};
+  new MutationObserver(pX).observe(box,{childList:true,attributes:true,attributeFilter:["hidden"]});pX()})();
 function abrirNaoLidosMes(m){
   const box=$("cartaoComp");
   const itens=[];
@@ -1643,7 +1646,7 @@ function render(){atualizarNomes();
   {const b=$("nlMesBtn"),m=mes(),nlLiv=mm=>registros.filter(r=>r.data.startsWith(mm)).reduce((t,r)=>t+(r.nl||0),0),soma=mm=>impDoMes(mm,()=>true).reduce((t,x)=>t+x.qtd,0)+nlLiv(mm),
      im=soma(m),ia=soma(somaMes(m,-1)),ger=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((t,r)=>t+(r.qtd||0),0);
    if(b){b.hidden=!im;if(im){const pc=ger?(im/ger*100).toFixed(1).replace(".",","):"0";
-     b.innerHTML=`🚫 ${im.toLocaleString("pt-BR")} não lido${im>1?"s":""} no mês <small>· ${pc}% das leituras${ia?" · "+nomeMes(somaMes(m,-1)).split(" ")[0]+": "+ia:""}</small><small>›</small>`;
+     b.innerHTML=`🚫 ${im.toLocaleString("pt-BR")}`;b.title=im+" não lido"+(im>1?"s":"")+" no mês · "+pc+"% das leituras"+(ia?" · "+nomeMes(somaMes(m,-1)).split(" ")[0]+": "+ia:"")+" — toque pra ver a lista";b.setAttribute("aria-label",b.title);
      b.onclick=()=>abrirNaoLidosMes(m)}}}
   atualizarComparacao(m,tot);$("mesNome").textContent=nomeMes(m).slice(0,3)+"/"+m.slice(2,4);atualizarDesfazer();$("mesLista").textContent=nomeMes(m);$("mesPicker").value=m;
   desenharCidades(m);
@@ -2873,7 +2876,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.04";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.05";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
