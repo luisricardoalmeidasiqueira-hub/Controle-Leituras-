@@ -621,7 +621,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.08</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.10</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1208,7 +1208,10 @@ $("etapaSelect").onchange=e=>escolherEtapa(+e.target.value);
 $("etapaMenos").onclick=()=>{if(etapa>1)escolherEtapa(etapa-1)};$("etapaMais").onclick=()=>{if(etapa<18)escolherEtapa(etapa+1)};
 $("etapaToggle").onclick=()=>abrirEtapas($("etapas").classList.contains("fechado"));
 // Trocou a data → puxa a etapa do calendário
-function etapaAutomatica(d){const e=etapaDoDia(d);if(e)return e;const pr=proximaEtapa(d);return pr&&pr.dia.slice(0,7)===d.slice(0,7)?pr.etapa:0}
+// Dia sem etapa no calendário: se a próxima etapa é ainda neste mês, vai pra ela (ex.: fim de semana no meio do ciclo).
+// Se o ciclo do mês já acabou (a próxima é só no mês que vem), fica na ÚLTIMA etapa feita (ex.: 30/10 → Etapa 18, não Etapa 01/02)
+function ultimaEtapaAte(d){let u=null;for(const m in cal)(cal[m]||[]).forEach((x,i)=>{if(x&&x<=d&&(!u||x>u.dia))u={dia:x,etapa:i+1}});return u}
+function etapaAutomatica(d){const e=etapaDoDia(d);if(e)return e;const pr=proximaEtapa(d);if(pr&&pr.dia.slice(0,7)===d.slice(0,7))return pr.etapa;const u=ultimaEtapaAte(d);return u?u.etapa:(pr?pr.etapa:0)}
 let dataManual=false;
 $("data").onchange=()=>{const d=$("data").value;if(!d)return;esqueci=null;dataManual=d!==hoje();mesVer=d.slice(0,7);const e=etapaAmarrada(d)||etapaAutomatica(d);if(e)sel(e,false);else render()};
 // Virou o dia com o app aberto: quando você voltar pro app, ele já passa pra data de hoje e a etapa do dia
@@ -2897,7 +2900,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.08";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.10";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -3180,7 +3183,9 @@ $("pdaArq").onchange=async e=>{
 // ---------- Botão opcional: usar a data da etapa no calendário ----------
 function atualizarUsarData(){
   const box=$("usarDataBox"),h=$("data").value||hoje();
-  const d=(!ajuda&&!esqueci)?diaDaEtapa(h.slice(0,7),etapa):"";
+  let d=(!ajuda&&!esqueci)?diaDaEtapa(h.slice(0,7),etapa):"";
+  // ciclo do mês terminou (ex.: 30/10 na Etapa 18 de 27/10): não é atraso, então sem ⏰ e sem "usar data"
+  if(d&&d<h&&!etapaDoDia(h)){const u=ultimaEtapaAte(h),pr=proximaEtapa(h);if(u&&u.etapa===etapa&&u.dia===d&&(!pr||pr.dia.slice(0,7)!==h.slice(0,7)))d=""}
   if(d&&d!==h){$("usarData").textContent="📅 usar "+d.slice(8)+"/"+d.slice(5,7);box.hidden=false}else box.hidden=true;
   // ⏰ ao lado da bolinha: está lançando uma etapa depois do dia do calendário
   const rel=$("topoRelogio");if(rel){
@@ -3252,6 +3257,8 @@ iniciarLinhas();
 completarProvisorio();
 // Ao abrir: usa o prontuário que já está escrito pra completar os livros antigos daquela cidade
 setTimeout(()=>{const l=$("localidade").value,p=$("prontuario").value.trim();if(l&&p)guardarPront(l,p)},400);
+// correção 16.09: a etapa que ficou presa hoje (01/02 depois do fim do ciclo) é liberada uma vez, pra abrir na certa
+try{if(!localStorage.getItem(KEY+"_fix_gap1609")){const a=etapaAmarrada(hoje()),au=etapaAutomatica(hoje());if(a&&au&&a!==au&&!etapaDoDia(hoje()))localStorage.removeItem(ETAPADIAKEY);localStorage.setItem(KEY+"_fix_gap1609","1")}}catch(e){}
 const eHoje=etapaAmarrada(hoje())||etapaAutomatica(hoje());
 sel(pdaFila.length?pdaFila[0].etapa:(eHoje||1),false);desenharIA();
 </script>
