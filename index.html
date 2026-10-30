@@ -423,7 +423,8 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .rel-badge.ok{background:#22c55e}.rel-badge{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #fff;padding:0}
 .rel-mini{font-size:12px;align-items:center}.rel-mini .conf-chip{margin:0 0 0 4px}
 .cid.rel{border-color:#fcd34d;background:#fffbeb;color:#92400e}.cid.rel.ativa{background:#d97706;border-color:#d97706;color:#fff}
-.cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.cid-volta{display:flex;align-items:center;gap:6px;width:100%;min-height:34px;padding:5px 10px;border:1px solid #c4c9d0;background:#f3f4f6;color:#374151;border-radius:10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;line-height:1.25}.cid-volta small{color:#6b7280;font-weight:600;font-size:11px}.cid-volta span{margin-left:auto;white-space:nowrap;font-weight:800;color:#4b5563;font-size:12px}
+.aj-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
 .cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
 .cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
 .et-tag{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
@@ -579,7 +580,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
-<div class="mes-chips"><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
+<div class="mes-chips"><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
 </section>
 
 <section id="cardLancar" class="card">
@@ -621,7 +622,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.10</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.11</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1593,11 +1594,12 @@ function desenharCidades(m){
   if(filtroCidade&&!tot[filtroCidade])filtroCidade="";
   const mostraCid=ks.length>=2;
   if(!mostraCid&&!rels.length){box.hidden=true;return}
+  // 🤝 os botões das cidades foram pro selinho "🤝 Ajuda ▾" lá em cima; aqui só aparece a faixinha pra voltar quando está filtrando
+  if(!filtroCidade&&!filtroRel){box.hidden=true;box.innerHTML="";return}
   box.hidden=false;
-  box.innerHTML=(mostraCid||filtroRel?`<button type="button" class="cid${!filtroCidade&&!filtroRel?" ativa":""}" data-k="">${mostraCid?"Todas":"📋 Etapa"}</button>`:"")+
-    (false&&rels.length?`<button type="button" class="cid rel${filtroRel?" ativa":""}" data-rel="1">📝 Releituras <small>${pend?"🟠 a confirmar":"✔"}</small></button>`:"")+
-    (mostraCid?ks.map(k=>`<button type="button" class="cid${filtroCidade===k&&!filtroRel?" ativa":""}" data-k="${esc(k)}">📍 ${esc(nomeCidade(k,m))} <small>${tot[k].toLocaleString("pt-BR")}</small></button>`).join(""):"");
-  box.querySelectorAll(".cid").forEach(b=>b.onclick=()=>{if(b.dataset.rel){filtroRel=!filtroRel;filtroCidade=""}else{filtroRel=false;filtroCidade=b.dataset.k}$("lista").hidden=false;$("listaSeta").textContent="▲";render()});
+  box.innerHTML=filtroCidade?`<button type="button" class="cid-volta">📍 <b>${esc(nomeCidade(filtroCidade,m))}</b> <small>${(tot[filtroCidade]||0).toLocaleString("pt-BR")} leituras no mês</small><span>✕ ver todas</span></button>`
+    :`<button type="button" class="cid-volta">📝 <b>Releituras</b><span>✕ voltar pra etapa</span></button>`;
+  box.querySelector(".cid-volta").onclick=()=>{filtroRel=false;filtroCidade="";render()};
 }
 // Digitou um livro que tem rota salva: mostra o atalho
 document.addEventListener("input",e=>{const i=e.target;if(!i.classList||!i.classList.contains("r-livro"))return;const row=i.closest(".livro-row");if(!row)return;let d=row.querySelector(".rota-dica");const rt=rotas[i.value.trim()];if(rt&&rt.ruas.some(Boolean)){if(!d){d=document.createElement("button");d.type="button";d.className="voltar-lista rota-dica";d.style.gridColumn="1/-1";d.style.background="#eff6ff";d.style.borderColor="#93c5fd";d.style.color="#1e40af";row.appendChild(d)}d.textContent="🗺️ Rota salva deste livro: "+rt.ruas.filter(Boolean).length+" rua(s) — toque pra ver";d.onclick=()=>abrirRota(i.value.trim())}else if(d)d.remove()});
@@ -1664,6 +1666,9 @@ function atualizarFaixaAjuda(){
 function render(){atualizarNomes();
   const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((s,r)=>s+r.qtd,0);
   $("total").textContent=tot.toLocaleString("pt-BR");
+  // 🤝 ajuda em outras cidades no mês: toque abre as cidades (toque numa cidade filtra a lista)
+  {const b=$("ajMesBtn"),m=mes(),cs=new Set(registros.filter(r=>r.data.startsWith(m)&&!r.releitura&&r.qtd).map(r=>normLoc(r.localidade)));
+   if(b){b.hidden=cs.size<2;if(cs.size>=2){b.textContent="🤝 Ajuda ▾";b.title="Leituras por cidade e ajuda no mês — toque pra ver";b.setAttribute("aria-label",b.title);b.onclick=abrirTotalCidades}}}
   // ⏳ total de horas trabalhadas no mês (sempre à vista; toque abre por etapa)
   {const b=$("hrMesBtn"),h=horasMes(mes());if(b){b.hidden=!h.min;if(h.min){b.textContent="⏳ "+fmtDur(h.min);b.title=fmtDur(h.min)+" trabalhadas no mês — toque pra ver por etapa";b.setAttribute("aria-label",b.title);b.onclick=()=>abrirHorasMes(mes())}}}
   // 🚫 total de não lidos do mês (sempre à vista; toque abre a lista)
@@ -2900,7 +2905,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.10";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.11";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
