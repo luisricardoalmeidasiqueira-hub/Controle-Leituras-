@@ -193,7 +193,8 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .grupo-cid{margin-top:8px;padding:5px 8px;border-radius:8px;background:#f3f4f6;font-size:12px;font-weight:800;color:#374151;display:flex;justify-content:space-between;gap:6px}.grupo-cid span{font-weight:700;color:#6b7280}
 .tot-toque{cursor:pointer}
 .nl-end{display:block;margin-top:3px;color:#7f1d1d!important;font-weight:700;font-size:12px;line-height:1.3;word-break:break-word}.ed-ends{grid-column:1/-1;font-size:12.5px;color:#7f1d1d;font-weight:700;line-height:1.35;margin-top:-4px}.ed-ends small{display:block}
-.nl-mes{display:flex;width:auto;align-items:center;gap:4px;margin:6px 0 0 auto;height:28px;padding:0 11px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+.mes-chips{display:flex;justify-content:flex-end;align-items:center;gap:6px;flex-wrap:wrap}.mes-chips:has(button:not([hidden])){margin-top:6px}.hr-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+.nl-mes{display:flex;width:auto;align-items:center;gap:4px;margin:0;height:28px;padding:0 11px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
 .cc-x{position:sticky;top:0;display:flex;align-items:center;justify-content:center;margin:0 0 -32px auto;width:32px;height:32px;border:0;border-radius:999px;background:#f3f4f6;color:#374151;font-size:15px;font-weight:800;cursor:pointer;z-index:5;box-shadow:0 1px 4px #0002}#cartaoComp .comp-tit{padding-right:42px;min-height:34px;display:flex!important;align-items:center;margin-bottom:10px!important}.cartao-atraso>button.cc-x,#cartaoComp>button.cc-x{display:flex!important;width:32px!important;height:32px!important;margin:0 0 -32px auto!important;padding:0!important;background:#f3f4f6!important;color:#374151!important;border-radius:999px!important;font-size:15px!important;position:sticky!important;top:0!important}
  .ajuda-linha{display:flex;justify-content:flex-end;margin:-2px 0 6px}
 .ajuda-btn{border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;height:28px;padding:0 11px;font-size:12px;font-weight:800;cursor:pointer}
@@ -578,7 +579,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
-<button id="nlMesBtn" class="nl-mes" type="button" hidden></button>
+<div class="mes-chips"><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
 </section>
 
 <section id="cardLancar" class="card">
@@ -620,7 +621,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.07</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.08</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1464,6 +1465,17 @@ function abrirRankHora(mAtual,deRanking){
   box.hidden=false;if(!deRanking)box.scrollIntoView({behavior:"smooth",block:"center"});
 }
 
+// ---------- ⏳ Horas trabalhadas no mês: soma das etapas (livros com ⏱️; senão ▶/⏹ da etapa) ----------
+function horasMes(m){const ets=new Set();Object.keys(horas).forEach(k=>{const[a,e]=k.split("|");if(a===m)ets.add(+e)});registros.forEach(r=>{if(r.data.startsWith(m)&&!r.releitura&&duracao(r))ets.add(r.etapa)});
+  const L=[];[...ets].sort((a,b)=>a-b).forEach(e=>{const el=etapaLivros(m,e);let min,q,ini,fim;if(el.n){min=el.min;q=el.q;ini=el.ini;fim=el.fim}else{const v=horas[m+"|"+e]||{};min=duracao(v);q=leitEtapa(m,e);ini=v.ini;fim=v.fim}
+    if(min>0)L.push({e,min,q,ini,fim,dia:diaDaEtapa(m,e)})});
+  return{L,min:L.reduce((t,x)=>t+x.min,0),q:L.reduce((t,x)=>t+(x.q||0),0)}}
+function abrirHorasMes(m){const box=$("cartaoComp"),h=horasMes(m),a=horasMes(somaMes(m,-1)),ph=h.min&&h.q?porHora(h.q,h.min):0;
+  const linhas=h.L.map(x=>`<div class="comp-linha" style="cursor:default"><div><b>Etapa ${p2(x.e)}${x.dia?" · "+fmt(x.dia).slice(0,5):""}</b><small>${x.ini&&x.fim?x.ini+" → "+x.fim:""}${x.q?" · "+x.q.toLocaleString("pt-BR")+" leituras · ⚡ "+porHora(x.q,x.min)+"/h":""}</small></div><b>${fmtDur(x.min)}</b></div>`).join("");
+  box.innerHTML=`<b class="comp-tit">⏳ Horas trabalhadas de ${nomeMes(m)}</b><div class="comp-linha sel" style="cursor:default"><div><b>Total</b><small>${h.L.length} etapa${h.L.length>1?"s":""} com horário${ph?" · ⚡ "+ph+" leituras/hora":""}${h.L.length?" · média "+fmtDur(Math.round(h.min/h.L.length))+" por etapa":""}</small></div><b>${fmtDur(h.min)}</b></div>${linhas||'<div class="comp-dica">Nenhuma etapa com horário neste mês.</div>'}`+
+    `<div class="comp-dica">${a.min?nomeMes(somaMes(m,-1)).replace(/^./,c=>c.toUpperCase())+": <b>"+fmtDur(a.min)+"</b> em "+a.L.length+" etapa"+(a.L.length>1?"s":"")+" · ":""}Conta o tempo dos livros com ⏱️ (pausa não conta); etapa sem livro cronometrado usa ▶ Começou / ⏹ Terminou.</div><button type="button" class="comp-rank" id="hmRk">🕐 Ranking de horário</button><button type="button" class="comp-ok">Ok</button>`;
+  box.querySelector(".comp-ok").onclick=()=>box.hidden=true;$("hmRk").onclick=()=>abrirRankHorario(m);
+  box.hidden=false;box.scrollIntoView({behavior:"smooth",block:"center"})}
 // ---------- 🕐 Ranking de horário: dia que terminou mais cedo e mais tarde ----------
 // usa o que o app já guarda: ▶/⏹ da etapa e o ⏱️ dos livros (não precisa lançar nada a mais)
 function diasHorario(){const D={},pega=(d,ini,fim,e)=>{if(!d||!fim)return;const x=D[d]=D[d]||{d,ini:"",fim:"",et:new Set()};if(!x.fim||minDe(fim)>minDe(x.fim))x.fim=fim;if(ini&&(!x.ini||minDe(ini)<minDe(x.ini)))x.ini=ini;if(e)x.et.add(e)};
@@ -1649,6 +1661,8 @@ function atualizarFaixaAjuda(){
 function render(){atualizarNomes();
   const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((s,r)=>s+r.qtd,0);
   $("total").textContent=tot.toLocaleString("pt-BR");
+  // ⏳ total de horas trabalhadas no mês (sempre à vista; toque abre por etapa)
+  {const b=$("hrMesBtn"),h=horasMes(mes());if(b){b.hidden=!h.min;if(h.min){b.textContent="⏳ "+fmtDur(h.min);b.title=fmtDur(h.min)+" trabalhadas no mês — toque pra ver por etapa";b.setAttribute("aria-label",b.title);b.onclick=()=>abrirHorasMes(mes())}}}
   // 🚫 total de não lidos do mês (sempre à vista; toque abre a lista)
   {const b=$("nlMesBtn"),m=mes(),nlLiv=mm=>registros.filter(r=>r.data.startsWith(mm)).reduce((t,r)=>t+(r.nl||0),0),soma=mm=>impDoMes(mm,()=>true).reduce((t,x)=>t+x.qtd,0)+nlLiv(mm),
      im=soma(m),ia=soma(somaMes(m,-1)),ger=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((t,r)=>t+(r.qtd||0),0);
@@ -2883,7 +2897,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.07";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.08";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
