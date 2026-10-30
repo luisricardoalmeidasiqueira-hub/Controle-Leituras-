@@ -193,7 +193,7 @@ input{width:100%;height:43px;border:1px solid #d1d5db;border-radius:10px;padding
 .grupo-cid{margin-top:8px;padding:5px 8px;border-radius:8px;background:#f3f4f6;font-size:12px;font-weight:800;color:#374151;display:flex;justify-content:space-between;gap:6px}.grupo-cid span{font-weight:700;color:#6b7280}
 .tot-toque{cursor:pointer}
 .nl-end{display:block;margin-top:3px;color:#7f1d1d!important;font-weight:700;font-size:12px;line-height:1.3;word-break:break-word}.ed-ends{grid-column:1/-1;font-size:12.5px;color:#7f1d1d;font-weight:700;line-height:1.35;margin-top:-4px}.ed-ends small{display:block}
-.mes-chips{display:flex;justify-content:flex-end;align-items:center;gap:6px;flex-wrap:wrap}.mes-chips:has(button:not([hidden])){margin-top:6px}.hr-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+.mes-chips{display:flex;justify-content:flex-end;align-items:center;gap:6px;flex-wrap:wrap}.mes-chips>button{padding:0 8px!important;font-size:13px!important;gap:3px!important;white-space:nowrap}@media (max-width:385px){.mes-chips{gap:4px}.mes-chips>button{padding:0 6px!important;font-size:12px!important}}@media (max-width:340px){.mes-chips>button{font-size:11px!important;padding:0 5px!important}}.mes-chips:has(button:not([hidden])){margin-top:6px}.hr-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
 .nl-mes{display:flex;width:auto;align-items:center;gap:4px;margin:0;height:28px;padding:0 11px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
 .cc-x{position:sticky;top:0;display:flex;align-items:center;justify-content:center;margin:0 0 -32px auto;width:32px;height:32px;border:0;border-radius:999px;background:#f3f4f6;color:#374151;font-size:15px;font-weight:800;cursor:pointer;z-index:5;box-shadow:0 1px 4px #0002}#cartaoComp .comp-tit{padding-right:42px;min-height:34px;display:flex!important;align-items:center;margin-bottom:10px!important}.cartao-atraso>button.cc-x,#cartaoComp>button.cc-x{display:flex!important;width:32px!important;height:32px!important;margin:0 0 -32px auto!important;padding:0!important;background:#f3f4f6!important;color:#374151!important;border-radius:999px!important;font-size:15px!important;position:sticky!important;top:0!important}
  .ajuda-linha{display:flex;justify-content:flex-end;margin:-2px 0 6px}
@@ -424,7 +424,8 @@ textarea.end-txt{width:100%;min-height:38px;resize:none;overflow:hidden;border:1
 .rel-mini{font-size:12px;align-items:center}.rel-mini .conf-chip{margin:0 0 0 4px}
 .cid.rel{border-color:#fcd34d;background:#fffbeb;color:#92400e}.cid.rel.ativa{background:#d97706;border-color:#d97706;color:#fff}
 .cidades{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.cid-volta{display:flex;align-items:center;gap:6px;width:100%;min-height:34px;padding:5px 10px;border:1px solid #c4c9d0;background:#f3f4f6;color:#374151;border-radius:10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;line-height:1.25}.cid-volta small{color:#6b7280;font-weight:600;font-size:11px}.cid-volta span{margin-left:auto;white-space:nowrap;font-weight:800;color:#4b5563;font-size:12px}
-.aj-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+.cp-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}.cp-mes.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cp-mes .brasao{height:22px;width:auto;display:block;flex:none}
+.aj-mes.ativa{background:#9a3412;color:#fff;border-color:#9a3412}.aj-mes{display:flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid #fdba74;background:#fff7ed;color:#9a3412;border-radius:999px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;line-height:1}
 .cid{border:1px solid #c4c9d0;background:#fff;color:#374151;border-radius:999px;height:28px;padding:0 10px;font-size:12px;font-weight:800;cursor:pointer}
 .cid small{font-weight:600;color:#6b7280;font-size:10px}.cid.ativa{background:#4b5563;color:#fff;border-color:#4b5563}.cid.ativa small{color:#e5e7eb}
 .et-tag{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
@@ -580,7 +581,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
 </div>
-<div class="mes-chips"><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
+<div class="mes-chips"><button id="cpMesBtn" class="cp-mes" type="button" hidden></button><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
 </section>
 
 <section id="cardLancar" class="card">
@@ -622,7 +623,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.11</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.13</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -1603,6 +1604,16 @@ function desenharCidades(m){
 }
 // Digitou um livro que tem rota salva: mostra o atalho
 document.addEventListener("input",e=>{const i=e.target;if(!i.classList||!i.classList.contains("r-livro"))return;const row=i.closest(".livro-row");if(!row)return;let d=row.querySelector(".rota-dica");const rt=rotas[i.value.trim()];if(rt&&rt.ruas.some(Boolean)){if(!d){d=document.createElement("button");d.type="button";d.className="voltar-lista rota-dica";d.style.gridColumn="1/-1";d.style.background="#eff6ff";d.style.borderColor="#93c5fd";d.style.color="#1e40af";row.appendChild(d)}d.textContent="🗺️ Rota salva deste livro: "+rt.ruas.filter(Boolean).length+" rua(s) — toque pra ver";d.onclick=()=>abrirRota(i.value.trim())}else if(d)d.remove()});
+// 🛡️ brasão de Tatuí (pequeno, ~2 KB) no selinho da sua cidade
+const BRASAO_TATUI="data:image/png;base64,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";
+// 🤝 só as cidades onde você ajudou (sua cidade fica no selinho 📍 ao lado)
+function abrirAjudaMes(m){const box=$("cartaoComp"),cp=cidadePrincipal(),tot={},liv={};registros.forEach(r=>{if(r.data.startsWith(m)&&!r.releitura&&r.qtd){const k=normLoc(r.localidade);if(k===cp)return;tot[k]=(tot[k]||0)+r.qtd;liv[k]=(liv[k]||0)+1}});
+  const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),q=ks.reduce((t,k)=>t+tot[k],0);
+  box.innerHTML=`<b class="comp-tit" style="color:#9a3412!important">🤝 Ajuda em ${nomeMes(m)}</b>`+ks.map(k=>`<div class="comp-linha" data-cid="${esc(k)}"><div><b>📍 ${esc(nomeCidade(k,m))}</b><small>${liv[k]} livro${liv[k]>1?"s":""} · toque pra ver os livros</small></div><b>${tot[k].toLocaleString("pt-BR")} ›</b></div>`).join("")+
+    `<div class="comp-linha sel" style="cursor:default"><div><b>Total da ajuda</b><small>${ks.length} cidade${ks.length>1?"s":""}</small></div><b>${q.toLocaleString("pt-BR")}</b></div>${filtroCidade&&tot[filtroCidade]?'<button type="button" class="comp-rank" id="ajTodas">✕ Ver todas as cidades</button>':""}<button type="button" class="comp-ok">Ok</button>`;
+  box.querySelector(".comp-ok").onclick=()=>box.hidden=true;const vt=$("ajTodas");if(vt)vt.onclick=()=>{box.hidden=true;filtroCidade="";render()};
+  box.querySelectorAll("[data-cid]").forEach(l=>l.onclick=()=>{box.hidden=true;filtroRel=false;filtroCidade=l.dataset.cid;$("lista").hidden=false;$("listaSeta").textContent="▲";render();$("listaHead").scrollIntoView({behavior:"smooth",block:"start"})});
+  box.hidden=false}
 function abrirTotalCidades(){
   const m=mes(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+(r.releitura?0:r.qtd)}});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),geral=ks.reduce((t,k)=>t+tot[k],0),cp=cidadePrincipal(),box=$("cartaoComp");
@@ -1666,9 +1677,12 @@ function atualizarFaixaAjuda(){
 function render(){atualizarNomes();
   const m=mes(),tot=registros.filter(r=>r.data.startsWith(m)&&!r.releitura).reduce((s,r)=>s+r.qtd,0);
   $("total").textContent=tot.toLocaleString("pt-BR");
-  // 🤝 ajuda em outras cidades no mês: toque abre as cidades (toque numa cidade filtra a lista)
-  {const b=$("ajMesBtn"),m=mes(),cs=new Set(registros.filter(r=>r.data.startsWith(m)&&!r.releitura&&r.qtd).map(r=>normLoc(r.localidade)));
-   if(b){b.hidden=cs.size<2;if(cs.size>=2){b.textContent="🤝 Ajuda ▾";b.title="Leituras por cidade e ajuda no mês — toque pra ver";b.setAttribute("aria-label",b.title);b.onclick=abrirTotalCidades}}}
+  // 📍 sua cidade e 🤝 ajuda (outras cidades) no mês — só aparecem quando teve ajuda
+  {const m=mes(),cp=cidadePrincipal(),tot={};registros.forEach(r=>{if(r.data.startsWith(m)&&!r.releitura&&r.qtd){const k=normLoc(r.localidade);tot[k]=(tot[k]||0)+r.qtd}});
+   const ks=Object.keys(tot),aj=ks.filter(k=>k!==cp),qa=aj.reduce((t,k)=>t+tot[k],0),b1=$("cpMesBtn"),b2=$("ajMesBtn"),tem=aj.length>0&&!!tot[cp];
+   if(b1){b1.hidden=!tem;if(tem){b1.innerHTML=(/^tatu[ií]/i.test(nomeCidade(cp,m))?`<img class="brasao" src="${BRASAO_TATUI}" alt="Tatuí">`:"📍 "+esc(nomeCidade(cp,m)))+" "+tot[cp].toLocaleString("pt-BR");b1.setAttribute("aria-label",nomeCidade(cp,m)+": "+tot[cp].toLocaleString("pt-BR")+" leituras");b1.classList.toggle("ativa",filtroCidade===cp&&!filtroRel);b1.title="Leituras em "+nomeCidade(cp,m)+" no mês — toque pra ver só os livros daqui";
+     b1.onclick=()=>{filtroRel=false;filtroCidade=filtroCidade===cp?"":cp;$("lista").hidden=false;$("listaSeta").textContent="▲";render();if(filtroCidade)$("listaHead").scrollIntoView({behavior:"smooth",block:"start"})}}}
+   if(b2){const so=aj.length>0&&(tem||ks.length>=2);b2.hidden=!so;if(so){b2.textContent="🤝 Ajuda ▾";b2.classList.toggle("ativa",!!filtroCidade&&aj.includes(filtroCidade)&&!filtroRel);b2.title="Ajuda em outras cidades: "+qa.toLocaleString("pt-BR")+" leituras — toque pra ver";b2.setAttribute("aria-label",b2.title);b2.onclick=()=>abrirAjudaMes(m)}}}
   // ⏳ total de horas trabalhadas no mês (sempre à vista; toque abre por etapa)
   {const b=$("hrMesBtn"),h=horasMes(mes());if(b){b.hidden=!h.min;if(h.min){b.textContent="⏳ "+fmtDur(h.min);b.title=fmtDur(h.min)+" trabalhadas no mês — toque pra ver por etapa";b.setAttribute("aria-label",b.title);b.onclick=()=>abrirHorasMes(mes())}}}
   // 🚫 total de não lidos do mês (sempre à vista; toque abre a lista)
@@ -2905,7 +2919,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.11";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.13";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
