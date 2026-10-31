@@ -287,7 +287,7 @@ function desenharCrono(){atualizarImpCr();desenharIrrFaixa();const c=$("cronoLiv
       <div class="cr2-sub">desde ${hmDe(cronoIni(main))}${main.recId?"":" · fecha no ✔"}</div>${txtMeta(main)}
       <div class="cr2-bts">${on?bt2("pausa",main.id,"❚❚","Pausar","pp"):bt2("volta",main.id,"▶","Continuar","go")}${bt2("trocar",main.id,"🔄","Trocar")}${main.recId?bt2("fim",main.id,"⏹","Terminei","fim"):""}${bt2("imp",main.id,FLAGX,"+1")}${bt2("impf",main.id,"📷","Foto")}${ni?bt2("impv",main.id,"🚫"+ni,"Imped.","iv"):""}${bt2("edit",main.id,"✏️","Editar")}${bt2("x",main.id,"✕","Sair")}</div></div>`;
     if(outros.length)h+=`<div class="cr2-par"><span>⏸️ parados:</span>${outros.map(x=>`<button type="button" class="cr2-chip" data-cr="volta" data-id="${x.id}">${x.livro?esc(x.livro):"livro"} · ${fmtDur(cronoMin(x))} ▶</button>`).join("")}</div>`;
-  }else h=`<button type="button" class="crono" id="crIni">⏱️ Começar livro</button>`;
+  }else h=`<button type="button" class="crono" id="crIni">⏱️ Começar<span class="cr-lv"> livro</span></button>`;
   c.innerHTML=h;
   const ci=$("crIni");if(ci)ci.onclick=()=>escolherLivroCrono();
 
@@ -2206,7 +2206,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.23";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.26";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
@@ -2591,4 +2591,4 @@ function maisLivro(bt){const bs=[...bt.parentNode.querySelectorAll(".ib-esc")];
 (function(){const ob=new MutationObserver(atualizarMenuDot);["relBadge","guardDot"].forEach(k=>{const e=$(k);if(e)ob.observe(e,{attributes:true})});atualizarMenuDot();
   const mb=$("menuBtn");if(mb)mb.onclick=abrirMenu;
   // os 3 botões do livro vão pra linha das pílulas (rua · rota · tempo): uma linha a menos em cada livro
-  const L=$("lista");if(L){const mover=()=>L.querySelectorAll(".item:not(.rel-mini)>.item-btns").forEach(b=>{const d=b.previousElementSibling;if(d){b.classList.add("ib-linha");d.appendChild(b)}});new MutationObserver(mover).observe(L,{childList:true});mover()}})();
+  const L=$("lista");if(L){const mover=()=>L.querySelectorAll(".item:not(.rel-mini)>.item-btns").forEach(b=>{const d=b.previousElementSibling;if(d){b.classList.add("ib-linha");d.insertBefore(b,d.firstChild)}});new MutationObserver(mover).observe(L,{childList:true});mover()}})();

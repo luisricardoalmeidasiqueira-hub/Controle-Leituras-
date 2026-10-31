@@ -625,6 +625,32 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 .linha2 #voltarHoje{order:-1;margin:0!important;height:26px!important}
 .linha2 .mes-chips{margin:0!important}.linha2 #noMes{display:none!important}.linha2{gap:5px}.linha2 .mes-chips{gap:5px!important}.linha2 .tot-mes{gap:4px!important}
 
+
+/* 16.24: quadradinho da data só do tamanho do texto; ❓ ao lado da bolinha */
+.topo{grid-template-columns:auto 24px minmax(0,1fr) 24px auto 32px!important}
+.topo .etapa-toggle{width:100%!important;justify-content:center!important;gap:8px!important}
+.topo .date-wrap{gap:5px;padding:0 8px!important}
+.topo .date-wrap .topo-q{position:static!important;width:17px;height:17px;font-size:9px;border-width:1.5px;box-shadow:none;flex:none;order:3}
+.topo .date-wrap .status-dot{margin-left:0!important;flex:none}
+.topo .date-wrap .topo-rel{padding:8px 0!important;margin-left:0!important;order:4}
+.topo{grid-template-columns:auto 24px minmax(64px,1fr) 24px auto 32px!important}
+.topo .date-wrap .status-dot{width:20px!important;height:20px!important;padding:5px!important}
+@media (max-width:400px){.topo{grid-template-columns:auto 22px minmax(60px,1fr) 22px auto 30px!important;gap:4px!important}.topo .mes-nome{padding:0 6px!important;font-size:12px!important}.topo .date-wrap:has(.topo-rel:not([hidden])) .data-txt em,.topo .date-wrap:has(.topo-q:not([hidden])) .data-txt em{display:none}.topo .date-wrap{padding:0 6px!important;gap:3px}}
+
+/* 16.25: ⏱️ ✏️ ⋮ no canto de cima, à direita, ao lado do número do livro */
+#lista .item-btns.ib-linha{float:right;margin:0 0 3px 6px!important;position:relative;z-index:1}
+#lista .item:not(.rel-mini)>div:first-child::after{content:"";display:block;clear:both}
+
+/* 16.26: ⏱️ Começar, 🚩, 🚫 e ✔ numa linha só; cronômetro rodando ocupa a linha de cima */
+.save-row{flex-wrap:wrap;justify-content:flex-end}
+.save-row>#cronoLivro{flex:1 1 0;min-width:0;order:0}
+.save-row>#cronoLivro .crono{margin:0!important;height:34px;padding:0 10px;white-space:nowrap;overflow:hidden;justify-content:center}
+.save-row>#cronoLivro:has(.cr2-card){flex:1 1 100%;order:-1}
+.save-row>#irrFaixa{flex:1 1 100%;order:-1}
+.imp-box .nl-txt{font-weight:800}
+.info-azul{border:0;background:#dbeafe;color:#1d4ed8;border-radius:50%;width:16px;height:16px;padding:0;font-size:10px;font-weight:800;line-height:16px;vertical-align:middle;margin-left:3px;cursor:pointer}
+@media (max-width:400px){.save-row>#cronoLivro .cr-lv{display:none}}
+@media (max-width:360px){.imp-box .nl-txt{display:none}}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -672,13 +698,12 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <span id="titulo" hidden></span><select id="etapaSelect" hidden aria-hidden="true"></select>
 <div class="loc-pront"><div><div class="label">LOCALIDADE</div><input id="localidade" type="text" placeholder="Digite a localidade"></div>
 <div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div><div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div></div>
-<div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div><div class="row-label">REL.</div></div>
+<div class="cab"><div class="row-label">LIVRO E QUANTIDADE <button type="button" class="info-azul" onclick="alert('Número em azul = quantidade da última vez que você lançou esse livro.\n\nDá pra corrigir: é só apagar e digitar o certo.')" aria-label="O que é o número azul">ⓘ</button></div><div class="row-label">PART.</div><div class="row-label">REL.</div></div>
 <div id="livroRows"></div>
-<div id="cronoLivro"></div>
 <datalist id="nomesDivididos"></datalist>
 <div class="save-row">
-<div class="hint">Azul = quantidade da última vez (dá pra corrigir).</div>
-<span id="bobDig" class="bob-dig" hidden></span><button type="button" id="nlFotoBtn" class="nl-foto" title="Ler não lidos da foto do Resumo por Mensagem do PDA" aria-label="Ler não lidos da foto"><span class="flag-x">🚩</span><small class="f002">RESUMO</small></button><input id="nlArq" type="file" accept="image/*" hidden><label class="imp-box" title="Não lidos (opcional)"><span>🚫 Não lidos<em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<div id="cronoLivro"></div>
+<span id="bobDig" class="bob-dig" hidden></span><button type="button" id="nlFotoBtn" class="nl-foto" title="Ler não lidos da foto do Resumo por Mensagem do PDA" aria-label="Ler não lidos da foto"><span class="flag-x">🚩</span><small class="f002">RESUMO</small></button><input id="nlArq" type="file" accept="image/*" hidden><label class="imp-box" title="Não lidos (opcional)"><span>🚫<b class="nl-txt"> Não lidos</b><em id="impPct" class="imp-pct"></em></span><input id="impQtd" type="number" inputmode="numeric" min="0" placeholder="0"></label>
 <button id="saveAll" class="save-all" type="button" title="Salvar leitura" aria-label="Salvar leitura"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
 </div>
 </section>
@@ -703,7 +728,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.23</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.26</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -801,7 +826,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.23" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.26" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
