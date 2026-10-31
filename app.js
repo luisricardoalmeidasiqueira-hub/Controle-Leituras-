@@ -967,7 +967,7 @@ function render(){atualizarNomes();
    const ks=Object.keys(tot),aj=ks.filter(k=>k!==cp),qa=aj.reduce((t,k)=>t+tot[k],0),b1=$("cpMesBtn"),b2=$("ajMesBtn"),tem=aj.length>0&&!!tot[cp];
    if(b1){b1.hidden=!tem;if(tem){b1.innerHTML=(/^tatu[ií]/i.test(nomeCidade(cp,m))?`<img class="brasao" src="${BRASAO_TATUI}" alt="Tatuí">`:"📍 "+esc(nomeCidade(cp,m)))+" "+tot[cp].toLocaleString("pt-BR");b1.setAttribute("aria-label",nomeCidade(cp,m)+": "+tot[cp].toLocaleString("pt-BR")+" leituras");b1.classList.toggle("ativa",filtroCidade===cp&&!filtroRel);b1.title="Leituras em "+nomeCidade(cp,m)+" no mês — toque pra ver só os livros daqui";
      b1.onclick=()=>{filtroRel=false;filtroCidade=filtroCidade===cp?"":cp;$("lista").hidden=false;$("listaSeta").textContent="▲";render();if(filtroCidade)$("listaHead").scrollIntoView({behavior:"smooth",block:"start"})}}}
-   if(b2){const so=aj.length>0&&(tem||ks.length>=2);b2.hidden=!so;if(so){b2.textContent="🤝 Ajuda ▾";b2.classList.toggle("ativa",!!filtroCidade&&aj.includes(filtroCidade)&&!filtroRel);b2.title="Ajuda em outras cidades: "+qa.toLocaleString("pt-BR")+" leituras — toque pra ver";b2.setAttribute("aria-label",b2.title);b2.onclick=()=>abrirAjudaMes(m)}}}
+   if(b2){const so=aj.length>0&&(tem||ks.length>=2);b2.hidden=!so;if(so){b2.textContent="🤝 ▾";b2.classList.toggle("ativa",!!filtroCidade&&aj.includes(filtroCidade)&&!filtroRel);b2.title="Ajuda em outras cidades: "+qa.toLocaleString("pt-BR")+" leituras — toque pra ver";b2.setAttribute("aria-label",b2.title);b2.onclick=()=>abrirAjudaMes(m)}}}
   // ⏳ total de horas trabalhadas no mês (sempre à vista; toque abre por etapa)
   {const b=$("hrMesBtn"),h=horasMes(mes());if(b){b.hidden=!h.min;if(h.min){b.textContent="⏳ "+fmtDur(h.min);b.title=fmtDur(h.min)+" trabalhadas no mês — toque pra ver por etapa";b.setAttribute("aria-label",b.title);b.onclick=()=>abrirHorasMes(mes())}}}
   // 🚫 total de não lidos do mês (sempre à vista; toque abre a lista)
@@ -2206,7 +2206,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.22";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.23";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;

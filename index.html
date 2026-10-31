@@ -608,6 +608,23 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 .head-btns #atualizarApp{width:34px!important;padding:0!important;justify-content:center;border:0!important;font-size:16px!important}
 .head-btns #atualizarApp #verPill{display:none!important}
 .head-tit h1{white-space:normal!important}
+
+/* ===== 16.23: data, etapa e mês numa linha só; total do mês junto dos selinhos ===== */
+.topo{grid-template-columns:minmax(0,1fr) 24px auto 24px auto 32px!important;gap:5px!important;align-items:center}
+.topo .et-seta{height:32px!important;font-size:15px!important;border-radius:8px!important}
+.topo .etapa-toggle{width:auto!important;padding:0 7px!important;gap:3px!important}
+.topo .etapa-toggle .et-lbl{font-size:9.5px}
+.topo .etapa-toggle b{font-size:15px!important}
+.topo .mes-nome{height:32px!important;font-size:12.5px!important;padding:0 8px!important;border-radius:8px!important;background:#eef0f3;color:#374151;border:1px solid #d1d5db;white-space:nowrap}
+.topo .date-wrap{padding:0 7px!important}
+.topo .data-txt em{margin-left:3px}
+#mesAnt,#mesProx{display:none!important}
+.linha2{display:flex!important;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;margin-top:7px!important}
+.linha2 .tot-mes{margin-right:auto;height:28px!important;padding:0!important;justify-self:auto!important}
+.linha2 .tot-mes b{font-size:15px!important}
+.linha2 #voltarHoje{order:-1;margin:0!important;height:26px!important}
+.linha2 .mes-chips{margin:0!important}.linha2 #noMes{display:none!important}.linha2{gap:5px}.linha2 .mes-chips{gap:5px!important}.linha2 .tot-mes{gap:4px!important}
+
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -625,8 +642,9 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <div class="topo">
 <div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><span id="topoRelogio" class="topo-rel" role="button" aria-label="Etapa atrasada" hidden></span><span id="topoInterroga" class="topo-q" role="button" aria-label="Atraso do mês passado" hidden>❓</span><span id="topoProx" class="topo-prox" role="button" aria-label="Data desta etapa no mês que vem" hidden></span><input id="data" type="date" aria-label="Data da leitura"></div>
 <button id="etapaMenos" class="et-seta" type="button" aria-label="Etapa anterior">‹</button>
-<button id="etapaToggle" class="etapa-toggle" type="button"><span><small class="et-lbl">ETAPA</small> <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
+<button id="etapaToggle" class="etapa-toggle" type="button"><span><small class="et-lbl">ET.</small> <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
 <button id="etapaMais" class="et-seta" type="button" aria-label="Próxima etapa">›</button>
+<div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
 <div id="calTexto" class="cal-info" hidden></div>
@@ -638,12 +656,12 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <div id="etapas" class="etapas fechado"><div class="etapas-dica">Atrasou? Escolha a etapa que está lendo — a data não muda.</div></div>
 <div class="linha2">
 <button id="mesAnt" class="nav" type="button" aria-label="Mês anterior">‹</button>
-<div class="mes-nome"><span id="mesNome"></span><input id="mesPicker" type="month" aria-label="Escolher mês"></div>
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
 <button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
-</div>
 <div class="mes-chips"><button id="cpMesBtn" class="cp-mes" type="button" hidden></button><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
+</div>
+
 </section>
 
 <section id="cardLancar" class="card">
@@ -685,7 +703,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.22</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.23</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -783,7 +801,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.22" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.23" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
