@@ -2201,13 +2201,18 @@ $("atualizarApp").onclick=async()=>{
   try{
     if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}
     if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}
+    await renovarCacheInicio();
   }catch(e){}
   location.replace(location.pathname+"?v="+Date.now());
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.27";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.28";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
+// 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
+async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
+  await Promise.all([...us].map(u=>fetch(u,{cache:"reload"}).catch(()=>{})))}catch(e){}}
+if(location.protocol!=="file:")setTimeout(renovarCacheInicio,1500);
 async function conferirAtualizacao(){
   if(location.protocol==="file:")return;
   try{
@@ -2215,9 +2220,11 @@ async function conferirAtualizacao(){
     if("serviceWorker" in navigator){const regs=await navigator.serviceWorker.getRegistrations();if(regs.length){await Promise.all(regs.map(r=>r.unregister()));if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}}
     const r=await fetch(location.pathname+"?chk="+Date.now(),{cache:"no-store",headers:{"Cache-Control":"no-cache","Pragma":"no-cache"}});if(!r.ok)return;
     const m=(await r.text()).match(/Versão (\d+(?:\.\d+)*)/);if(!m)return;
-    let tentou="";try{tentou=sessionStorage.getItem("atualizando")||""}catch(e){}
-    if(versaoMaior(m[1],VERSAO_APP)&&tentou!==m[1]){
-      try{sessionStorage.setItem("atualizando",m[1])}catch(e){}
+    // trava só por 1 minuto (antes travava de vez e o iPhone ficava preso na versão velha)
+    let tentou=null;try{tentou=JSON.parse(localStorage.getItem(KEY+"_atualizando")||"null")}catch(e){}
+    if(versaoMaior(m[1],VERSAO_APP)&&!(tentou&&tentou.v===m[1]&&Date.now()-tentou.t<60000)){
+      try{localStorage.setItem(KEY+"_atualizando",JSON.stringify({v:m[1],t:Date.now()}))}catch(e){}
+      await renovarCacheInicio();
       location.replace(location.pathname+"?v="+Date.now());
     }
   }catch(e){}
