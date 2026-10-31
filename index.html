@@ -566,6 +566,48 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 #lista .item-btns .ib-n{font-size:8.5px}
 
 .hr-seta{margin-left:6px;border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:999px;height:24px;padding:0 9px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;vertical-align:middle;white-space:nowrap}
+
+/* ===== ☰ Mais (16.20) ===== */
+#guardBtn,#ajudaBtn,#relBtn{display:none!important}
+.tools{display:none!important}
+.loc-pront{grid-template-columns:minmax(0,1fr) 92px auto!important;align-items:end}.loc-pront>.ajuda-linha{margin:0!important;align-self:end;gap:5px}.loc-pront>.ajuda-linha .ic-only{min-width:40px;height:36px;padding:0 8px}
+.menu-btn{position:relative;font-size:20px!important;font-weight:900}
+.folha-fundo{position:fixed;inset:0;background:rgba(17,24,39,.5);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.folha-fundo[hidden]{display:none}
+.folha{background:#fff;width:100%;max-width:560px;border-radius:18px 18px 0 0;padding:12px 14px calc(14px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto;box-shadow:0 -6px 24px #0003}
+.folha-tit{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:16px;color:#1f2937}
+.folha-x{border:0;background:#f3f4f6;border-radius:999px;width:32px;height:32px;font-size:15px;font-weight:800;cursor:pointer}
+.folha-it{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;border:0;border-bottom:1px solid #f1f5f9;background:#fff;padding:6px 4px;font:inherit;font-size:15px;font-weight:800;color:#1f2937;text-align:left;cursor:pointer}
+.folha-it .fi-e{font-size:20px;width:28px;text-align:center;flex:none}
+.folha-it .fi-t{flex:1;min-width:0}.folha-it small{display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-top:1px}
+.folha-it.verm{color:#b91c1c}.folha-it.on{background:#fff7ed}
+.fi-dot{width:11px;height:11px;border-radius:50%;flex:none;background:#f97316}.fi-dot.verm{background:#ef4444}
+.folha-sep{height:8px}
+#lista .item-btns.ib-linha{display:inline-flex!important;width:auto!important;margin:4px 0 0!important;gap:4px!important;vertical-align:middle}
+#lista .item-btns.ib-linha .ib-esc{display:none!important}
+#lista .item-btns.ib-linha button{flex:none!important;width:auto!important;min-width:0;height:26px!important;flex-direction:row!important;gap:3px!important;padding:0 8px!important;border-radius:999px!important;margin:0!important}
+#lista .item-btns.ib-linha .ib-e{font-size:12px}
+#lista .item-btns.ib-linha .ib-n{display:none}#lista .item:not(.rel-mini) .item-btns.ib-linha button{height:27px!important;width:32px!important;}#lista .item-btns.ib-linha button{width:32px!important;padding:0!important;justify-content:center;border:1px solid #e5e7eb!important;background:#f9fafb!important}#lista .item-btns.ib-linha button.hr-on{background:#e0e7ff!important;border-color:#c7d2fe!important}#lista .item-btns.ib-linha .ib-e{font-size:14px!important}
+#lista .item-btns.ib-linha .ib-mais .ib-e{font-weight:900}
+
+.head-tit>div{min-width:0}.head-tit h1{overflow-wrap:anywhere}@media (max-width:400px){.head-tit p{display:none!important}.head-tit h1{font-size:14px!important;white-space:normal!important;line-height:1.15}}
+/* ===== Topo mais baixo (16.21): data sem o ano, etapa menor ===== */
+.date-wrap{height:32px!important}
+.data-txt{font-size:13px!important}
+.et-seta{height:32px!important;font-size:16px!important}
+.etapa-toggle{height:32px!important;font-size:12px!important;padding:0 8px!important}
+.etapa-toggle .et-lbl{font-size:10px;font-weight:800;color:#6b7280;letter-spacing:.3px}
+.etapa-toggle b{font-size:15px!important;color:#1f2937}
+.cal-btn{height:32px!important}
+.cal-btn .mini-cal{width:23px!important;height:25px!important}
+.mini-cal b{font-size:12.5px!important}
+.linha2 button.nav{height:28px!important}
+.mes-nome{height:28px!important;font-size:12.5px!important;padding:0 11px!important}
+
+/* 16.22: 🔄 só com a setinha; a versão fica no rodapé */
+.head-btns #atualizarApp{width:34px!important;padding:0!important;justify-content:center;border:0!important;font-size:16px!important}
+.head-btns #atualizarApp #verPill{display:none!important}
+.head-tit h1{white-space:normal!important}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -577,13 +619,13 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <body>
 <div class="app">
 <header><div class="head-row"><div class="head-tit"><div class="avatar-wrap"><img id="fotoPerfil" class="foto-perfil" alt="Minha foto"><span id="fotoVazia" class="foto-perfil foto-vazia" role="button" aria-label="Escolher foto" hidden>👤</span><button id="fotoLapis" class="foto-lapis" type="button" aria-label="Editar foto">✏️</button></div><div><h1>Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div></div>
-<div class="head-btns"><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄 <span id="verPill"></span></button></div></div></header>
+<div class="head-btns"><button id="menuBtn" class="hbtn menu-btn" type="button" title="Mais: releituras, arquivadas, ajuda, exportar, backup..." aria-label="Mais opções">☰<span id="menuDot" class="rel-badge" hidden></span></button><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄 <span id="verPill"></span></button></div></div></header>
 <main>
 <section class="card">
 <div class="topo">
 <div class="date-wrap"><span id="dataTxt" class="data-txt"></span><span id="statusDot" class="status-dot verde" role="button" aria-label="Aviso do dia"></span><span id="topoRelogio" class="topo-rel" role="button" aria-label="Etapa atrasada" hidden></span><span id="topoInterroga" class="topo-q" role="button" aria-label="Atraso do mês passado" hidden>❓</span><span id="topoProx" class="topo-prox" role="button" aria-label="Data desta etapa no mês que vem" hidden></span><input id="data" type="date" aria-label="Data da leitura"></div>
 <button id="etapaMenos" class="et-seta" type="button" aria-label="Etapa anterior">‹</button>
-<button id="etapaToggle" class="etapa-toggle" type="button"><span>ETAPA <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
+<button id="etapaToggle" class="etapa-toggle" type="button"><span><small class="et-lbl">ETAPA</small> <b id="etapaAtual">01</b></span><span><small id="cicloBadge" class="ciclo-badge" hidden></small><span id="etapaSeta">▾</span></span></button>
 <button id="etapaMais" class="et-seta" type="button" aria-label="Próxima etapa">›</button>
 <button id="calChip" class="cal-btn" type="button" title="Calendário de leitura" aria-label="Calendário de leitura">📅</button>
 </div>
@@ -605,13 +647,13 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 </section>
 
 <section id="cardLancar" class="card">
-<div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div>
+
 <div id="ajudaFaixa" class="ajuda-faixa" hidden></div>
 <div id="pdaFaixa" class="ajuda-faixa" hidden></div>
 <datalist id="cidadesAjuda"></datalist>
 <span id="titulo" hidden></span><select id="etapaSelect" hidden aria-hidden="true"></select>
 <div class="loc-pront"><div><div class="label">LOCALIDADE</div><input id="localidade" type="text" placeholder="Digite a localidade"></div>
-<div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div></div>
+<div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div><div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div></div>
 <div class="cab"><div class="row-label">LIVRO E QUANTIDADE</div><div class="row-label">PART.</div><div class="row-label">REL.</div></div>
 <div id="livroRows"></div>
 <div id="cronoLivro"></div>
@@ -643,7 +685,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.19</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.22</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -741,7 +783,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.19" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.22" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
