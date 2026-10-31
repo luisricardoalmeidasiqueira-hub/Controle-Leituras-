@@ -564,6 +564,8 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 #lista .item:not(.rel-mini) .item-btns button:last-child{flex:1;margin-left:0}
 #lista .item-btns .ib-e{font-size:13px}
 #lista .item-btns .ib-n{font-size:8.5px}
+
+.hr-seta{margin-left:6px;border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:999px;height:24px;padding:0 9px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;vertical-align:middle;white-space:nowrap}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -641,7 +643,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.17</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.19</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -739,7 +741,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.17" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.19" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
