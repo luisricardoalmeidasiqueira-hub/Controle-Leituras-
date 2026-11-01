@@ -2207,7 +2207,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.28";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.29";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2583,6 +2583,7 @@ function abrirFolha(tit,itens){let f=$("folhaFundo");if(!f){f=document.createEle
 function dotDe(el){if(!el||el.hidden)return "";if(el.classList.contains("atr"))return "verm";if(el.classList.contains("ok"))return "";return "lar"}
 function abrirMenu(){const rd=dotDe($("relBadge")),gd=dotDe($("guardDot"));
   abrirFolha("☰ Mais",[
+    ...(()=>{const bc=$("bannerCal"),a=bc&&!bc.hidden?anoParaLancar():0;return a?[{e:"📅",t:"Lançar calendário de "+a,s:"escolha a foto do calendário que a empresa mandou",fn:()=>bc.click()}]:[]})(),
     {e:"📝",t:"Releituras",s:rd==="verm"?"releitura passou da semana":rd?"tem releitura pra confirmar ou lançar":"",dot:rd,fn:()=>$("relBtn").click()},
     {e:"🎞️",t:"Leituras arquivadas",s:gd?"tem leitura pra lançar no PDA":"foto agora, lança no PDA depois",dot:gd,fn:()=>$("guardBtn").click()},
     {e:"🤝",t:ajuda?"Sair da ajuda":"Ajudar outra cidade",s:ajuda?"você está lançando como ajuda":"",on:!!ajuda,fn:()=>$("ajudaBtn").click()},
