@@ -2207,7 +2207,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.29";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.30";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2532,8 +2532,16 @@ $("topoInterroga").onclick=()=>verAtraso(etapa,($("data").value||hoje()).slice(0
 // 📅 data desta etapa no mês que vem (pra responder rápido na rua)
 function proxDaEtapa(){const h=$("data").value||hoje(),m=somaMes(h.slice(0,7),1),d=diaDaEtapa(m,etapa);return d?{m,d,c:cicloPlanejado(m,etapa-1),pv:ehProv(m)}:null}
 function atualizarTopoProx(){const b=$("topoProx"),p=ajuda?null:proxDaEtapa();b.hidden=!p;if(p){b.textContent="📅 "+p.d.slice(8)+"/"+p.d.slice(5,7);b.classList.toggle("prov",p.pv)}}
-$("topoProx").onclick=e=>{e.stopPropagation();const p=proxDaEtapa();if(!p)return;const[a,mo,di]=p.d.split("-").map(Number),sem=["domingo","segunda","terça","quarta","quinta","sexta","sábado"][new Date(a,mo-1,di).getDay()];
-  alert("📅 Etapa "+p2(etapa)+" no mês que vem:\n\n"+p.d.slice(8)+"/"+p.d.slice(5,7)+"/"+a+" ("+sem+")"+(p.c!=null?"\nCiclo de "+p.c+" dias":"")+(p.pv?"\n\n🟡 Calendário provisório (pode mudar quando chegar o oficial)":""))};
+$("topoProx").onclick=e=>{e.stopPropagation();abrirEtapa3Meses()};
+// 📅 a etapa no mês passado, neste mês e no mês que vem (dia do calendário e dia em que foi lida)
+function abrirEtapa3Meses(){const h=$("data").value||hoje(),m0=h.slice(0,7),SEM=["dom","seg","ter","qua","qui","sex","sáb"],dm=d=>d.slice(8)+"/"+d.slice(5,7),sem=d=>{const[a,mo,di]=d.split("-").map(Number);return SEM[new Date(a,mo-1,di).getDay()]};
+  const it=[-1,0,1].map(k=>{const m=somaMes(m0,k),d=diaDaEtapa(m,etapa),lid=[...new Set(registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura).map(r=>r.data))].sort(),nm=nomeMes(m).split(" ")[0].replace(/^./,c=>c.toUpperCase());
+    const rot=k<0?"Mês passado":k>0?"Mês que vem":"Este mês";
+    let sub=d?"calendário: "+dm(d)+" ("+sem(d)+")":"sem data no calendário";
+    if(k<=0)sub+=lid.length?" · lido em "+lid.map(dm).join(" e "):(k<0?" · sem leitura lançada":"");
+    if(k>0){const c=cicloPlanejado(m,etapa-1);if(c!=null)sub+=" · ciclo de "+c+" dias";if(ehProv(m))sub+=" · 🟡 provisório"}
+    return{e:k<0?"⬅️":k>0?"➡️":"📍",t:rot+" · "+nm+(d?" · "+dm(d):""),s:sub,on:k===0,fn:()=>{mesVer=m;render()}}});
+  abrirFolha("📅 Etapa "+p2(etapa)+" nos meses",it)}
 const _atualizarChip3=atualizarChip;
 atualizarChip=function(){_atualizarChip3();atualizarTopoInterroga();atualizarTopoProx()};
 // ---------- Início: data de hoje e etapa do calendário ----------
