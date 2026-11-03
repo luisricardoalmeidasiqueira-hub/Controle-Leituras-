@@ -2148,6 +2148,8 @@ $("calApagar").onclick=()=>{
   try{localStorage.setItem(CALDELKEY,JSON.stringify(calApagados))}catch(e){}
   salvarCal();salvarProv();desenharCal();render();alert("🗑️ Calendário de "+ano+" apagado.");
 };
+// 🗓️ abre direto a foto do calendário do ano (com 📤 pra mandar pra quem pedir)
+function verCalAno(){const f=fotoAtual();if(!f){abrirCal();return}$("zoomImg").src=f;$("zoomFundo").hidden=false;zoom=1;aplicarZoom();$("zoomArea").scrollTo(0,0)}
 $("zoomComp").onclick=()=>{const f=fotoAtual();if(f)compartilharImagem(f,"calendario-leitura.jpg","Calendário de Leitura")};
 // ---------- Bolinha de status do dia ----------
 // cinza = sem leitura · verde = no dia · amarelo = atenção · vermelho = atrasado
@@ -2225,7 +2227,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.35";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.36";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2612,6 +2614,7 @@ function dotDe(el){if(!el||el.hidden)return "";if(el.classList.contains("atr"))r
 function abrirMenu(){const rd=dotDe($("relBadge")),gd=dotDe($("guardDot"));
   abrirFolha("☰ Mais",[
     ...(()=>{const bc=$("bannerCal"),a=bc&&!bc.hidden?anoParaLancar():0;return a?[{e:"📅",t:"Lançar calendário de "+a,s:"escolha a foto do calendário que a empresa mandou",fn:()=>bc.click()}]:[]})(),
+    {e:"🗓️",t:"Calendário do ano",s:"foto do calendário de leitura · dá pra compartilhar",fn:verCalAno},
     {e:"📷",t:"Foto do Resumo por Mensagem",s:"pergunta em qual livro guardar",fn:()=>{nlAlvo="impQtd";nlBtn="nlFotoBtn";$("nlArq").click()}},
     {e:"📝",t:"Releituras",s:rd==="verm"?"releitura passou da semana":rd?"tem releitura pra confirmar ou lançar":"",dot:rd,fn:()=>$("relBtn").click()},
     {e:"🎞️",t:"Leituras arquivadas",s:gd?"tem leitura pra lançar no PDA":"foto agora, lança no PDA depois",dot:gd,fn:()=>$("guardBtn").click()},

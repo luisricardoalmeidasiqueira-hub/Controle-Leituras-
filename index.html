@@ -681,6 +681,8 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 .res-cam{position:relative;background:#fff!important;border:1px solid #fecaca!important;color:#b91c1c!important}.res-cam small{position:absolute;right:-4px;bottom:-4px;font-size:12px;line-height:1}
 
 .conf-chip.ag{background:#f3f4f6!important;border-color:#d1d5db!important;color:#4b5563!important}
+
+.cal-ano{display:flex;align-items:center;justify-content:center;height:28px;width:34px;padding:0!important;border:1px solid #bfdbfe;background:#eff6ff;border-radius:999px;font-size:15px!important;cursor:pointer;flex:none}@media (max-width:400px){.linha2 .mes-chips>.cal-ano{width:28px!important;font-size:13px!important;padding:0!important}.linha2 .pct{margin-right:4px}}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -715,7 +717,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <button id="mesProx" class="nav" type="button" aria-label="Próximo mês">›</button>
 <button id="voltarHoje" class="nav voltar-hoje" type="button" hidden>↩ Hoje</button>
 <div class="tot-mes"><b id="total" class="tot-toque">0</b><span id="noMes" class="tot-toque">no mês</span><button id="pctMes" class="pct" type="button" hidden></button></div>
-<div class="mes-chips"><button id="cpMesBtn" class="cp-mes" type="button" hidden></button><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
+<div class="mes-chips"><button id="calAnoBtn" class="cal-ano" type="button" title="Calendário de leitura do ano (foto) · dá pra compartilhar" aria-label="Calendário de leitura do ano" onclick="verCalAno()">🗓️</button><button id="cpMesBtn" class="cp-mes" type="button" hidden></button><button id="ajMesBtn" class="aj-mes" type="button" hidden></button><button id="hrMesBtn" class="hr-mes" type="button" hidden></button><button id="nlMesBtn" class="nl-mes" type="button" hidden></button></div>
 </div>
 
 </section>
@@ -758,7 +760,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.35</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.36</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -856,7 +858,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.35" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.36" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
