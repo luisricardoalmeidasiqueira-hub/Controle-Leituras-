@@ -673,6 +673,12 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 /* 16.32: resumo do dia (Hoje: ... Encerrar) ocupa a linha toda, em cima dos botões */
 .save-row>#hr2Dia{flex:1 1 100%;order:-1;margin:0!important}
 .save-row>#cronoLivro:has(.cr2-card){order:-2}
+
+/* 16.33: bandeirinha com ✔ quando o Resumo já foi lido; etiqueta de leituras feitas */
+.nl-livro{position:relative}.nl-livro.lido::after{content:"✔";position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#22c55e;color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;box-shadow:0 0 0 2px #fff}
+.feitas-tag{color:#15803d;font-weight:800;white-space:nowrap}
+
+.res-cam{position:relative;background:#fff!important;border:1px solid #fecaca!important;color:#b91c1c!important}.res-cam small{position:absolute;right:-4px;bottom:-4px;font-size:12px;line-height:1}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -719,7 +725,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <datalist id="cidadesAjuda"></datalist>
 <span id="titulo" hidden></span><select id="etapaSelect" hidden aria-hidden="true"></select>
 <div class="loc-pront"><div><div class="label">LOCALIDADE</div><input id="localidade" type="text" placeholder="Digite a localidade"></div>
-<div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div><div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div></div>
+<div><div class="label">PRONTUÁRIO</div><input id="prontuario" type="text" inputmode="numeric" autocomplete="off" placeholder="Nº"></div><div class="ajuda-linha"><button id="pdaBtn" class="ajuda-btn pda-btn ic-only" type="button" title="Foto do PDA" aria-label="Foto do PDA">📷</button><button id="resCamBtn" class="ajuda-btn ic-only res-cam" type="button" title="Foto do Resumo por Mensagem" aria-label="Foto do Resumo por Mensagem" onclick="nlAlvo='impQtd';nlBtn='nlFotoBtn';$('nlArq').click()"><span class="flag-x">🚩</span><small>📷</small></button><button id="iaBtn" class="ajuda-btn ic-only ia-ic" type="button" title="Leitura com IA" aria-label="Leitura com IA" onclick="abrirIA()">🤖<span id="iaDot" class="rel-badge ia-dot"></span></button><button id="guardBtn" class="ajuda-btn ic-only guard-ic" type="button" title="Leituras arquivadas (foto agora, lança no PDA depois)" aria-label="Leituras arquivadas" onclick="abrirGuard()">🎞️<span id="guardDot" class="rel-badge" hidden></span></button><button id="ajudaBtn" class="ajuda-btn ic-only" type="button" title="Ajudar outra cidade" aria-label="Ajudar outra cidade">🤝</button><button id="relBtn" class="ajuda-btn ic-only rel-btn" type="button" title="Releituras" aria-label="Releituras">📝<span id="relBadge" class="rel-badge" hidden></span></button><input id="pdaArq" type="file" accept="image/*" multiple hidden></div></div>
 <div class="cab"><div class="row-label">LIVRO E QUANTIDADE <button type="button" class="info-azul" onclick="alert('Número em azul = quantidade da última vez que você lançou esse livro.\n\nDá pra corrigir: é só apagar e digitar o certo.')" aria-label="O que é o número azul">ⓘ</button></div><div class="row-label">PART.</div><div class="row-label">REL.</div></div>
 <div id="livroRows"></div>
 <datalist id="nomesDivididos"></datalist>
@@ -750,7 +756,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.32</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.34</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -848,7 +854,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.32" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.34" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){
