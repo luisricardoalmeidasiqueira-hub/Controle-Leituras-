@@ -1352,7 +1352,7 @@ function confDe(r){
   if(r.conf.length>n)r.conf.length=n;
   return r.conf;
 }
-function chipConf(r){const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
+function chipConf(r){if(r.aguarda)return `<br><button type="button" class="conf-chip ag" onclick="abrirConf('${r.id}')">⏳ 999 · aguardando voltar no PDA</button>`;const c=confDe(r),f=c.filter(x=>x.ok).length;return `<br><button type="button" class="conf-chip${f===c.length?" ok":""}" onclick="abrirConf('${r.id}')">📝 Confirmações ${f}/${c.length}${f===c.length?" ✔":""}</button>`}
 let confAbertas=new Set();
 // 🔴 Mesmo medidor (ou mesmo endereço) que já teve confirmação no mês passado: devolve os meses seguidos
 function confRepetida(r,x){
@@ -2225,7 +2225,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.34";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.35";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
