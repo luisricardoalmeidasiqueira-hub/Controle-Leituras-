@@ -988,7 +988,7 @@ function render(){atualizarNomes();
   const imps=impDoMes(m,x=>filtroRel?false:filtroCidade?normLoc(x.localidade)===filtroCidade:x.etapa===etapa).sort((a,b)=>a.etapa-b.etapa||a.data.localeCompare(b.data));
   const totImp=imps.reduce((t,x)=>t+x.qtd,0)+rs.reduce((t,r)=>t+(r.nl||0),0);
   const qtRel=rs.filter(r=>r.releitura).length,qtLiv=rs.length-qtRel;
-  $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">🚫 ${totImp} não lidos${(q=>pctNL(totImp,q)?" · "+pctNL(totImp,q):"")(rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0))}</span>`:"");
+  $("nreg").innerHTML=qtLiv+(qtLiv===1?" livro":" livros")+(qtRel?` · <span style="color:#b45309;font-weight:700">${qtRel} ${qtRel===1?"livro":"livros"} de releitura</span>`:"")+(totImp?` · <span class="imp-tag">🚫 ${totImp} não lidos${(q=>pctNL(totImp,q)?" · "+pctNL(totImp,q):"")(rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0))}</span>`:"")+(()=>{const ma=somaMes(mes(),-1),qa=leitEtapa(ma,etapa);return qa?` · <span class="ant-tag" role="button" onclick="abrirEtapa3Meses()" title="Esta etapa no mês passado">⬅️ ${nomeMes(ma).slice(0,3)}: ${qa.toLocaleString("pt-BR")}</span>`:""})();
   $("totEtapa").textContent=rs.filter(r=>!r.releitura).reduce((s,r)=>s+r.qtd,0).toLocaleString("pt-BR")+" leituras";
   {const q0=rs.filter(r=>!r.releitura&&!predios[r.livro]).reduce((s,r)=>s+qBob(r.livro,r.qtd,r),0),qp=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+r.qtd,0),qi=rs.filter(r=>!r.releitura&&predios[r.livro]).reduce((s,r)=>s+qImp(r.livro,r.qtd),0),q=q0+qi,tb=$("totBob");
    tb.hidden=(!q&&!qp)||filtroRel;tb.textContent=q?"🧾 "+bobinas(q):"🧾 0";tb.title="Cabem "+bobinas(q)*porBobina+" leituras ("+porBobina+" por bobina)"+(qp?" · do prédio só entram as que imprimem":"")+". Toque pra mudar."}
@@ -2207,7 +2207,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.30";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.31";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2538,7 +2538,7 @@ function abrirEtapa3Meses(){const h=$("data").value||hoje(),m0=h.slice(0,7),SEM=
   const it=[-1,0,1].map(k=>{const m=somaMes(m0,k),d=diaDaEtapa(m,etapa),lid=[...new Set(registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura).map(r=>r.data))].sort(),nm=nomeMes(m).split(" ")[0].replace(/^./,c=>c.toUpperCase());
     const rot=k<0?"Mês passado":k>0?"Mês que vem":"Este mês";
     let sub=d?"calendário: "+dm(d)+" ("+sem(d)+")":"sem data no calendário";
-    if(k<=0)sub+=lid.length?" · lido em "+lid.map(dm).join(" e "):(k<0?" · sem leitura lançada":"");
+    if(k<=0){const q=leitEtapa(m,etapa),nl=registros.filter(r=>r.etapa===etapa&&r.data.startsWith(m)&&!r.releitura).length;sub+=lid.length?" · lido em "+lid.map(dm).join(" e "):(k<0?" · sem leitura lançada":"");if(q)sub+=" · "+q.toLocaleString("pt-BR")+" leituras em "+nl+" livro"+(nl>1?"s":"")}
     if(k>0){const c=cicloPlanejado(m,etapa-1);if(c!=null)sub+=" · ciclo de "+c+" dias";if(ehProv(m))sub+=" · 🟡 provisório"}
     return{e:k<0?"⬅️":k>0?"➡️":"📍",t:rot+" · "+nm+(d?" · "+dm(d):""),s:sub,on:k===0,fn:()=>{mesVer=m;render()}}});
   abrirFolha("📅 Etapa "+p2(etapa)+" nos meses",it)}
