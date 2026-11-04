@@ -689,6 +689,15 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 /* 16.38: 🔑 chaves */
 .chaves-faixa{display:flex;align-items:center;gap:5px;width:100%;margin:6px 0;padding:6px 10px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;border-radius:10px;font:inherit;font-size:12.5px;text-align:left;cursor:pointer;line-height:1.3}.chaves-faixa[hidden]{display:none}.chaves-faixa span{margin-left:auto}
 .chave-tag{display:inline-block;margin:4px 4px 0 0;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#fffbeb;border:1px solid #fcd34d;color:#92400e;vertical-align:middle;white-space:nowrap;cursor:pointer}
+
+/* 16.39: formulário da chave, 🔑 no número do livro, chaves no Editar */
+.ch-form label{display:block;font-size:12px;font-weight:800;color:#374151;margin:8px 0 0}
+.ch-form input,.ch-form select{display:block;width:100%;height:42px;margin-top:4px;border:1px solid #d1d5db;border-radius:10px;padding:0 10px;font:inherit;font-size:16px;background:#fff;box-sizing:border-box;-webkit-appearance:none;appearance:none}
+.ch-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ch-bts{display:flex;gap:8px;margin-top:14px}.ch-bts button{flex:1;height:44px;border:0;border-radius:10px;font:inherit;font-size:15px;font-weight:800;cursor:pointer}.ch-cancel{background:#f3f4f6;color:#374151}.ch-ok{background:#f59e0b;color:#fff}
+.num-chave{display:inline-block;margin-left:3px;font-size:15px;vertical-align:middle;cursor:pointer}
+.ed-chaves{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ed-chaves .chave-tag{margin:0;border-style:solid;font:inherit;font-size:12px;font-weight:800}
+.ch-add{height:32px;border:1px dashed #f59e0b;background:#fffbeb;color:#92400e;border-radius:999px;padding:0 12px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -766,7 +775,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <input id="arquivoImportar" type="file" accept=".json,application/json" hidden>
 </section>
 </main>
-<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.38</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
+<footer>Desenvolvido por Luís Ricardo de Almeida Siqueira<br>© 2026 Luís Ricardo de Almeida Siqueira — Todos os direitos reservados.<span class="ver">Versão 16.39</span><button type="button" id="iaRod" class="ia-btn" onclick="abrirIA()">🤖 Leitura com IA</button></footer>
 </div>
 
 <!-- Editar registro -->
@@ -785,6 +794,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <div class="full"><div class="label">QUANTIDADE</div><input id="edQtd" type="number" inputmode="numeric"></div>
 <div class="full"><div class="label">⏰ DIA PREVISTO DA ETAPA <small style="font-weight:600">(opcional · na ajuda o app já usa o calendário; só mude se for outro dia)</small></div><input id="edPrev" type="date"></div><div class="full"><div class="label" style="color:#991b1b">🚫 NÃO LIDOS <small style="font-weight:600">(deste livro, opcional)</small></div><div style="display:flex;gap:6px"><input id="edNl" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#fecaca;flex:1;min-width:0"><button type="button" id="edNlFoto" class="nl-foto" style="width:46px;height:44px;align-self:stretch" title="Ler não lidos da foto do Resumo por Mensagem"><span class="flag-x">🚩</span></button></div></div>
 <div id="edEnds" class="ed-ends" hidden></div>
+<div class="full"><div class="label" style="color:#92400e">🔑 CHAVES DESTE LIVRO <small style="font-weight:600">(opcional)</small></div><div id="edChaves" class="ed-chaves"></div></div>
 <div class="full"><div class="label" style="color:#475569">🔌 INATIVOS DESLIGADOS · 082 <small style="font-weight:600">(opcional · não imprimem: no mês que vem sai da conta das bobinas)</small></div><input id="edIna" type="number" inputmode="numeric" min="0" placeholder="0" style="border-color:#cbd5e1"></div>
 <div class="full ed-part"><div class="label">👥 DIVIDIDO COM <small style="font-weight:600">(separe por vírgula)</small></div><input id="edCom" type="text" autocomplete="off" placeholder="Ex.: João, Pedro"></div>
 </div>
@@ -864,7 +874,7 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 <img id="fotoPrev" alt="Foto do calendário" hidden>
 </div></div>
 
-<script src="app.js?v=16.38" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
+<script src="app.js?v=16.39" onerror="document.body.insertAdjacentHTML('afterbegin','<div style=&quot;position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fef2f2;border:2px solid #fca5a5;color:#991b1b;border-radius:12px;padding:14px;font:700 15px Arial;text-align:center&quot;>Não consegui abrir o app.<br><small>Confira a internet e se o arquivo app.js está no GitHub junto com o index.html.</small></div>')"></script>
 <div id="fotoMenu" class="modal-fundo" hidden><div class="modal"><h3>📷 Foto do perfil</h3><p class="foto-dica2">A foto fica só neste celular. Quem usar o app pode escolher a sua.</p><div class="foto-opc"><button id="fotoEscolher" type="button">📷 Escolher foto</button><button id="fotoTirar" class="verm" type="button">🗑️ Tirar foto</button><button id="fotoOriginal" type="button">↩ Voltar à foto original</button><button id="fotoFechar" type="button">Fechar</button></div><input id="fotoArq" type="file" accept="image/*" hidden></div></div>
 <script>
 (function(){

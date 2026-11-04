@@ -898,9 +898,10 @@ function recolherHora(hb){const et=hb.querySelector(".hr-et");if(!et)return;cons
   const alvo=ch[k-1];if(alvo.classList.contains("hr-res")){alvo.appendChild(bt)}else{et.insertBefore(bt,box)}}
 // 🔵 número do livro azul = esse livro também foi feito no mês passado (toque mostra quando e quanto)
 function numLivroHtml(r){const ma=somaMes(r.data.slice(0,7),-1),pa=r.releitura?[]:registros.filter(x=>x.livro===r.livro&&!x.releitura&&x.data.startsWith(ma));
-  if(!pa.length)return `<b class="num-livro">${esc(r.livro)}</b>`;
+  const ck=r.releitura||!chavesDoLivro(r.livro).length?"":`<span class="num-chave" role="button" onclick="abrirChaves('${esc(r.livro)}')" aria-label="Tem chave neste livro">🔑</span>`;
+  if(!pa.length)return `<b class="num-livro">${esc(r.livro)}</b>${ck}`;
   const q=pa.reduce((t,x)=>t+(x.qtd||0),0),ds=[...new Set(pa.map(x=>fmt(x.data).slice(0,5)))].join(" e "),nm=nomeMes(ma).split(" ")[0],msg="🔵 Livro "+r.livro+" também foi feito em "+nm+".\n\nLido em: "+ds+"\nLeituras: "+q+(pa.some(x=>x.nl)?"\nNão lidos: "+pa.reduce((t,x)=>t+(x.nl||0),0):"")+(pa.some(x=>duracao(x))?"\nTempo: "+fmtDur(pa.reduce((t,x)=>t+duracao(x),0)):"");
-  return `<b class="num-livro ant" role="button" title="Também feito em ${nm}" onclick='alert(${JSON.stringify(msg).replace(/'/g,"&#39;")})'>${esc(r.livro)}</b>`}
+  return `<b class="num-livro ant" role="button" title="Também feito em ${nm}" onclick='alert(${JSON.stringify(msg).replace(/'/g,"&#39;")})'>${esc(r.livro)}</b>${ck}`}
 function abrirAjudaMes(m){const box=$("cartaoComp"),cp=cidadePrincipal(),tot={},liv={};registros.forEach(r=>{if(r.data.startsWith(m)&&!r.releitura&&r.qtd){const k=normLoc(r.localidade);if(k===cp)return;tot[k]=(tot[k]||0)+r.qtd;liv[k]=(liv[k]||0)+1}});
   const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]),q=ks.reduce((t,k)=>t+tot[k],0);
   box.innerHTML=`<b class="comp-tit" style="color:#9a3412!important">🤝 Ajuda em ${nomeMes(m)}</b>`+ks.map(k=>`<div class="comp-linha" data-cid="${esc(k)}"><div><b>📍 ${esc(nomeCidade(k,m))}</b><small>${liv[k]} livro${liv[k]>1?"s":""} · toque pra ver os livros</small></div><b>${tot[k].toLocaleString("pt-BR")} ›</b></div>`).join("")+
@@ -1771,7 +1772,7 @@ function confPendentes(){const out=[],lim=somaDias(hoje(),-40);registros.forEach
 function editar(id){
   const r=registros.find(x=>String(x.id)===String(id));if(!r)return;editId=String(id);
   $("edData").value=r.data;$("edEtapa").value=r.etapa;$("edLocal").value=r.localidade||"";$("edPront").value=r.prontuario||"";$("edLivro").value=r.livro;
-  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;$("edNl").value=r.nl||"";{const ee=$("edEnds"),h=htmlEndsNl(r);ee.innerHTML=h;ee.hidden=!h}$("edIna").value=r.ina||"";$("edPrev").value=r.diaPrev||"";$("edCom").value=(r.com||[]).join(", ");
+  $("edPart").checked=!!r.particionado;$("edRel").checked=!!r.releitura;$("edDe").value=r.de??"";$("edAte").value=r.ate??"";$("edQtd").value=r.qtd;edChaveLivro=r;desenharEdChaves();$("edNl").value=r.nl||"";{const ee=$("edEnds"),h=htmlEndsNl(r);ee.innerHTML=h;ee.hidden=!h}$("edIna").value=r.ina||"";$("edPrev").value=r.diaPrev||"";$("edCom").value=(r.com||[]).join(", ");
   edMostrarPart();$("editFundo").hidden=false;
 }
 function fecharEdicao(){$("editFundo").hidden=true;editId=null}
@@ -2233,7 +2234,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.38";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.39";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2643,26 +2644,38 @@ function maisLivro(bt){const bs=[...bt.parentNode.querySelectorAll(".ib-esc")];
 // ---------- 🔑 Chaves: endereços em que você tem a chave (aparece na etapa e no livro pra lembrar) ----------
 let chaves=[];try{chaves=JSON.parse(localStorage.getItem(KEY+"_chaves")||"[]")||[]}catch(e){}
 function salvarChaves(){try{localStorage.setItem(KEY+"_chaves",JSON.stringify(chaves))}catch(e){}}
+let edChaveLivro=null;
+function desenharEdChaves(){const b=$("edChaves"),r=edChaveLivro;if(!b||!r)return;const cs=chavesDoLivro(r.livro);
+  b.innerHTML=cs.map(c=>`<button type="button" class="chave-tag" data-c="${c.id}">🔑 Et. ${p2(+c.etapa)} · ${esc(ruaCurta(c.end))}${c.obs?" · "+esc(c.obs):""} ✏️</button>`).join("")+`<button type="button" class="ch-add">➕ 🔑 Tenho a chave aqui</button>`;
+  b.querySelectorAll("[data-c]").forEach(x=>x.onclick=()=>acoesChave(x.dataset.c));b.querySelector(".ch-add").onclick=()=>novaChave(r.id)}
 function chavesDoLivro(l){return chaves.filter(c=>c.livro&&c.livro===l)}
 function chavesDaEtapa(m,e){const ls=new Set(registros.filter(r=>r.etapa===e&&r.data.startsWith(m)&&!r.releitura).map(r=>r.livro));return chaves.filter(c=>+c.etapa===e||(c.livro&&ls.has(c.livro)))}
-function chaveTag(r){const cs=chavesDoLivro(r.livro);if(!cs.length)return "";return ` <span class="chave-tag" role="button" onclick="abrirChaves('${esc(r.livro)}')">🔑 ${esc(cs.length===1?ruaCurta(cs[0].end):cs.length+" chaves")}</span>`}
+function chaveTag(r){const cs=chavesDoLivro(r.livro);if(!cs.length)return "";return ` <span class="chave-tag" role="button" onclick="abrirChaves('${esc(r.livro)}')">🔑 Et. ${p2(+cs[0].etapa)} · ${esc(cs.length===1?ruaCurta(cs[0].end):cs.length+" chaves")}</span>`}
 function ruaCurta(e){return String(e||"").split(",").slice(0,2).join(",").trim()||"endereço"}
 function novaChave(id,ed){const r=id?registros.find(x=>String(x.id)===String(id)):null,c=ed?chaves.find(x=>String(x.id)===String(ed)):null;
-  const end=prompt("🔑 Endereço em que você tem a chave:\n(rua e número)",c?c.end:(r&&r.pda&&r.pda.end?ruaCurta(r.pda.end)+", ":""));if(end===null||!end.trim())return;
-  const lv=prompt("📖 Número do livro (opcional):",c?c.livro||"":(r?r.livro:""));if(lv===null)return;
-  const lr=lv.trim()?registros.filter(x=>x.livro===lv.trim()&&!x.releitura).sort((a,b)=>b.data.localeCompare(a.data))[0]:null;
-  const et=parseInt(prompt("📋 Etapa (1 a 18):",String(c?c.etapa:(r?r.etapa:(lr?lr.etapa:etapa)))),10);if(!(et>=1&&et<=18))return alert("Etapa inválida.");
-  const obs=prompt("📝 Observação (opcional) — ex.: chave do portão, cadeado, falar com o vizinho:",c?c.obs||"":"");if(obs===null)return;
-  const novo={id:c?c.id:Date.now(),end:end.trim().toUpperCase(),livro:lv.trim(),etapa:et,obs:obs.trim(),desde:c?c.desde:hoje()};
-  if(c)Object.assign(c,novo);else chaves.push(novo);salvarChaves();render();toast("🔑 Chave guardada · "+ruaCurta(novo.end)+(novo.livro?" · livro "+novo.livro:"")+" · Et. "+p2(et))}
+  let f=$("folhaFundo");if(!f){f=document.createElement("div");f.id="folhaFundo";f.className="folha-fundo";document.body.appendChild(f)}
+  const etIni=c?+c.etapa:(r?r.etapa:etapa),endIni=c?c.end:(r&&r.pda&&r.pda.end?String(r.pda.end).split(",")[0].trim()+", ":"");
+  f.innerHTML=`<div class="folha ch-form"><div class="folha-tit"><b>🔑 ${c?"Editar chave":"Tenho a chave"}</b><button type="button" class="folha-x" aria-label="Fechar">✕</button></div>
+    <label>📍 Endereço (rua e número)<input id="chEnd" type="text" autocomplete="off" value="${esc(endIni)}" placeholder="ex.: R Cônego Demétrio, 120"></label>
+    <div class="ch-2"><label>📖 Livro<input id="chLiv" type="text" inputmode="numeric" autocomplete="off" value="${esc(c?c.livro||"":(r?r.livro:""))}" placeholder="opcional"></label>
+    <label>📋 Etapa<select id="chEt">${Array.from({length:18},(_,k)=>`<option value="${k+1}"${k+1===etIni?" selected":""}>Etapa ${p2(k+1)}</option>`).join("")}</select></label></div>
+    <label>📝 Observação<input id="chObs" type="text" autocomplete="off" value="${esc(c?c.obs||"":"")}" placeholder="ex.: chave do portão, cadeado (opcional)"></label>
+    <div class="ch-bts"><button type="button" class="ch-cancel">Cancelar</button><button type="button" class="ch-ok">🔑 Salvar</button></div></div>`;
+  f.hidden=false;f.onclick=e=>{if(e.target===f)f.hidden=true};f.querySelector(".folha-x").onclick=f.querySelector(".ch-cancel").onclick=()=>f.hidden=true;
+  $("chLiv").oninput=()=>{const l=$("chLiv").value.trim(),x=l?registros.filter(y=>y.livro===l&&!y.releitura).sort((a,b)=>b.data.localeCompare(a.data))[0]:null;if(x)$("chEt").value=x.etapa};
+  setTimeout(()=>{const e=$("chEnd");e.focus();e.setSelectionRange(e.value.length,e.value.length)},80);
+  f.querySelector(".ch-ok").onclick=()=>{const end=$("chEnd").value.trim();if(!end){$("chEnd").focus();return}
+    const novo={id:c?c.id:Date.now(),end:end.toUpperCase(),livro:$("chLiv").value.trim(),etapa:+$("chEt").value,obs:$("chObs").value.trim(),desde:c?c.desde:hoje()};
+    if(c)Object.assign(c,novo);else chaves.push(novo);salvarChaves();f.hidden=true;render();if(!$("edFundo")||$("edFundo").hidden===false)desenharEdChaves();
+    toast("🔑 Chave guardada · Et. "+p2(novo.etapa)+" · "+ruaCurta(novo.end)+(novo.livro?" · livro "+novo.livro:""))}}
 function abrirChaves(soLivro){const m=mes(),cs=(soLivro?chaves.filter(c=>c.livro===soLivro):chaves.slice()).sort((a,b)=>(+a.etapa-+b.etapa)||String(a.end).localeCompare(String(b.end)));
-  const it=[{e:"➕",t:"Marcar endereço com chave",s:"rua, livro, etapa e observação",fn:()=>novaChave()}].concat(cs.map(c=>({e:"🔑",t:esc(c.end),s:[c.livro?"Livro "+esc(c.livro):"","Et. "+p2(+c.etapa),c.obs?esc(c.obs):"","desde "+fmt(c.desde||hoje()).slice(0,5)].filter(Boolean).join(" · "),on:+c.etapa===etapa,fn:()=>acoesChave(c.id)})));
+  const it=[{e:"➕",t:"Marcar endereço com chave",s:"rua, livro, etapa e observação",fn:()=>novaChave()}].concat(cs.map(c=>({e:"🔑",t:"Et. "+p2(+c.etapa)+" · "+esc(c.end),s:[c.livro?"Livro "+esc(c.livro):"","Et. "+p2(+c.etapa),c.obs?esc(c.obs):"","desde "+fmt(c.desde||hoje()).slice(0,5)].filter(Boolean).join(" · "),on:+c.etapa===etapa,fn:()=>acoesChave(c.id)})));
   abrirFolha("🔑 "+(soLivro?"Chaves do livro "+esc(soLivro):"Minhas chaves"),it)}
 function acoesChave(id){const c=chaves.find(x=>String(x.id)===String(id));if(!c)return;
   abrirFolha("🔑 "+esc(ruaCurta(c.end)),[
     {e:"🗺️",t:"Abrir no mapa",fn:()=>window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&destination="+encodeURIComponent(c.end+(c.end.includes(",")?"":"")+", "+(normLoc($("localidade").value||"")?$("localidade").value:"Tatuí")+", SP"),"_blank")},
     {e:"✏️",t:"Editar",fn:()=>novaChave(null,c.id)},
-    {e:"🗑️",t:"Devolvi a chave",s:"tira da lista",verm:1,fn:()=>{if(confirm("Tirar a chave de "+c.end+" da lista?")){chaves=chaves.filter(x=>x!==c);salvarChaves();render();abrirChaves()}}}])}
+    {e:"🗑️",t:"Devolvi a chave",s:"tira da lista",verm:1,fn:()=>{if(confirm("Tirar a chave de "+c.end+" da lista?")){chaves=chaves.filter(x=>x!==c);salvarChaves();render();desenharEdChaves();toast("🗑️ Chave tirada da lista")}}}])}
 // faixa na etapa: lembra das chaves dos livros desta etapa
 function desenharChavesEtapa(){const ref=$("horaEtapa");if(!ref)return;let f=$("chavesEtapa");if(!f){f=document.createElement("button");f.type="button";f.id="chavesEtapa";f.className="chaves-faixa";ref.before(f);f.onclick=()=>{const cs=chavesDaEtapa(mes(),etapa);abrirFolha("🔑 Chaves da Etapa "+p2(etapa),cs.map(c=>({e:"🔑",t:esc(c.end),s:[c.livro?"Livro "+esc(c.livro):"",c.obs?esc(c.obs):""].filter(Boolean).join(" · "),fn:()=>acoesChave(c.id)})).concat([{e:"📋",t:"Ver todas as chaves",fn:()=>abrirChaves()}]))}}
   const cs=filtroRel?[]:chavesDaEtapa(mes(),etapa);f.hidden=!cs.length;if(cs.length)f.innerHTML=`🔑 <b>Leve a chave:</b> ${cs.slice(0,2).map(c=>esc(ruaCurta(c.end))).join(" · ")}${cs.length>2?" e mais "+(cs.length-2):""} <span>▾</span>`}
