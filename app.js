@@ -1,5 +1,8 @@
 
 const KEY="controle_leituras_luis_ricardo_v1",RASC=KEY+"_rascunho",CALKEY=KEY+"_calendario",FOTOKEY=KEY+"_calendario_foto";
+// 🔑 chaves: carregadas logo no começo (o app usa no primeiro desenho da lista)
+let chaves=[];try{chaves=JSON.parse(localStorage.getItem(KEY+"_chaves")||"[]")||[]}catch(e){}
+let edChaveLivro=null;
 let registros=[];try{registros=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){}
 let etapa=1;
 const $=x=>document.getElementById(x);
@@ -2234,7 +2237,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.39";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.40";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2642,9 +2645,7 @@ function maisLivro(bt){const bs=[...bt.parentNode.querySelectorAll(".ib-esc")];
   const L=$("lista");if(L){const mover=()=>L.querySelectorAll(".item:not(.rel-mini)>.item-btns").forEach(b=>{const d=b.previousElementSibling;if(d){b.classList.add("ib-linha");d.insertBefore(b,d.firstChild)}});new MutationObserver(mover).observe(L,{childList:true});mover()}})();
 
 // ---------- 🔑 Chaves: endereços em que você tem a chave (aparece na etapa e no livro pra lembrar) ----------
-let chaves=[];try{chaves=JSON.parse(localStorage.getItem(KEY+"_chaves")||"[]")||[]}catch(e){}
 function salvarChaves(){try{localStorage.setItem(KEY+"_chaves",JSON.stringify(chaves))}catch(e){}}
-let edChaveLivro=null;
 function desenharEdChaves(){const b=$("edChaves"),r=edChaveLivro;if(!b||!r)return;const cs=chavesDoLivro(r.livro);
   b.innerHTML=cs.map(c=>`<button type="button" class="chave-tag" data-c="${c.id}">🔑 Et. ${p2(+c.etapa)} · ${esc(ruaCurta(c.end))}${c.obs?" · "+esc(c.obs):""} ✏️</button>`).join("")+`<button type="button" class="ch-add">➕ 🔑 Tenho a chave aqui</button>`;
   b.querySelectorAll("[data-c]").forEach(x=>x.onclick=()=>acoesChave(x.dataset.c));b.querySelector(".ch-add").onclick=()=>novaChave(r.id)}
