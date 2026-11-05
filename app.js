@@ -1,5 +1,7 @@
 
 const KEY="controle_leituras_luis_ricardo_v1",RASC=KEY+"_rascunho",CALKEY=KEY+"_calendario",FOTOKEY=KEY+"_calendario_foto";
+// 16.43: "feitas" de foto do Resumo que pulou a LEITURA NORMAL: calcula pelo total do livro (total − não lidos − inativos)
+try{if(!localStorage.getItem(KEY+"_fix_feitas1643")){const rr=JSON.parse(localStorage.getItem(KEY)||"[]");let mud=0;rr.forEach(r=>{if(!r||!r.qtd||r.releitura)return;const ruim=r.feitas&&r.feitas+(r.nl||0)+(r.ina||0)<r.qtd*0.6,apagado=!r.feitas&&(r.nl||r.ina)&&r.data==="2026-11-05";if(ruim||apagado){r.feitas=Math.max(0,r.qtd-(r.nl||0)-(r.ina||0));r.feitasCalc=1;r.res=r.res||r.data;mud++}});if(mud)localStorage.setItem(KEY,JSON.stringify(rr));localStorage.setItem(KEY+"_fix_feitas1643",String(mud))}}catch(e){}
 // 🔑 chaves: carregadas logo no começo (o app usa no primeiro desenho da lista)
 let chaves=[];try{chaves=JSON.parse(localStorage.getItem(KEY+"_chaves")||"[]")||[]}catch(e){}
 let edChaveLivro=null;
@@ -1638,6 +1640,9 @@ function lerResumoPDA(t){
     for(const y of [l,L[i+1]||"",L[i+2]||""]){const k=y.match(/(?:QUANT|UANT|ANTID|TIDADE|DADE)\D{0,4}(\d{1,4})/);if(k){q=+k[1];break}}
     if(q!=null&&!out.some(o=>o.nome.slice(0,10)===nome.slice(0,10)))out.push({cod:m[2]?m[1]:"",nome,q});
   });
+  // 1ª "Quantidade" que aparece antes de qualquer código = 000 LEITURA NORMAL (o nome ficou cortado/apagado)
+  if(!out.some(o=>/NORMAL/.test(o.nome)||o.cod==="000")){const iq=L.findIndex(l=>/(?:QUANT|UANT|ANTID|TIDADE|DADE)\D{0,4}\d{1,4}/.test(l)),ic=L.findIndex(l=>/(\d{3})\s*[-–]\s*[A-ZÀ-Ú]/.test(l)||/LEITURA|IMPEDIMENTO|INATIVO|DESLIGADA|AVARIA/.test(l));
+    if(iq>=0&&(ic<0||iq<ic)){const k=L[iq].match(/(?:QUANT|UANT|ANTID|TIDADE|DADE)\D{0,4}(\d{1,4})/);if(k)out.unshift({cod:"000",nome:"LEITURA NORMAL",q:+k[1]})}}
   return out;
 }
 let nlAlvo="impQtd",nlBtn="nlFotoBtn",resFeitas=0,resIna=0;
@@ -1647,9 +1652,9 @@ $("edNlFoto").onclick=()=>{nlAlvo="edNl";nlBtn="edNlFoto";$("nlArq").click()};
 $("nlArq").onchange=async e=>{
   const f=(e.target.files||[])[0];e.target.value="";if(!f)return;const b=$(nlBtn);b.disabled=true;b.textContent="⏳";
   try{
-    let itens=[];
+    let itens=[],iaOk=false;
     let filaN=null;
-    if(iaChave){b.textContent="🤖";try{const jr=await iaLer(f,IA_RESUMO);if(jr&&!Array.isArray(jr)&&+jr.fila>0)filaN=+jr.fila;itens=itensResumoIA(jr).filter(x=>x.cod||x.q);
+    if(iaChave){b.textContent="🤖";try{const jr=await iaLer(f,IA_RESUMO);if(jr&&!Array.isArray(jr)&&+jr.fila>0)filaN=+jr.fila;itens=itensResumoIA(jr).filter(x=>x.cod||x.q);if(itens.length)iaOk=true;
       // não achou o 002/009? pergunta de novo, mais direto
       if(!filaN&&!itens.some(x=>["002","009","000"].includes(x.cod)||/IMPEDIMENTO|DESLIGADA|NORMAL/.test(x.nome))){const k=itensResumoIA(await iaLer(f,IA_RESUMO2));if(k.length)itens=k}}catch(err){iaFalhou(err)}b.textContent="⏳"}
     // 🖨️ era a foto da Fila de Impressão: guarda as impressas no livro
@@ -1676,14 +1681,14 @@ $("nlArq").onchange=async e=>{
     if(e999>0){const rr=nlAlvo.startsWith("rec:")?registros.find(x=>String(x.id)===nlAlvo.slice(4)):null,ult=registros.filter(x=>!x.releitura).slice(-1)[0];
       const lv=rr?rr.livro:prompt("📝 999 · devolução de livro incompleto: "+e999+" leitura"+(e999>1?"s":"")+" vão voltar pra confirmação.\n\nDe qual livro? Fica nas releituras como ⏳ aguardando voltar. O prazo de 7 dias só começa quando voltar no PDA.",rr?rr.livro:(livroDigitado()||(ult?ult.livro:"")));
       if(lv&&lv.trim())aguardarRel(lv.trim(),e999,rr||registros.filter(x=>x.livro===lv.trim()&&!x.releitura).slice(-1)[0])}
-    resFeitas=feitas;if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r)guardaResumo(r,{n,feitas,e082,e002,e009,e041,e001})}else{
+    resFeitas=feitas;if(nlAlvo.startsWith("rec:")){const r=registros.find(x=>String(x.id)===nlAlvo.slice(4));if(r)guardaResumo(r,{n,feitas,e082,e002,e009,e041,e001,tot:itens.reduce((t,x)=>t+(+x.q||0),0),ocr:!iaOk,semNormal:!itens.some(x=>x.cod==="000"||/NORMAL/.test(x.nome))})}else{
       // Bandeirinha da tela principal usada DEPOIS de salvar o livro: oferece colar no último livro salvo
       const vazias=![...$("livroRows").children].some(linhaPreenchida),ult=registros.filter(x=>!x.releitura).slice(-1)[0];
       // 🚩 de cima sem livro digitado: pergunta em qual livro de hoje guardar (antes só ia pro último, e só até 4 horas)
       if(nlAlvo==="impQtd"&&vazias){const d=$("data").value||hoje(),cr=cronos.find(x=>x.recId)||null,hs=registros.filter(x=>x.data===d&&!x.releitura).slice().reverse();
         if(cr){const rc=registros.find(x=>String(x.id)===cr.recId);if(rc&&rc.data===d){hs.splice(hs.indexOf(rc),1);hs.unshift(rc)}}
         const totFoto=itens.reduce((t,x)=>t+(+x.q||0),0),bate=hs.find(x=>x.qtd===totFoto);if(bate){hs.splice(hs.indexOf(bate),1);hs.unshift(bate)}
-        if(hs.length){abrirFolha("🚩 Resumo lido · em qual livro guardar?",hs.map((x,i)=>({e:"📖",t:"Livro "+esc(x.livro)+" · "+x.qtd+" leituras",s:(bate===x?"✔ bate com o total da foto ("+totFoto+") · ":i===0?(cr&&String(x.id)===cr.recId?"está no cronômetro · ":"o último · "):"")+"✅ "+feitas+" feitas"+(n?" · 🚫 "+n:"")+(e082?" · 🔌 "+e082:""),fn:()=>guardaResumo(x,{n,feitas,e082,e002,e009,e041,e001})})).concat([{e:"🚫",t:"Só no dia (campo Não lidos)",s:"não guarda em nenhum livro",fn:()=>{resIna=e082;$("impQtd").value=n;$("impQtd").dispatchEvent(new Event("input",{bubbles:true}));if(e001)setTimeout(()=>avisoAvaria(e001),300)}}]));return}}
+        if(hs.length){abrirFolha("🚩 Resumo lido · em qual livro guardar?",hs.map((x,i)=>({e:"📖",t:"Livro "+esc(x.livro)+" · "+x.qtd+" leituras",s:(bate===x?"✔ bate com o total da foto ("+totFoto+") · ":i===0?(cr&&String(x.id)===cr.recId?"está no cronômetro · ":"o último · "):"")+"✅ "+feitas+" feitas"+(n?" · 🚫 "+n:"")+(e082?" · 🔌 "+e082:""),fn:()=>guardaResumo(x,{n,feitas,e082,e002,e009,e041,e001,tot:itens.reduce((t,x)=>t+(+x.q||0),0),ocr:!iaOk,semNormal:!itens.some(x=>x.cod==="000"||/NORMAL/.test(x.nome))})})).concat([{e:"🚫",t:"Só no dia (campo Não lidos)",s:"não guarda em nenhum livro",fn:()=>{resIna=e082;$("impQtd").value=n;$("impQtd").dispatchEvent(new Event("input",{bubbles:true}));if(e001)setTimeout(()=>avisoAvaria(e001),300)}}]));return}}
       if(nlAlvo==="edNl"&&e082)$("edIna").value=e082;else if(nlAlvo==="impQtd")resIna=e082;
       $(nlAlvo).value=n;$(nlAlvo).dispatchEvent(new Event("input",{bubbles:true}));if(e001)setTimeout(()=>avisoAvaria(e001),600)}
   }catch(err){alert("Não foi possível ler a foto agora. Confira se tem internet e tente de novo.")}
@@ -1691,11 +1696,20 @@ $("nlArq").onchange=async e=>{
 };
 
 // 🚩 guarda o que a foto do Resumo leu no livro e mostra o que ficou salvo (antes não dava pra saber se tinha lido)
-function guardaResumo(r,o){const{n,feitas,e082}=o;if(n||r.nl)r.nl=n||undefined;if(feitas&&feitas<=r.qtd+50)r.feitas=feitas;if(e082&&e082<=r.qtd)r.ina=e082;r.res=hoje();
+function guardaResumo(r,o){const{n,feitas,e082}=o;
+  // ⚠️ a soma das mensagens da foto tem que bater com o livro; se não bate, a foto não foi lida inteira (não guarda as "feitas" erradas)
+  let tol=Math.max(3,Math.round(r.qtd*0.05)),naoBate=o.tot&&Math.abs(o.tot-r.qtd)>tol;
+  // a linha "000 LEITURA NORMAL" ficou de fora da foto (cortada/rolada): o total do PDA é o total do livro, então a normal é o que falta
+  if(naoBate&&o.semNormal&&o.tot<r.qtd){const normal=r.qtd-o.tot;o={...o,feitas:(o.feitas||0)+normal,calc:normal,tot:r.qtd};naoBate=false}
+  if(naoBate){abrirFolha("⚠️ Resumo não foi lido inteiro · livro "+esc(r.livro),[
+    {e:"⚠️",t:"A foto somou "+o.tot+", o livro tem "+r.qtd,s:(o.ocr?"a 🤖 IA não respondeu e o leitor do celular pulou linhas":"alguma linha ficou de fora")+" · nada foi guardado",fn:()=>{}},
+    {e:"📷",t:"Tirar a foto de novo",s:"reta, sem reflexo"+(o.ocr?" · confira se a 🤖 IA está 🟢":""),fn:()=>nlDoLivro(r.id)},
+    {e:"✏️",t:"Digitar as leituras feitas",s:"normal + acima + abaixo (o que o PDA mostra)",fn:()=>{const v=prompt("✅ Leituras feitas do livro "+r.livro+"\n(normal + acima + abaixo + virada + troca):",r.feitas||"");if(v===null)return;const q=parseInt(v,10);if(q>=0&&q<=r.qtd){r.feitas=q||undefined;try{localStorage.setItem(KEY,JSON.stringify(registros))}catch(e){}render();toast("✅ "+q+" leituras feitas guardadas no livro "+r.livro)}}}]);return}
+  if(n||r.nl)r.nl=n||undefined;const fe=o.feitas;if(fe&&fe<=r.qtd+50){r.feitas=fe;if(o.calc)r.feitasCalc=1;else delete r.feitasCalc}if(e082&&e082<=r.qtd)r.ina=e082;r.res=hoje();
   try{localStorage.setItem(KEY,JSON.stringify(registros))}catch(e){}render();
   const bAgora=bobinas(qBob(r.livro,r.qtd,r)),q2=r.ina?Math.max(0,r.qtd-desc082(r)):r.qtd,bMes=bobinas(q2);
   abrirFolha("🚩 Resumo lido · livro "+esc(r.livro),[
-    {e:"✅",t:(feitas||0).toLocaleString("pt-BR")+" leituras feitas",s:"normal + acima + abaixo + virada + troca · livro tem "+r.qtd,fn:()=>{}},
+    {e:"✅",t:(o.feitas||0).toLocaleString("pt-BR")+" leituras feitas",s:(o.calc?"a LEITURA NORMAL não apareceu na foto: calculei pelo total do livro ("+o.calc+") · ":"normal + acima + abaixo + virada + troca · ")+"livro tem "+r.qtd,fn:()=>{}},
     {e:"🚫",t:(n||0)+" não lido"+(n===1?"":"s"),s:n?"002: "+(o.e002||0)+(o.e009?" · 009: "+o.e009:"")+(o.e041?" · 041: "+o.e041:""):"nenhum impedimento",fn:()=>{}},
     {e:"🔌",t:(e082||0)+" inativo"+(e082===1?"":"s")+" desligado"+(e082===1?"":"s")+" (082)",s:e082?"não imprimem: saem da conta das bobinas":"nenhum inativo",fn:()=>{}},
     ...(o.e001?[{e:"🛠️",t:o.e001+" avaria"+(o.e001>1?"s":"")+" (001) · lançar no Situação do Medidor",s:"toque pra abrir o app e lançar como Medidor Avariado",fn:()=>window.open(SIT_MEDIDOR,"_blank")}]:[]),
@@ -2247,7 +2261,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.41";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.44";$("verPill").textContent="v"+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
@@ -2438,7 +2452,7 @@ async function iaLer(file,instr){if(!iaChave||navigator.onLine===false)return nu
 let iaAvisou=false;function iaFalhou(err){iaErro=String(err&&err.message||err);desenharIA();if(!iaAvisou){iaAvisou=true;setTimeout(()=>iaAvisou=false,8000);alert("🤖 A IA não conseguiu ler agora ("+iaErro+").\nVou usar o leitor do celular.")}}
 const IA_CAIXA='Esta é uma foto da tela "Caixa de Entrada" de um PDA de leitura de energia. Cada livro tem uma linha como "B, 0200, 11, 001282" (o 3º número é a ETAPA, o último é o LIVRO com 6 dígitos) e à direita "0/232" (o número depois da barra é a QUANTIDADE de leituras). Embaixo vem o endereço, depois "Limite: dd/mm/aaaa" e a distância em Km. Leia TODOS os livros que aparecem inteiros na foto, na ordem. Responda só JSON: {"livros":[{"etapa":11,"livro":"001282","qtd":232,"end":"R DONA MARIA JOAQUINA RODRIGUES, 100, JD PAULISTA, TATUI, SP","lim":"16/10/2026","km":"5,18"}]}. Se não tiver livro, {"livros":[]}.';
 const IA_ROTEIRO='Esta é uma foto da aba "Roteiro" de um PDA de leitura de energia. Cada linha é como "( 41 - - ) R DONA MARIA JOAQUINA RODRIG.." . Leia todas as linhas na ordem, de cima pra baixo, e devolva só o nome da rua (com o tipo: R, AV, TV, PC, AL, EST, ROD...), em MAIÚSCULAS, exatamente como está escrito, SEM o número entre parênteses e sem os ".." do final. Ignore linhas cortadas pela metade na borda da tela. Pode repetir rua se ela aparece mais de uma vez. Responda só JSON: {"ruas":["R DONA MARIA JOAQUINA RODRIG","R LIONS CLUB DE TATUI"]}.';
-const IA_RESUMO2='Foto (com reflexo) da tela "Resumo por Mensagem" de um PDA de leitura de energia. Procure estas linhas pelo código e leia a "Quantidade:" logo abaixo de cada uma: 000 LEITURA NORMAL, 001 AVARIA, 002 IMPEDIMENTO DE LEITURA, 004 TROCA DE EQUIPAMENTO, 009 UC DESLIGADA EM CAMPO, 011 LEITURA ACIMA DO ESPERADO, 012 LEITURA ABAIXO DO ESPERADO, 013 VIRADA DE MEDIDOR, 041 CAES SOLTOS, 081 INATIVO LIGADO, 082 INATIVO DESLIGADO, 999 DEVOLUCAO DE LIVRO INCOMPLETO (só se a linha começar com 999; "MED - ANL - MED INCOMPLETO" NÃO é 999). Responda só JSON com os números (0 se a linha não existir): {"q000":314,"q001":0,"q002":3,"q004":0,"q009":3,"q011":13,"q012":9,"q013":1,"q041":0,"q081":0,"q082":43,"q999":0}.';
+const IA_RESUMO2='Foto (com reflexo) da tela "Resumo por Mensagem" de um PDA de leitura de energia. Procure estas linhas pelo código e leia a "Quantidade:" logo abaixo de cada uma: 000 LEITURA NORMAL, 001 AVARIA, 002 IMPEDIMENTO DE LEITURA, 004 TROCA DE EQUIPAMENTO, 009 UC DESLIGADA EM CAMPO, 011 LEITURA ACIMA DO ESPERADO, 012 LEITURA ABAIXO DO ESPERADO, 013 VIRADA DE MEDIDOR, 041 CAES SOLTOS, 081 INATIVO LIGADO, 082 INATIVO DESLIGADO, 999 DEVOLUCAO DE LIVRO INCOMPLETO (só se a linha começar com 999; "MED - ANL - MED INCOMPLETO" NÃO é 999).  MUITO IMPORTANTE: a PRIMEIRA linha da lista é SEMPRE 000 LEITURA NORMAL (a que tem a maior quantidade). Se no topo aparecer só uma "Quantidade:" sem o código ou o nome (cortado, apagado pelo reflexo ou fora da foto), essa quantidade é da 000 LEITURA NORMAL: devolva cod "000" com ela. Responda só JSON com os números (0 se a linha não existir): {"q000":314,"q001":0,"q002":3,"q004":0,"q009":3,"q011":13,"q012":9,"q013":1,"q041":0,"q081":0,"q082":43,"q999":0}.';
 // aceita a resposta da IA mesmo se ela vier com outros nomes de campo
 const RES_NOMES={"000":"LEITURA NORMAL","001":"AVARIA","002":"IMPEDIMENTO DE LEITURA","009":"UC DESLIGADA EM CAMPO","011":"LEITURA ACIMA DO ESPERADO","012":"LEITURA ABAIXO DO ESPERADO","013":"VIRADA DE MEDIDOR","082":"INATIVO DESLIGADO","004":"TROCA DE EQUIPAMENTO","041":"CAES SOLTOS","081":"INATIVO LIGADO","999":"DEVOLUCAO DE LIVRO INCOMPLETO"};
 function itensResumoIA(j){if(!j)return[];let a=Array.isArray(j)?j:j.itens||j.items||j.mensagens||Object.values(j).find(Array.isArray);
@@ -2446,7 +2460,7 @@ function itensResumoIA(j){if(!j)return[];let a=Array.isArray(j)?j:j.itens||j.ite
   return a.map(x=>{const cod=String(x.cod??x.codigo??x.code??x.c??"").replace(/\D/g,""),c3=cod?cod.padStart(3,"0"):"";const nome=String(x.nome??x.descricao??x.mensagem??x.name??x.texto??"").toUpperCase().replace(/^\d{2,3}\s*[-–]\s*/,"").trim()||RES_NOMES[c3]||"";
     const q=parseInt(String(x.q??x.quantidade??x.qtd??x.quantity??x.qt??"").replace(/\D/g,""),10)||0;
     if(/MED\s*INCOMPLETO|\bANL\b/.test(nome)||/^MED/i.test(String(x.cod??x.codigo??"")))return{cod:"MED",nome:"MED - ANL - MED INCOMPLETO",q};return{cod:c3,nome,q}}).filter(x=>x.nome||x.cod)}
-const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome e uma "Quantidade:" logo abaixo. Os códigos que aparecem são: 000 = LEITURA NORMAL; 001 = AVARIA (medidor avariado); 002 = IMPEDIMENTO DE LEITURA; 004 = TROCA DE EQUIPAMENTO; 009 = UC DESLIGADA EM CAMPO; 041 = CAES SOLTOS (cães soltos); 011 = LEITURA ACIMA DO ESPERADO; 012 = LEITURA ABAIXO DO ESPERADO; 013 = VIRADA DE MEDIDOR; 081 = INATIVO LIGADO; 082 = INATIVO DESLIGADO; 999 = DEVOLUCAO DE LIVRO INCOMPLETO. ATENÇÃO: "MED - ANL - MED INCOMPLETO" NÃO é 999 (é medidor digitado incompleto); para ela use cod "MED". Só use 999 se a linha começar com o número 999 escrito na tela. Pode ter outros itens; leia também. Se o nome estiver apagado pelo reflexo, reconheça pelo código. A foto é tirada na rua: pode estar torta, com reflexo do sol, riscos na tela e a capa do aparelho; o código e a "Quantidade" ficam do lado esquerdo e quase sempre dá pra ler mesmo se o fim do nome estiver apagado pelo reflexo. Leia TODOS os itens. Use exatamente as chaves cod, nome e q (q é número). Se a foto for da tela "Fila de Impressão" (título tipo "Fila de Impressão - 0/84"), responda {"fila":84,"itens":[]} com o número DEPOIS da barra. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO DE LEITURA","q":3},{"cod":"009","nome":"UC DESLIGADA EM CAMPO","q":3},{"cod":"082","nome":"INATIVO DESLIGADO","q":43}]}. Se não achar, {"itens":[]}.';
+const IA_RESUMO='Esta é uma foto da tela "Resumo por Mensagem" de um PDA de leitura de energia. Cada mensagem tem um código de 3 dígitos, um nome e uma "Quantidade:" logo abaixo. Os códigos que aparecem são: 000 = LEITURA NORMAL; 001 = AVARIA (medidor avariado); 002 = IMPEDIMENTO DE LEITURA; 004 = TROCA DE EQUIPAMENTO; 009 = UC DESLIGADA EM CAMPO; 041 = CAES SOLTOS (cães soltos); 011 = LEITURA ACIMA DO ESPERADO; 012 = LEITURA ABAIXO DO ESPERADO; 013 = VIRADA DE MEDIDOR; 081 = INATIVO LIGADO; 082 = INATIVO DESLIGADO; 999 = DEVOLUCAO DE LIVRO INCOMPLETO. ATENÇÃO: "MED - ANL - MED INCOMPLETO" NÃO é 999 (é medidor digitado incompleto); para ela use cod "MED". Só use 999 se a linha começar com o número 999 escrito na tela. Pode ter outros itens; leia também. Se o nome estiver apagado pelo reflexo, reconheça pelo código. A foto é tirada na rua: pode estar torta, com reflexo do sol, riscos na tela e a capa do aparelho; o código e a "Quantidade" ficam do lado esquerdo e quase sempre dá pra ler mesmo se o fim do nome estiver apagado pelo reflexo. Leia TODOS os itens. MUITO IMPORTANTE: a PRIMEIRA linha da lista é SEMPRE 000 LEITURA NORMAL (a que tem a maior quantidade). Se no topo aparecer só uma "Quantidade:" sem o código ou o nome (cortado, apagado pelo reflexo ou fora da foto), essa quantidade é da 000 LEITURA NORMAL: devolva cod "000" com ela. Use exatamente as chaves cod, nome e q (q é número). Se a foto for da tela "Fila de Impressão" (título tipo "Fila de Impressão - 0/84"), responda {"fila":84,"itens":[]} com o número DEPOIS da barra. Responda só JSON: {"itens":[{"cod":"002","nome":"IMPEDIMENTO DE LEITURA","q":3},{"cod":"009","nome":"UC DESLIGADA EM CAMPO","q":3},{"cod":"082","nome":"INATIVO DESLIGADO","q":43}]}. Se não achar, {"itens":[]}.';
 const IA_FILA='Esta é uma foto da tela "Fila de Impressão" de um PDA de leitura de energia. No título aparece algo como "Fila de Impressão - 0/84": o número DEPOIS da barra é o total de contas para imprimir. Responda só JSON: {"total":84}. Se a foto NÃO for da tela Fila de Impressão (ex.: for o Resumo por Mensagem), ou se não achar, responda {"total":null}.';
 async function lerFilaImpressao(file){let n=null;
   if(iaChave){try{const j=await iaLer(file,IA_FILA);if(j&&j.total!=null&&!isNaN(+j.total))n=+j.total}catch(err){iaFalhou(err)}}
