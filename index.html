@@ -714,11 +714,12 @@ details.pda-item summary{max-width:100%;box-sizing:border-box}.pda-rua{min-width
 .fp-tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .fp-tipo{height:44px;border:0;border-radius:10px;background:#ede9fe;color:#5b21b6;font-weight:800;font-size:14px;cursor:pointer}
 .fp-tipo:disabled{opacity:.4;cursor:default}
+.ver-tit{font-size:11px;font-weight:700;color:#fde68a;line-height:1.2;margin-top:2px}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div class="head-row"><div class="head-tit"><div class="avatar-wrap"><img id="fotoPerfil" class="foto-perfil" alt="Minha foto"><span id="fotoVazia" class="foto-perfil foto-vazia" role="button" aria-label="Escolher foto" hidden>👤</span><button id="fotoLapis" class="foto-lapis" type="button" aria-label="Editar foto">✏️</button></div><div><h1>Controle de Leituras</h1><p>Lançamento por etapa, livro e intervalo</p></div></div>
+<header><div class="head-row"><div class="head-tit"><div class="avatar-wrap"><img id="fotoPerfil" class="foto-perfil" alt="Minha foto"><span id="fotoVazia" class="foto-perfil foto-vazia" role="button" aria-label="Escolher foto" hidden>👤</span><button id="fotoLapis" class="foto-lapis" type="button" aria-label="Editar foto">✏️</button></div><div><h1>Controle de Leituras</h1><div id="verTit" class="ver-tit"></div><p>Lançamento por etapa, livro e intervalo</p></div></div>
 <div class="head-btns"><button id="menuBtn" class="hbtn menu-btn" type="button" title="Mais: releituras, arquivadas, ajuda, exportar, backup..." aria-label="Mais opções">☰<span id="menuDot" class="rel-badge" hidden></span></button><button id="equipBtn" class="hbtn" type="button" title="Equipamentos de Luís Ricardo (PDA e impressora)" aria-label="Equipamentos de Luís Ricardo">📟</button><button id="compartilharApp" class="hbtn" type="button" title="Compartilhar aplicativo" aria-label="Compartilhar aplicativo">📤</button><button id="atualizarApp" class="hbtn" type="button" title="Atualizar aplicativo" aria-label="Atualizar aplicativo">🔄 <span id="verPill"></span></button></div></div></header>
 <main>
 <section class="card">
@@ -3252,7 +3253,7 @@ $("atualizarApp").onclick=async()=>{
 };
 
 // ---------- Atualização automática: ao abrir, confere se tem versão nova no GitHub ----------
-const VERSAO_APP="16.53";$("verPill").textContent="v"+VERSAO_APP;
+const VERSAO_APP="16.53";$("verPill").textContent="v"+VERSAO_APP;if($("verTit"))$("verTit").textContent="versão "+VERSAO_APP;
 function versaoMaior(a,b){const x=a.split(".").map(Number),y=b.split(".").map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0)}return false}
 // 🔄 o iPhone abre o app pelo ícone usando uma cópia guardada da página: aqui troca essa cópia pela versão nova
 async function renovarCacheInicio(){try{const base=new URL("./",location.href).href,us=new Set([base,base+"index.html",location.origin+location.pathname]);
